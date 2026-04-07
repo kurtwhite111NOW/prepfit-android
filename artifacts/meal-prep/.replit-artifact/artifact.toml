@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Meal Prep Planner"
+version = "1.0.0"
+id = "artifacts/meal-prep"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21075
+
+[services.development]
+run = "pnpm --filter @workspace/meal-prep run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/meal-prep", "run", "build" ]
+publicDir = "artifacts/meal-prep/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21075"
+BASE_PATH = "/"

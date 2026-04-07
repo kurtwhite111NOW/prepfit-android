@@ -6,4 +6,21 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./analyzeMealPhotoBody";
+export * from "./createMealItemBody";
+export * from "./createMealPlanBody";
+export * from "./createSavedMealBody";
+export * from "./errorResponse";
+export * from "./generatedMeal";
+export * from "./generatedMealPlan";
+export * from "./generatedShoppingItem";
+export * from "./generateMealPlanBody";
 export * from "./healthStatus";
+export * from "./mealItem";
+export * from "./mealPhotoAnalysis";
+export * from "./mealPlan";
+export * from "./mealPlanWithMeals";
+export * from "./savedMeal";
+export * from "./shoppingCategory";
+export * from "./shoppingItem";
+export * from "./shoppingList";

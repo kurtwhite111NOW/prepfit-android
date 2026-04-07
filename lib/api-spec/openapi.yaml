@@ -10,6 +10,14 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: meal-plans
+    description: Meal plan operations
+  - name: meals
+    description: Saved meal operations
+  - name: shopping-lists
+    description: Shopping list operations
+  - name: ai
+    description: AI-powered operations
 paths:
   /healthz:
     get:
@@ -24,6 +32,199 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /meal-plans:
+    get:
+      operationId: listMealPlans
+      tags: [meal-plans]
+      summary: List all meal plans
+      responses:
+        "200":
+          description: List of meal plans
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MealPlan"
+    post:
+      operationId: createMealPlan
+      tags: [meal-plans]
+      summary: Create a new meal plan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMealPlanBody"
+      responses:
+        "201":
+          description: Created meal plan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MealPlan"
+
+  /meal-plans/{id}:
+    get:
+      operationId: getMealPlan
+      tags: [meal-plans]
+      summary: Get a meal plan with its meals
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Meal plan with meals
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MealPlanWithMeals"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteMealPlan
+      tags: [meal-plans]
+      summary: Delete a meal plan
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /saved-meals:
+    get:
+      operationId: listSavedMeals
+      tags: [meals]
+      summary: List all saved meals (from photo scans)
+      responses:
+        "200":
+          description: List of saved meals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SavedMeal"
+    post:
+      operationId: createSavedMeal
+      tags: [meals]
+      summary: Save a meal from photo analysis
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSavedMealBody"
+      responses:
+        "201":
+          description: Saved meal
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedMeal"
+
+  /saved-meals/{id}:
+    delete:
+      operationId: deleteSavedMeal
+      tags: [meals]
+      summary: Delete a saved meal
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /shopping-lists/{mealPlanId}:
+    get:
+      operationId: getShoppingList
+      tags: [shopping-lists]
+      summary: Get the shopping list for a meal plan
+      parameters:
+        - name: mealPlanId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Shopping list with categorized items
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShoppingList"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /ai/generate-meal-plan:
+    post:
+      operationId: generateMealPlan
+      tags: [ai]
+      summary: Generate a meal plan using AI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateMealPlanBody"
+      responses:
+        "200":
+          description: Generated meal plan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeneratedMealPlan"
+
+  /ai/analyze-meal-photo:
+    post:
+      operationId: analyzeMealPhoto
+      tags: [ai]
+      summary: Analyze a meal photo to estimate calories and nutrition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyzeMealPhotoBody"
+      responses:
+        "200":
+          description: Meal analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MealPhotoAnalysis"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +235,313 @@ components:
       required:
         - status
 
+    MealPlan:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        mealsPerDay:
+          type: integer
+        dailyCalories:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - mealsPerDay
+        - dailyCalories
+        - createdAt
+
+    MealItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        mealPlanId:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        calories:
+          type: integer
+        mealNumber:
+          type: integer
+        ingredients:
+          type: string
+      required:
+        - id
+        - mealPlanId
+        - name
+        - description
+        - calories
+        - mealNumber
+        - ingredients
+
+    MealPlanWithMeals:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        mealsPerDay:
+          type: integer
+        dailyCalories:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        meals:
+          type: array
+          items:
+            $ref: "#/components/schemas/MealItem"
+      required:
+        - id
+        - name
+        - mealsPerDay
+        - dailyCalories
+        - createdAt
+        - meals
+
+    ShoppingList:
+      type: object
+      properties:
+        mealPlanId:
+          type: integer
+        mealPlanName:
+          type: string
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/ShoppingCategory"
+      required:
+        - mealPlanId
+        - mealPlanName
+        - categories
+
+    ShoppingCategory:
+      type: object
+      properties:
+        category:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ShoppingItem"
+      required:
+        - category
+        - items
+
+    ShoppingItem:
+      type: object
+      properties:
+        name:
+          type: string
+        quantity:
+          type: string
+        brandSuggestion:
+          type: string
+        notes:
+          type: string
+      required:
+        - name
+        - quantity
+        - brandSuggestion
+        - notes
+
+    SavedMeal:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        estimatedCalories:
+          type: integer
+        ingredients:
+          type: string
+        imageData:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - description
+        - estimatedCalories
+        - ingredients
+        - createdAt
+
+    CreateMealPlanBody:
+      type: object
+      properties:
+        name:
+          type: string
+        mealsPerDay:
+          type: integer
+        dailyCalories:
+          type: integer
+        meals:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateMealItemBody"
+      required:
+        - name
+        - mealsPerDay
+        - dailyCalories
+        - meals
+
+    CreateMealItemBody:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        calories:
+          type: integer
+        mealNumber:
+          type: integer
+        ingredients:
+          type: string
+      required:
+        - name
+        - description
+        - calories
+        - mealNumber
+        - ingredients
+
+    CreateSavedMealBody:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        estimatedCalories:
+          type: integer
+        ingredients:
+          type: string
+        imageData:
+          type: string
+      required:
+        - name
+        - description
+        - estimatedCalories
+        - ingredients
+
+    GenerateMealPlanBody:
+      type: object
+      properties:
+        mealsPerDay:
+          type: integer
+          minimum: 2
+          maximum: 5
+        dailyCalories:
+          type: integer
+      required:
+        - mealsPerDay
+        - dailyCalories
+
+    GeneratedMealPlan:
+      type: object
+      properties:
+        name:
+          type: string
+        meals:
+          type: array
+          items:
+            $ref: "#/components/schemas/GeneratedMeal"
+        shoppingItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/GeneratedShoppingItem"
+      required:
+        - name
+        - meals
+        - shoppingItems
+
+    GeneratedMeal:
+      type: object
+      properties:
+        mealNumber:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        calories:
+          type: integer
+        ingredients:
+          type: string
+      required:
+        - mealNumber
+        - name
+        - description
+        - calories
+        - ingredients
+
+    GeneratedShoppingItem:
+      type: object
+      properties:
+        category:
+          type: string
+        name:
+          type: string
+        quantity:
+          type: string
+        brandSuggestion:
+          type: string
+        notes:
+          type: string
+      required:
+        - category
+        - name
+        - quantity
+        - brandSuggestion
+        - notes
+
+    AnalyzeMealPhotoBody:
+      type: object
+      properties:
+        imageBase64:
+          type: string
+          description: Base64-encoded image data
+      required:
+        - imageBase64
+
+    MealPhotoAnalysis:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        estimatedCalories:
+          type: integer
+        ingredients:
+          type: string
+        confidence:
+          type: string
+      required:
+        - name
+        - description
+        - estimatedCalories
+        - ingredients
+        - confidence
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error

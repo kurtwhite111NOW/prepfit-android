@@ -14,3 +14,174 @@ import * as zod from "zod";
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
 });
+
+/**
+ * @summary List all meal plans
+ */
+export const ListMealPlansResponseItem = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  mealsPerDay: zod.number(),
+  dailyCalories: zod.number(),
+  createdAt: zod.coerce.date(),
+});
+export const ListMealPlansResponse = zod.array(ListMealPlansResponseItem);
+
+/**
+ * @summary Create a new meal plan
+ */
+export const CreateMealPlanBody = zod.object({
+  name: zod.string(),
+  mealsPerDay: zod.number(),
+  dailyCalories: zod.number(),
+  meals: zod.array(
+    zod.object({
+      name: zod.string(),
+      description: zod.string(),
+      calories: zod.number(),
+      mealNumber: zod.number(),
+      ingredients: zod.string(),
+    }),
+  ),
+});
+
+/**
+ * @summary Get a meal plan with its meals
+ */
+export const GetMealPlanParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const GetMealPlanResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  mealsPerDay: zod.number(),
+  dailyCalories: zod.number(),
+  createdAt: zod.coerce.date(),
+  meals: zod.array(
+    zod.object({
+      id: zod.number(),
+      mealPlanId: zod.number(),
+      name: zod.string(),
+      description: zod.string(),
+      calories: zod.number(),
+      mealNumber: zod.number(),
+      ingredients: zod.string(),
+    }),
+  ),
+});
+
+/**
+ * @summary Delete a meal plan
+ */
+export const DeleteMealPlanParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
+ * @summary List all saved meals (from photo scans)
+ */
+export const ListSavedMealsResponseItem = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  description: zod.string(),
+  estimatedCalories: zod.number(),
+  ingredients: zod.string(),
+  imageData: zod.string().optional(),
+  createdAt: zod.coerce.date(),
+});
+export const ListSavedMealsResponse = zod.array(ListSavedMealsResponseItem);
+
+/**
+ * @summary Save a meal from photo analysis
+ */
+export const CreateSavedMealBody = zod.object({
+  name: zod.string(),
+  description: zod.string(),
+  estimatedCalories: zod.number(),
+  ingredients: zod.string(),
+  imageData: zod.string().optional(),
+});
+
+/**
+ * @summary Delete a saved meal
+ */
+export const DeleteSavedMealParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
+ * @summary Get the shopping list for a meal plan
+ */
+export const GetShoppingListParams = zod.object({
+  mealPlanId: zod.coerce.number(),
+});
+
+export const GetShoppingListResponse = zod.object({
+  mealPlanId: zod.number(),
+  mealPlanName: zod.string(),
+  categories: zod.array(
+    zod.object({
+      category: zod.string(),
+      items: zod.array(
+        zod.object({
+          name: zod.string(),
+          quantity: zod.string(),
+          brandSuggestion: zod.string(),
+          notes: zod.string(),
+        }),
+      ),
+    }),
+  ),
+});
+
+/**
+ * @summary Generate a meal plan using AI
+ */
+export const generateMealPlanBodyMealsPerDayMin = 2;
+export const generateMealPlanBodyMealsPerDayMax = 5;
+
+export const GenerateMealPlanBody = zod.object({
+  mealsPerDay: zod
+    .number()
+    .min(generateMealPlanBodyMealsPerDayMin)
+    .max(generateMealPlanBodyMealsPerDayMax),
+  dailyCalories: zod.number(),
+});
+
+export const GenerateMealPlanResponse = zod.object({
+  name: zod.string(),
+  meals: zod.array(
+    zod.object({
+      mealNumber: zod.number(),
+      name: zod.string(),
+      description: zod.string(),
+      calories: zod.number(),
+      ingredients: zod.string(),
+    }),
+  ),
+  shoppingItems: zod.array(
+    zod.object({
+      category: zod.string(),
+      name: zod.string(),
+      quantity: zod.string(),
+      brandSuggestion: zod.string(),
+      notes: zod.string(),
+    }),
+  ),
+});
+
+/**
+ * @summary Analyze a meal photo to estimate calories and nutrition
+ */
+export const AnalyzeMealPhotoBody = zod.object({
+  imageBase64: zod.string().describe("Base64-encoded image data"),
+});
+
+export const AnalyzeMealPhotoResponse = zod.object({
+  name: zod.string(),
+  description: zod.string(),
+  estimatedCalories: zod.number(),
+  ingredients: zod.string(),
+  confidence: zod.string(),
+});

@@ -8,3 +8,129 @@
 export interface HealthStatus {
   status: string;
 }
+
+export interface MealPlan {
+  id: number;
+  name: string;
+  mealsPerDay: number;
+  dailyCalories: number;
+  createdAt: string;
+}
+
+export interface MealItem {
+  id: number;
+  mealPlanId: number;
+  name: string;
+  description: string;
+  calories: number;
+  mealNumber: number;
+  ingredients: string;
+}
+
+export interface MealPlanWithMeals {
+  id: number;
+  name: string;
+  mealsPerDay: number;
+  dailyCalories: number;
+  createdAt: string;
+  meals: MealItem[];
+}
+
+export interface ShoppingItem {
+  name: string;
+  quantity: string;
+  brandSuggestion: string;
+  notes: string;
+}
+
+export interface ShoppingCategory {
+  category: string;
+  items: ShoppingItem[];
+}
+
+export interface ShoppingList {
+  mealPlanId: number;
+  mealPlanName: string;
+  categories: ShoppingCategory[];
+}
+
+export interface SavedMeal {
+  id: number;
+  name: string;
+  description: string;
+  estimatedCalories: number;
+  ingredients: string;
+  imageData?: string;
+  createdAt: string;
+}
+
+export interface CreateMealItemBody {
+  name: string;
+  description: string;
+  calories: number;
+  mealNumber: number;
+  ingredients: string;
+}
+
+export interface CreateMealPlanBody {
+  name: string;
+  mealsPerDay: number;
+  dailyCalories: number;
+  meals: CreateMealItemBody[];
+}
+
+export interface CreateSavedMealBody {
+  name: string;
+  description: string;
+  estimatedCalories: number;
+  ingredients: string;
+  imageData?: string;
+}
+
+export interface GenerateMealPlanBody {
+  /**
+   * @minimum 2
+   * @maximum 5
+   */
+  mealsPerDay: number;
+  dailyCalories: number;
+}
+
+export interface GeneratedMeal {
+  mealNumber: number;
+  name: string;
+  description: string;
+  calories: number;
+  ingredients: string;
+}
+
+export interface GeneratedShoppingItem {
+  category: string;
+  name: string;
+  quantity: string;
+  brandSuggestion: string;
+  notes: string;
+}
+
+export interface GeneratedMealPlan {
+  name: string;
+  meals: GeneratedMeal[];
+  shoppingItems: GeneratedShoppingItem[];
+}
+
+export interface AnalyzeMealPhotoBody {
+  /** Base64-encoded image data */
+  imageBase64: string;
+}
+
+export interface MealPhotoAnalysis {
+  name: string;
+  description: string;
+  estimatedCalories: number;
+  ingredients: string;
+  confidence: string;
+}
+
+export interface ErrorResponse {
+  error: string;
+}
