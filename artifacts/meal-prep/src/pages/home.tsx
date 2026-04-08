@@ -1,158 +1,204 @@
 import { Link } from "wouter";
 import { useListMealPlans, getListMealPlansQueryKey } from "@workspace/api-client-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowRight, CalendarDays, Plus, Utensils, Camera, Sparkles, ChefHat } from "lucide-react";
+import {
+  Sparkles,
+  ScanLine,
+  ShoppingBasket,
+  Flame,
+  CalendarDays,
+  ArrowRight,
+  ChefHat,
+  TrendingUp,
+  Plus,
+} from "lucide-react";
 
 export default function Home() {
   const { data: mealPlans, isLoading } = useListMealPlans({
-    query: {
-      queryKey: getListMealPlansQueryKey()
-    }
+    query: { queryKey: getListMealPlansQueryKey() },
   });
 
   const latestPlan = mealPlans?.[0];
+  const hour = new Date().getHours();
+  const greeting =
+    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <section className="space-y-2">
-        <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground tracking-tight">
-          Good morning.
-        </h1>
-        <p className="text-muted-foreground text-lg">
-          Ready to fuel your body today?
-        </p>
+      {/* Hero Header */}
+      <section className="relative overflow-hidden rounded-3xl bg-sidebar px-7 pt-8 pb-7">
+        {/* Background texture */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-primary blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-primary/60 blur-3xl" />
+        </div>
+
+        <div className="relative">
+          <p className="text-primary text-sm font-semibold uppercase tracking-widest mb-1">
+            {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+          </p>
+          <h1 className="font-serif text-4xl md:text-5xl font-bold text-sidebar-foreground leading-tight mb-3">
+            {greeting}.
+          </h1>
+          <p className="text-sidebar-foreground/50 text-base max-w-sm">
+            {latestPlan
+              ? `Active plan: ${latestPlan.name} · ${latestPlan.dailyCalories} kcal/day`
+              : "No active plan yet. Let's build one."}
+          </p>
+
+          {/* Stats row */}
+          {latestPlan && (
+            <div className="mt-5 flex items-center gap-4 flex-wrap">
+              <div className="flex items-center gap-2 bg-white/5 border border-white/8 rounded-xl px-3.5 py-2">
+                <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center">
+                  <CalendarDays size={14} className="text-primary" />
+                </div>
+                <div>
+                  <p className="text-[10px] text-sidebar-foreground/40 uppercase tracking-wider font-semibold">Meals/Day</p>
+                  <p className="text-sidebar-foreground font-bold text-sm leading-none">{latestPlan.mealsPerDay}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 bg-white/5 border border-white/8 rounded-xl px-3.5 py-2">
+                <div className="w-7 h-7 rounded-lg bg-amber-500/20 flex items-center justify-center">
+                  <Flame size={14} className="text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-[10px] text-sidebar-foreground/40 uppercase tracking-wider font-semibold">Daily Target</p>
+                  <p className="text-sidebar-foreground font-bold text-sm leading-none">{latestPlan.dailyCalories.toLocaleString()} kcal</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 bg-white/5 border border-white/8 rounded-xl px-3.5 py-2">
+                <div className="w-7 h-7 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                  <TrendingUp size={14} className="text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-[10px] text-sidebar-foreground/40 uppercase tracking-wider font-semibold">Per Meal</p>
+                  <p className="text-sidebar-foreground font-bold text-sm leading-none">
+                    {Math.round(latestPlan.dailyCalories / latestPlan.mealsPerDay)} kcal
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </section>
 
       {/* Quick Actions */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Link href="/planner">
-          <div className="group cursor-pointer bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 p-6 rounded-2xl transition-all hover:shadow-md hover:-translate-y-1">
-            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
-              <Sparkles size={24} />
+      <section>
+        <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">
+          Quick Actions
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <Link href="/planner">
+            <div className="group cursor-pointer rounded-2xl border border-border bg-card p-5 transition-all duration-200 hover:border-primary/30 hover:shadow-md card-glow">
+              <div className="w-10 h-10 rounded-xl gradient-emerald flex items-center justify-center text-white mb-4 group-hover:scale-105 transition-transform shadow-sm">
+                <Sparkles size={19} />
+              </div>
+              <h3 className="font-semibold text-foreground text-[15px] mb-0.5">Generate Plan</h3>
+              <p className="text-muted-foreground text-xs leading-relaxed">AI-crafted meals for your calorie goal</p>
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-1">Generate Plan</h3>
-            <p className="text-muted-foreground text-sm">Let AI craft your perfect week of meals</p>
-          </div>
-        </Link>
-        
-        <Link href="/scan">
-          <div className="group cursor-pointer bg-gradient-to-br from-secondary/50 to-secondary border border-border p-6 rounded-2xl transition-all hover:shadow-md hover:-translate-y-1">
-            <div className="w-12 h-12 rounded-full bg-background flex items-center justify-center text-foreground mb-4 group-hover:scale-110 transition-transform shadow-sm">
-              <Camera size={24} />
+          </Link>
+
+          <Link href="/scan">
+            <div className="group cursor-pointer rounded-2xl border border-border bg-card p-5 transition-all duration-200 hover:border-primary/30 hover:shadow-md card-glow">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-200 flex items-center justify-center text-amber-600 mb-4 group-hover:scale-105 transition-transform">
+                <ScanLine size={19} />
+              </div>
+              <h3 className="font-semibold text-foreground text-[15px] mb-0.5">Scan a Meal</h3>
+              <p className="text-muted-foreground text-xs leading-relaxed">Photo-to-calorie analysis in seconds</p>
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-1">Scan a Meal</h3>
-            <p className="text-muted-foreground text-sm">Snap a photo to track what you're eating</p>
-          </div>
-        </Link>
+          </Link>
+
+          <Link href="/shopping">
+            <div className="group cursor-pointer rounded-2xl border border-border bg-card p-5 transition-all duration-200 hover:border-primary/30 hover:shadow-md card-glow">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-200 flex items-center justify-center text-blue-500 mb-4 group-hover:scale-105 transition-transform">
+                <ShoppingBasket size={19} />
+              </div>
+              <h3 className="font-semibold text-foreground text-[15px] mb-0.5">Grocery List</h3>
+              <p className="text-muted-foreground text-xs leading-relaxed">Smart list with clean brand picks</p>
+            </div>
+          </Link>
+        </div>
       </section>
 
-      {/* Current Plan Overview */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-serif font-semibold">Active Plan</h2>
+      {/* Active Plan */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Active Meal Plan
+          </h2>
           <Link href="/planner">
-            <Button variant="ghost" size="sm" className="text-primary gap-1">
-              View all <ArrowRight size={16} />
-            </Button>
+            <button className="text-xs font-medium text-primary flex items-center gap-1 hover:gap-2 transition-all">
+              View all <ArrowRight size={12} />
+            </button>
           </Link>
         </div>
 
         {isLoading ? (
-          <Card className="border-none shadow-sm bg-card overflow-hidden">
-            <CardHeader className="pb-4">
-              <Skeleton className="h-6 w-1/3 mb-2" />
-              <Skeleton className="h-4 w-1/4" />
-            </CardHeader>
-            <CardContent>
-              <div className="flex gap-4">
-                <Skeleton className="h-20 w-1/3 rounded-xl" />
-                <Skeleton className="h-20 w-1/3 rounded-xl" />
-                <Skeleton className="h-20 w-1/3 rounded-xl" />
-              </div>
-            </CardContent>
-          </Card>
+          <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+            <Skeleton className="h-5 w-1/3" />
+            <Skeleton className="h-4 w-1/4" />
+            <div className="flex gap-3 mt-4">
+              <Skeleton className="h-16 flex-1 rounded-xl" />
+              <Skeleton className="h-16 flex-1 rounded-xl" />
+              <Skeleton className="h-16 flex-1 rounded-xl" />
+            </div>
+          </div>
         ) : latestPlan ? (
-          <Card className="border-border shadow-sm bg-card overflow-hidden group">
-            <div className="h-2 bg-primary w-full"></div>
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
+          <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm card-glow transition-all duration-200">
+            <div className="h-1 gradient-emerald w-full" />
+            <div className="p-6">
+              <div className="flex justify-between items-start gap-4">
                 <div>
-                  <CardTitle className="text-xl">{latestPlan.name}</CardTitle>
-                  <CardDescription className="mt-1">
-                    Created {new Date(latestPlan.createdAt).toLocaleDateString()}
-                  </CardDescription>
+                  <h3 className="font-semibold text-foreground text-lg leading-tight">{latestPlan.name}</h3>
+                  <p className="text-muted-foreground text-xs mt-1">
+                    Created {new Date(latestPlan.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                  </p>
                 </div>
-                <div className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm font-medium">
-                  {latestPlan.dailyCalories} kcal / day
-                </div>
+                <span className="calorie-pill px-3 py-1.5 rounded-full text-sm flex items-center gap-1.5 whitespace-nowrap">
+                  <Flame size={13} />
+                  {latestPlan.dailyCalories.toLocaleString()} kcal
+                </span>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="bg-background border border-border rounded-xl p-3 flex flex-col items-center justify-center text-center">
-                  <span className="text-2xl font-bold text-primary">{latestPlan.mealsPerDay}</span>
-                  <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mt-1">Meals/Day</span>
+
+              <div className="mt-5 grid grid-cols-3 gap-3">
+                <div className="rounded-xl bg-muted/50 border border-border p-3 text-center">
+                  <p className="text-2xl font-bold text-foreground">{latestPlan.mealsPerDay}</p>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mt-0.5">Meals/Day</p>
                 </div>
-                <div className="bg-background border border-border rounded-xl p-3 flex flex-col items-center justify-center text-center">
-                  <span className="text-2xl font-bold text-foreground">
-                    {latestPlan.mealsPerDay * 7}
-                  </span>
-                  <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mt-1">Total Meals</span>
+                <div className="rounded-xl bg-muted/50 border border-border p-3 text-center">
+                  <p className="text-2xl font-bold text-foreground">
+                    {Math.round(latestPlan.dailyCalories / latestPlan.mealsPerDay)}
+                  </p>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mt-0.5">Kcal/Meal</p>
                 </div>
-                
-                <div className="col-span-2 flex flex-col justify-center gap-2">
-                  <Link href="/shopping" className="w-full">
-                    <Button variant="outline" className="w-full justify-between group-hover:border-primary/50 transition-colors">
-                      View Shopping List
-                      <ShoppingCartIcon className="w-4 h-4" />
-                    </Button>
-                  </Link>
-                </div>
+                <Link href={`/shopping`} className="block">
+                  <div className="rounded-xl bg-primary/8 border border-primary/15 p-3 text-center h-full flex flex-col items-center justify-center cursor-pointer hover:bg-primary/12 transition-colors">
+                    <ShoppingBasket size={18} className="text-primary mb-1" />
+                    <p className="text-[10px] uppercase tracking-wider text-primary font-semibold">Grocery List</p>
+                  </div>
+                </Link>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ) : (
-          <Card className="border-dashed border-2 border-border bg-background shadow-none">
-            <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-muted-foreground mb-4">
-                <ChefHat size={32} />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">No active meal plan</h3>
-              <p className="text-muted-foreground max-w-md mx-auto mb-6">
-                You haven't generated a meal plan yet. Let our AI craft a personalized menu based on your goals.
-              </p>
-              <Link href="/planner">
-                <Button className="gap-2 shadow-sm">
-                  <Plus size={18} /> Create your first plan
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+          <div className="rounded-2xl border-2 border-dashed border-border bg-transparent p-10 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground mx-auto mb-4">
+              <ChefHat size={26} />
+            </div>
+            <h3 className="font-semibold text-foreground text-lg mb-1.5">No active meal plan</h3>
+            <p className="text-muted-foreground text-sm max-w-sm mx-auto mb-6">
+              Generate your first AI-powered meal plan based on your calorie goal and preferred meal count.
+            </p>
+            <Link href="/planner">
+              <Button className="gap-2 shadow-sm font-semibold">
+                <Plus size={16} /> Create First Plan
+              </Button>
+            </Link>
+          </div>
         )}
       </section>
     </div>
-  );
-}
-
-function ShoppingCartIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="8" cy="21" r="1" />
-      <circle cx="19" cy="21" r="1" />
-      <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
-    </svg>
   );
 }

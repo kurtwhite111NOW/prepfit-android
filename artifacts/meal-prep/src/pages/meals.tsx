@@ -1,8 +1,19 @@
-import { useListSavedMeals, getListSavedMealsQueryKey, useDeleteSavedMeal } from "@workspace/api-client-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import {
+  useListSavedMeals,
+  getListSavedMealsQueryKey,
+  useDeleteSavedMeal,
+} from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, Search, Trash2, Camera, Calendar, Flame } from "lucide-react";
+import {
+  BookOpen,
+  Trash2,
+  Camera,
+  Calendar,
+  Flame,
+  ScanLine,
+  Utensils,
+} from "lucide-react";
 import { Link } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -20,9 +31,7 @@ import {
 
 export default function Meals() {
   const { data: savedMeals, isLoading } = useListSavedMeals({
-    query: {
-      queryKey: getListSavedMealsQueryKey()
-    }
+    query: { queryKey: getListSavedMealsQueryKey() },
   });
 
   const deleteMeal = useDeleteSavedMeal();
@@ -30,145 +39,174 @@ export default function Meals() {
   const { toast } = useToast();
 
   const handleDelete = (id: number) => {
-    deleteMeal.mutate({ id }, {
-      onSuccess: () => {
-        toast({
-          title: "Meal deleted",
-          description: "The saved meal has been removed from your history."
-        });
-        queryClient.invalidateQueries({ queryKey: getListSavedMealsQueryKey() });
-      },
-      onError: () => {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to delete meal."
-        });
+    deleteMeal.mutate(
+      { id },
+      {
+        onSuccess: () => {
+          toast({ title: "Meal removed", description: "Deleted from your journal." });
+          queryClient.invalidateQueries({ queryKey: getListSavedMealsQueryKey() });
+        },
+        onError: () => {
+          toast({ variant: "destructive", title: "Error deleting meal" });
+        },
       }
-    });
+    );
   };
+
+  const totalCalories = savedMeals?.reduce((s, m) => s + m.estimatedCalories, 0) ?? 0;
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <section className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3 text-primary">
-            <BookOpen className="w-8 h-8" />
-            <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground tracking-tight">
-              My Meals
-            </h1>
-          </div>
-          <p className="text-muted-foreground text-lg">
-            Your personal history of scanned and saved meals.
+      {/* Header */}
+      <section className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-5">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">
+            Food Journal
+          </p>
+          <h1 className="font-serif text-4xl font-bold text-foreground leading-tight mb-1.5">
+            My Meals
+          </h1>
+          <p className="text-muted-foreground">
+            Every meal you've scanned and saved.
           </p>
         </div>
-        <Link href="/scan">
-          <Button className="gap-2 shadow-sm whitespace-nowrap">
-            <Camera size={18} /> Scan New Meal
-          </Button>
-        </Link>
+        <div className="flex items-center gap-3">
+          {savedMeals && savedMeals.length > 0 && (
+            <div className="calorie-pill px-3.5 py-2 rounded-xl text-sm flex items-center gap-1.5">
+              <Flame size={14} />
+              <span className="font-bold">{totalCalories.toLocaleString()}</span>
+              <span className="font-normal opacity-70 text-xs">kcal logged</span>
+            </div>
+          )}
+          <Link href="/scan">
+            <Button className="gap-2 font-semibold shadow-sm">
+              <Camera size={15} />
+              Scan Meal
+            </Button>
+          </Link>
+        </div>
       </section>
 
       {isLoading ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map(i => (
-            <Card key={i} className="overflow-hidden border-none shadow-sm bg-card">
-              <Skeleton className="h-48 w-full" />
-              <CardContent className="p-4 space-y-3">
-                <Skeleton className="h-6 w-3/4" />
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm">
+              <Skeleton className="h-44 w-full" />
+              <div className="p-4 space-y-3">
+                <Skeleton className="h-5 w-3/4" />
                 <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-5/6" />
-                <div className="pt-4 flex justify-between">
-                  <Skeleton className="h-8 w-20 rounded-full" />
-                  <Skeleton className="h-8 w-8 rounded-full" />
-                </div>
-              </CardContent>
-            </Card>
+                <Skeleton className="h-4 w-4/5" />
+              </div>
+            </div>
           ))}
         </div>
       ) : !savedMeals?.length ? (
-        <Card className="border-dashed border-2 border-border bg-background shadow-none">
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center text-muted-foreground mb-4">
-              <Search size={40} />
-            </div>
-            <h3 className="text-2xl font-serif font-semibold mb-2">No meals saved yet</h3>
-            <p className="text-muted-foreground max-w-md mx-auto mb-8 text-lg">
-              Start building your food journal by scanning your first meal photo.
-            </p>
-            <Link href="/scan">
-              <Button size="lg" className="gap-2 shadow-md hover-elevate">
-                <Camera size={20} /> Open Camera
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <div className="rounded-2xl border-2 border-dashed border-border bg-transparent p-14 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground mx-auto mb-5">
+            <ScanLine size={28} />
+          </div>
+          <h3 className="font-serif text-xl font-semibold text-foreground mb-2">
+            Start your food journal
+          </h3>
+          <p className="text-muted-foreground text-sm max-w-sm mx-auto mb-7">
+            Scan a photo of any meal to instantly analyze its calories and ingredients. All saved meals appear here.
+          </p>
+          <Link href="/scan">
+            <Button size="lg" className="gap-2 font-semibold shadow-sm">
+              <Camera size={17} /> Open Scanner
+            </Button>
+          </Link>
+        </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {savedMeals.map((meal) => (
-            <Card key={meal.id} className="overflow-hidden border-border hover:border-primary/30 transition-colors group flex flex-col">
+            <div
+              key={meal.id}
+              className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm hover:border-primary/25 hover:shadow-md card-glow transition-all duration-200 flex flex-col group"
+            >
               {meal.imageData ? (
-                <div className="aspect-video w-full overflow-hidden bg-secondary border-b border-border relative">
-                  <img 
-                    src={meal.imageData} 
-                    alt={meal.name} 
+                <div className="aspect-video w-full overflow-hidden bg-muted relative">
+                  <img
+                    src={meal.imageData}
+                    alt={meal.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                    <span className="text-white text-sm font-medium flex items-center gap-1.5">
-                      <Calendar className="w-4 h-4" />
-                      {new Date(meal.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
+                  <div className="absolute bottom-3 left-3 flex items-center gap-1.5 text-white/80 text-[11px] font-medium">
+                    <Calendar size={11} />
+                    {new Date(meal.createdAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </div>
+                  <div className="absolute top-3 right-3">
+                    <span className="calorie-pill px-2.5 py-1 rounded-lg text-xs flex items-center gap-1">
+                      <Flame size={11} />
+                      {meal.estimatedCalories}
                     </span>
                   </div>
                 </div>
               ) : (
-                <div className="aspect-video w-full bg-secondary flex items-center justify-center border-b border-border">
-                  <BookOpen className="w-12 h-12 text-muted-foreground opacity-20" />
+                <div className="aspect-video w-full bg-muted flex items-center justify-center relative">
+                  <Utensils size={32} className="text-muted-foreground/30" />
+                  <div className="absolute top-3 right-3">
+                    <span className="calorie-pill px-2.5 py-1 rounded-lg text-xs flex items-center gap-1">
+                      <Flame size={11} />
+                      {meal.estimatedCalories}
+                    </span>
+                  </div>
                 </div>
               )}
-              
-              <CardHeader className="pb-3 flex-1">
-                <div className="flex justify-between items-start gap-4">
-                  <CardTitle className="text-xl font-serif leading-tight">{meal.name}</CardTitle>
-                </div>
-                <CardDescription className="line-clamp-2 mt-2 text-sm text-foreground/80">
+
+              <div className="flex-1 p-4">
+                <h4 className="font-semibold text-foreground leading-tight mb-1">
+                  {meal.name}
+                </h4>
+                <p className="text-muted-foreground text-xs leading-relaxed line-clamp-2">
                   {meal.description}
-                </CardDescription>
-              </CardHeader>
-              
-              <CardContent className="pb-4">
-                <div className="bg-background rounded-xl p-3 border border-border mt-2">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block mb-1">
-                    Ingredients
-                  </span>
-                  <p className="text-xs text-muted-foreground line-clamp-3">
-                    {meal.ingredients}
-                  </p>
+                </p>
+
+                {meal.ingredients && (
+                  <div className="mt-3 bg-muted/40 border border-border rounded-xl p-3">
+                    <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-semibold mb-1">
+                      Ingredients
+                    </p>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-3">
+                      {meal.ingredients}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="px-4 pb-4 flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-muted-foreground text-[11px]">
+                  <Calendar size={11} />
+                  {new Date(meal.createdAt).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
                 </div>
-              </CardContent>
-              
-              <CardFooter className="bg-secondary/20 border-t border-border pt-4 pb-4 flex items-center justify-between mt-auto">
-                <div className="bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1.5">
-                  <Flame className="w-4 h-4" />
-                  {meal.estimatedCalories} <span className="font-normal text-xs uppercase tracking-wide opacity-80">kcal</span>
-                </div>
-                
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive hover:bg-destructive/10">
-                      <Trash2 className="w-4 h-4" />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl"
+                    >
+                      <Trash2 size={14} />
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Delete saved meal?</AlertDialogTitle>
+                      <AlertDialogTitle>Delete this meal?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This will permanently remove "{meal.name}" from your meal history. This action cannot be undone.
+                        "{meal.name}" will be permanently removed from your journal. This cannot be undone.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction 
+                      <AlertDialogAction
                         onClick={() => handleDelete(meal.id)}
                         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                       >
@@ -177,8 +215,8 @@ export default function Meals() {
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
-              </CardFooter>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
       )}
