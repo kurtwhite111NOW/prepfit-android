@@ -20,6 +20,7 @@ import type {
   AnalyzeMealPhotoBody,
   CreateMealPlanBody,
   CreateSavedMealBody,
+  CreateWeightEntryBody,
   ErrorResponse,
   GenerateMealPlanBody,
   GeneratedMealPlan,
@@ -29,6 +30,7 @@ import type {
   MealPlanWithMeals,
   SavedMeal,
   ShoppingList,
+  WeightEntry,
 } from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
@@ -780,6 +782,251 @@ export function useGetShoppingList<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary List all weight entries
+ */
+export const getListWeightEntriesUrl = () => {
+  return `/api/weight-entries`;
+};
+
+export const listWeightEntries = async (
+  options?: RequestInit,
+): Promise<WeightEntry[]> => {
+  return customFetch<WeightEntry[]>(getListWeightEntriesUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListWeightEntriesQueryKey = () => {
+  return [`/api/weight-entries`] as const;
+};
+
+export const getListWeightEntriesQueryOptions = <
+  TData = Awaited<ReturnType<typeof listWeightEntries>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listWeightEntries>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListWeightEntriesQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listWeightEntries>>
+  > = ({ signal }) => listWeightEntries({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listWeightEntries>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListWeightEntriesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listWeightEntries>>
+>;
+export type ListWeightEntriesQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List all weight entries
+ */
+
+export function useListWeightEntries<
+  TData = Awaited<ReturnType<typeof listWeightEntries>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listWeightEntries>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListWeightEntriesQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Log a new body weight entry
+ */
+export const getCreateWeightEntryUrl = () => {
+  return `/api/weight-entries`;
+};
+
+export const createWeightEntry = async (
+  createWeightEntryBody: CreateWeightEntryBody,
+  options?: RequestInit,
+): Promise<WeightEntry> => {
+  return customFetch<WeightEntry>(getCreateWeightEntryUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createWeightEntryBody),
+  });
+};
+
+export const getCreateWeightEntryMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createWeightEntry>>,
+    TError,
+    { data: BodyType<CreateWeightEntryBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createWeightEntry>>,
+  TError,
+  { data: BodyType<CreateWeightEntryBody> },
+  TContext
+> => {
+  const mutationKey = ["createWeightEntry"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createWeightEntry>>,
+    { data: BodyType<CreateWeightEntryBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createWeightEntry(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateWeightEntryMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createWeightEntry>>
+>;
+export type CreateWeightEntryMutationBody = BodyType<CreateWeightEntryBody>;
+export type CreateWeightEntryMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Log a new body weight entry
+ */
+export const useCreateWeightEntry = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createWeightEntry>>,
+    TError,
+    { data: BodyType<CreateWeightEntryBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createWeightEntry>>,
+  TError,
+  { data: BodyType<CreateWeightEntryBody> },
+  TContext
+> => {
+  return useMutation(getCreateWeightEntryMutationOptions(options));
+};
+
+/**
+ * @summary Delete a weight entry
+ */
+export const getDeleteWeightEntryUrl = (id: number) => {
+  return `/api/weight-entries/${id}`;
+};
+
+export const deleteWeightEntry = async (
+  id: number,
+  options?: RequestInit,
+): Promise<void> => {
+  return customFetch<void>(getDeleteWeightEntryUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteWeightEntryMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteWeightEntry>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteWeightEntry>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["deleteWeightEntry"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteWeightEntry>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return deleteWeightEntry(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteWeightEntryMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteWeightEntry>>
+>;
+
+export type DeleteWeightEntryMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Delete a weight entry
+ */
+export const useDeleteWeightEntry = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteWeightEntry>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteWeightEntry>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getDeleteWeightEntryMutationOptions(options));
+};
 
 /**
  * @summary Generate a meal plan using AI

@@ -136,6 +136,37 @@ export const GetShoppingListResponse = zod.object({
 });
 
 /**
+ * @summary List all weight entries
+ */
+export const ListWeightEntriesResponseItem = zod.object({
+  id: zod.number(),
+  weight: zod.number(),
+  unit: zod.string(),
+  notes: zod.string().optional(),
+  recordedAt: zod.coerce.date(),
+});
+export const ListWeightEntriesResponse = zod.array(
+  ListWeightEntriesResponseItem,
+);
+
+/**
+ * @summary Log a new body weight entry
+ */
+export const CreateWeightEntryBody = zod.object({
+  weight: zod.number(),
+  unit: zod.enum(["lbs", "kg"]),
+  notes: zod.string().optional(),
+  recordedAt: zod.coerce.date().optional(),
+});
+
+/**
+ * @summary Delete a weight entry
+ */
+export const DeleteWeightEntryParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
  * @summary Generate a meal plan using AI
  */
 export const generateMealPlanBodyMealsPerDayMin = 2;

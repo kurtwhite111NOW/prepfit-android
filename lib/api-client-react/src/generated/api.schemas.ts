@@ -131,6 +131,29 @@ export interface MealPhotoAnalysis {
   confidence: string;
 }
 
+export interface WeightEntry {
+  id: number;
+  weight: number;
+  unit: string;
+  notes?: string;
+  recordedAt: string;
+}
+
+export type CreateWeightEntryBodyUnit =
+  (typeof CreateWeightEntryBodyUnit)[keyof typeof CreateWeightEntryBodyUnit];
+
+export const CreateWeightEntryBodyUnit = {
+  lbs: "lbs",
+  kg: "kg",
+} as const;
+
+export interface CreateWeightEntryBody {
+  weight: number;
+  unit: CreateWeightEntryBodyUnit;
+  notes?: string;
+  recordedAt?: string;
+}
+
 export interface ErrorResponse {
   error: string;
 }

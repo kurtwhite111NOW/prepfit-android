@@ -5,6 +5,7 @@ import {
   ShoppingBasket,
   BookOpen,
   ScanLine,
+  Scale,
   Leaf,
 } from "lucide-react";
 
@@ -14,6 +15,7 @@ const navItems = [
   { href: "/shopping", label: "Grocery List", icon: ShoppingBasket },
   { href: "/meals", label: "My Meals", icon: BookOpen },
   { href: "/scan", label: "Scan Photo", icon: ScanLine },
+  { href: "/weight", label: "Weight", icon: Scale },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {

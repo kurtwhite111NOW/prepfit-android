@@ -8,6 +8,7 @@ import Planner from "@/pages/planner";
 import Shopping from "@/pages/shopping";
 import Meals from "@/pages/meals";
 import Scan from "@/pages/scan";
+import Weight from "@/pages/weight";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ function Router() {
         <Route path="/shopping" component={Shopping} />
         <Route path="/meals" component={Meals} />
         <Route path="/scan" component={Scan} />
+        <Route path="/weight" component={Weight} />
         <Route component={NotFound} />
       </Switch>
     </Layout>
