@@ -99,7 +99,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </nav>
 
         {/* Bottom card */}
-        <div className="px-4 pb-6 pt-4">
+        <div className="px-4 pb-3 pt-4">
           <div className="rounded-2xl bg-primary/10 border border-primary/15 p-4">
             <p className="text-sidebar-foreground/80 text-[11px] font-semibold uppercase tracking-wider mb-1.5">
               Pro Plan
@@ -111,6 +111,25 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <span className="text-primary font-bold text-base">$20</span>
               <span className="text-sidebar-foreground/35 text-[11px]">/month</span>
             </div>
+          </div>
+        </div>
+
+        {/* Install links */}
+        <div className="px-4 pb-5">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-sidebar-foreground/25 mb-2 px-1">
+            Install App
+          </p>
+          <div className="grid grid-cols-2 gap-1.5">
+            <Link href="/ios">
+              <div className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-xl text-sidebar-foreground/45 hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors cursor-pointer text-[11px] font-medium">
+                🍎 iOS
+              </div>
+            </Link>
+            <Link href="/android">
+              <div className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-xl text-sidebar-foreground/45 hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors cursor-pointer text-[11px] font-medium">
+                🤖 Android
+              </div>
+            </Link>
           </div>
         </div>
       </aside>
