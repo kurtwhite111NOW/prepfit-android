@@ -1,10 +1,12 @@
-# NutriPlan — MealPrep Pro
+# NutriPrep — Clean Eating & Weight Loss
 
 ## Overview
 
-A premium AI-powered meal prep and health tracking app. Users generate AI meal plans, scan meal photos for calorie analysis, track body weight over time, and get smart grocery lists with clean-brand suggestions. Built as a PWA (installable on iOS and Android without an app store).
+A premium AI-powered meal prep and health tracking app for busy moms. Users generate AI meal plans, scan meal photos for calorie analysis, track body weight over time, and get smart grocery lists with clean-brand suggestions. Built as a PWA (installable on Android without an app store).
 
-**Perceived value: $20/month subscription product.**
+**Brand:** NutriPrep — Clean Eating & Weight Loss · Simple Meal Prep for Busy Moms
+**Price:** $12/month billed annually at $144.00 USD
+**Trial:** 3-day free trial (localStorage-based, no login required)
 
 ---
 
@@ -15,8 +17,9 @@ A premium AI-powered meal prep and health tracking app. Users generate AI meal p
 - **Photo Scanner** — Take or upload a meal photo; AI identifies food, estimates calories, and lists ingredients. Save to journal.
 - **My Meals (Journal)** — All photo-scanned meals saved with image, calorie count, ingredients, date, and notes
 - **Weight Tracker** — Log body weight (lbs or kg), view a line chart of trend over time, see stats (current, total change, last change vs previous)
-- **iOS Install Guide** — Step-by-step instructions to install the app on iPhone/iPad via Safari + Add to Home Screen, with live QR code
-- **Android Install Guide** — Step-by-step instructions for Chrome/Samsung Internet/Edge on Android, with live QR code
+- **Android Install Guide** — Step-by-step visual guide to install as a PWA on Android (Chrome/Samsung Internet/Edge) with live QR code
+- **3-Day Free Trial** — Trial banner, progress bar in sidebar, full-screen paywall after expiry
+- **Light / Dark Mode** — Toggle in sidebar (moon/sun icon), persists to localStorage, respects system preference on first visit
 
 ---
 
@@ -27,7 +30,7 @@ A premium AI-powered meal prep and health tracking app. Users generate AI meal p
 - **Package manager**: pnpm
 - **TypeScript version**: 5.9
 - **Frontend**: React + Vite (`artifacts/meal-prep`), Tailwind CSS v4, shadcn/ui, wouter routing
-- **Fonts**: Playfair Display (serif headings) + Bricolage Grotesque (sans body)
+- **Fonts**: Playfair Display (serif headings) + Bricolage Grotesque (sans body) — Google Fonts
 - **Charts**: Recharts (weight tracker line chart)
 - **API framework**: Express 5 (`artifacts/api-server`)
 - **Database**: PostgreSQL + Drizzle ORM
@@ -51,9 +54,8 @@ pnpm run typecheck
 # Build all packages
 pnpm run build
 
-# Dev servers (managed by Replit workflows)
-pnpm --filter @workspace/api-server run dev
-pnpm --filter @workspace/meal-prep run dev
+# Push DB schema changes (dev only)
+pnpm --filter @workspace/db run push
 ```
 
 ---
@@ -67,7 +69,7 @@ artifacts/
   mockup-sandbox/     Design canvas sandbox
 
 lib/
-  db/                 Drizzle ORM + PostgreSQL schema + migrations
+  db/                 Drizzle ORM + PostgreSQL schema
   api-spec/           openapi.yaml (source of truth for all routes)
   api-client-react/   Generated React Query hooks (via Orval)
   api-zod/            Generated Zod validation schemas (via Orval)
@@ -117,8 +119,7 @@ lib/
 | `/meals` | My Meals | Photo journal with image gallery |
 | `/scan` | Scan Photo | Upload/capture photo for AI calorie analysis |
 | `/weight` | Weight Tracker | Log weight, line chart, history |
-| `/ios` | iOS Guide | Step-by-step install guide for iPhone/iPad with QR code |
-| `/android` | Android Guide | Step-by-step install guide for Android with QR code |
+| `/android` | Android Guide | Visual step-by-step PWA install guide with QR code |
 
 ---
 
@@ -131,61 +132,52 @@ lib/
 - **Calorie indicator**: Amber/gold pill (`calorie-pill` utility class)
 - **Cards**: White with subtle shadow and `card-glow` hover effect
 - **Radius**: `0.875rem` base
-- **Shadows**: Colored shadow system with green tint
+- **Dark mode**: `.dark` class on `<html>`, toggled via `useTheme` hook, saved to localStorage
+
+## Sidebar Branding
+
+- **Line 1**: "NutriPrep" — serif bold, white
+- **Line 2**: "Clean Eating & Weight Loss" — `text-primary` (emerald green)
+- **Line 3**: "Simple Meal Prep for Busy Moms" — bright white, small caps
+
+---
+
+## Trial & Paywall System
+
+- **Hook**: `src/hooks/use-trial.ts` — reads/writes `nutriplan_trial_start` in localStorage
+- **Banner**: `src/components/trial-banner.tsx` — shown at top of every page during trial, dismissible
+- **Paywall**: `src/components/upgrade-wall.tsx` — full-screen overlay when trial expires; closeable (X button) if user clicks Upgrade early during trial
+- **Pricing displayed**: $12/month, billed annually at $144.00 USD
+- **Stripe**: Not yet connected — "Start Pro Plan" button is UI-only, ready for Stripe integration
+
+## Theme System
+
+- **Hook**: `src/hooks/use-theme.ts` — reads/writes `nutriplan_theme` in localStorage
+- **Toggle**: `src/components/theme-toggle.tsx` — moon/sun button, two variants (sidebar + mobile header)
+- **Default**: Matches system `prefers-color-scheme` on first visit
 
 ---
 
 ## Publishing Guide — App Stores
 
-> Saved for reference — how to publish this web app on iOS App Store and Android Play Store.
+> How to publish NutriPrep on iOS App Store and Android Play Store.
 
 ### iOS App Store
-
-**Requirements:**
-- Apple Developer Account — **$99/year** at [developer.apple.com](https://developer.apple.com)
-- A Mac with Xcode (or rent cloud Mac time via MacStadium ~$1/hr)
-- Privacy Policy URL (generate free at privacypolicygenerator.info)
-- App screenshots (6.7", 6.5", 5.5" iPhone sizes + iPad)
-
-**Steps:**
-1. Deploy this app on Replit (get a live URL)
-2. Install Capacitor: `npm install @capacitor/core @capacitor/cli @capacitor/ios`
-3. Run `npx cap init` → `npx cap add ios` → set server URL to your live Replit URL
-4. Run `npx cap open ios` → opens Xcode
-5. In Xcode: Archive → Upload to App Store Connect
-6. At [appstoreconnect.apple.com](https://appstoreconnect.apple.com): create listing, add screenshots, description, set pricing
-7. Submit for Review (takes 1–3 days)
-
-**Easiest path:** Use **[Median.co](https://median.co)** (~$99/year) — paste your URL and they handle the iOS packaging without needing Xcode.
-
----
+- Apple Developer Account — **$99/year** at developer.apple.com
+- Requires a Mac + Xcode (or Median.co ~$99/year as easier alternative)
+- Wrap with Capacitor.js: `npx cap init` → `npx cap add ios` → Xcode → App Store Connect
+- Review takes 1–3 days
 
 ### Android Play Store
+- Google Play Developer Account — **$25 one-time** at play.google.com/console
+- **Fastest path**: [pwabuilder.com](https://pwabuilder.com) — paste URL, download .aab, upload to Play Console
+- Alternative: Capacitor.js `npx cap add android` → Android Studio
+- Review takes hours to 3 days
 
-**Requirements:**
-- Google Play Developer Account — **$25 one-time fee** at [play.google.com/console](https://play.google.com/console)
-- Privacy Policy URL
-- App icon (512×512px), feature graphic (1024×500px), 2+ screenshots
-
-**Steps (fastest — using PWABuilder):**
-1. Deploy this app on Replit (get a live URL)
-2. Go to **[pwabuilder.com](https://pwabuilder.com)** (free, by Microsoft)
-3. Enter your deployed Replit URL → click "Package for Stores"
-4. Download the Android App Bundle (.aab file) — no coding needed
-5. In Google Play Console: Create app → fill store listing → upload .aab → submit
-
-**Alternative:** Use **Capacitor.js** (`npx cap add android`) and build with Android Studio (free, Windows/Mac/Linux).
-
-**Review time:** A few hours to 3 days for new accounts.
-
----
-
-### Key Notes for Both Stores
-- Both require a **privacy policy URL** — non-negotiable
-- If charging a subscription, you **must** use Apple/Google in-app purchase (they take 15–30% cut)
-- PWABuilder is the fastest path to Play Store for a web app
-- Median.co is the easiest path to App Store for a web app
-- Both stores require at least 2 screenshots from the actual app
+### Requirements for both
+- Privacy policy URL (generate free at privacypolicygenerator.info)
+- App icon (512×512px) + screenshots
+- If charging subscription: must use Apple/Google in-app purchase (15–30% cut)
 
 ---
 
@@ -197,3 +189,9 @@ lib/
 | `SESSION_SECRET` | Session signing secret |
 | `AI_INTEGRATIONS_OPENAI_BASE_URL` | OpenAI proxy base URL (auto-set by Replit AI Integrations) |
 | `AI_INTEGRATIONS_OPENAI_API_KEY` | OpenAI proxy key (auto-set by Replit AI Integrations) |
+
+---
+
+## Upcoming
+
+- **Stripe paywall** — Wire "Start Pro Plan" button to Stripe Checkout ($144/year subscription), handle webhook to unlock access after payment
