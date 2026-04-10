@@ -44,12 +44,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {/* Mobile Header */}
         <header className="md:hidden flex items-center justify-between px-5 py-3.5 bg-sidebar border-b border-sidebar-border sticky top-0 z-20">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg gradient-emerald flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg gradient-emerald flex items-center justify-center shrink-0">
               <Leaf size={14} className="text-white" strokeWidth={2.5} />
             </div>
-            <span className="font-serif font-bold text-lg text-sidebar-foreground tracking-tight">
-              NutriPlan
-            </span>
+            <div>
+              <span className="font-serif font-bold text-base text-sidebar-foreground tracking-tight leading-none block">
+                NutriPlan's
+              </span>
+              <span className="text-[9px] text-sidebar-foreground/50 font-medium leading-none">
+                Clean Eating & Weightloss
+              </span>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle isDark={isDark} toggle={toggle} variant="header" />
@@ -77,10 +82,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </div>
               <div>
                 <span className="font-serif font-bold text-[1.05rem] text-sidebar-foreground leading-none block">
-                  NutriPlan
+                  NutriPlan's
                 </span>
-                <span className="text-[10px] text-sidebar-foreground/40 font-medium uppercase tracking-widest">
-                  Clean Eating
+                <span className="text-[10px] text-sidebar-foreground/70 font-semibold tracking-wide leading-none block mt-0.5">
+                  Clean Eating & Weightloss
+                </span>
+                <span className="text-[9px] text-sidebar-foreground/35 font-medium uppercase tracking-widest leading-none block mt-0.5">
+                  A Meal Prep for Busy Moms
                 </span>
               </div>
             </div>

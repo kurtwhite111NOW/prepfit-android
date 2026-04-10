@@ -37,7 +37,7 @@ const STEPS = [
     number: "01",
     icon: Chrome,
     title: "Open Chrome on your Android",
-    description: "Launch Google Chrome (or Samsung Internet / Edge). Navigate to NutriPlan by scanning the QR code or typing the URL.",
+    description: "Launch Google Chrome (or Samsung Internet / Edge). Navigate to NutriPlan's Clean Eating & Weightloss by scanning the QR code or typing the URL.",
     visual: (
       <div className="flex items-center gap-2 mt-3 p-2.5 rounded-xl bg-muted/50 border border-border text-xs font-mono text-muted-foreground">
         <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
@@ -73,7 +73,7 @@ const STEPS = [
       <div className="mt-3 p-3 rounded-xl bg-muted/40 border border-border flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl gradient-emerald flex items-center justify-center text-white text-lg shrink-0">🌿</div>
         <div>
-          <p className="text-sm font-semibold text-foreground">NutriPlan</p>
+          <p className="text-sm font-semibold text-foreground">NutriPlan's</p>
           <p className="text-xs text-muted-foreground">nutriplan.app</p>
         </div>
         <div className="ml-auto flex gap-2 text-xs">
@@ -88,13 +88,13 @@ const STEPS = [
     number: "04",
     icon: LayoutGrid,
     title: "Tap Add — it's on your home screen",
-    description: "Tap Add to confirm. The NutriPlan icon will appear on your Android home screen instantly.",
+    description: "Tap Add to confirm. The app icon will appear on your Android home screen instantly.",
     visual: (
       <div className="mt-3 grid grid-cols-4 gap-2">
         {["📱", "🎵", "📷", "🌿"].map((emoji, i) => (
           <div key={i} className={`aspect-square rounded-2xl flex flex-col items-center justify-center text-2xl ${i === 3 ? "gradient-emerald shadow-lg ring-2 ring-primary/30" : "bg-muted/50 border border-border"}`}>
             {emoji}
-            {i === 3 && <span className="text-[9px] text-white font-bold mt-0.5">NutriPlan</span>}
+            {i === 3 && <span className="text-[8px] text-white font-bold mt-0.5">NutriPlan's</span>}
           </div>
         ))}
       </div>
@@ -105,7 +105,7 @@ const STEPS = [
     number: "05",
     icon: Zap,
     title: "Launch — it's a full native app experience",
-    description: "Tap NutriPlan on your home screen. It opens full screen with no browser bar — just like an app from the Play Store.",
+    description: "Tap the NutriPlan's icon on your home screen. It opens full screen with no browser bar — just like an app from the Play Store.",
     visual: null,
     tip: null,
   },
@@ -152,7 +152,7 @@ export default function AndroidPage() {
               <span className="text-primary text-xs font-bold uppercase tracking-widest">Android</span>
             </div>
             <h1 className="font-serif text-4xl font-bold text-sidebar-foreground leading-tight mb-3">
-              Install NutriPlan<br />on Android
+              Install NutriPlan's<br />on Android
             </h1>
             <p className="text-sidebar-foreground/50 text-sm leading-relaxed max-w-xs mb-5">
               Add it to your home screen in under a minute — no Play Store, no downloads, always up to date.
