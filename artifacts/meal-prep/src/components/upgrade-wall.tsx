@@ -1,4 +1,4 @@
-import { Leaf, Check, Star, Shield, Zap, Brain, ShoppingCart, ScanLine, Scale } from "lucide-react";
+import { Leaf, Check, Star, Shield, Zap, Brain, ShoppingCart, ScanLine, Scale, X } from "lucide-react";
 
 const features = [
   { icon: Brain, label: "AI Meal Plan Generation", desc: "Personalized weekly plans in seconds" },
@@ -9,7 +9,11 @@ const features = [
   { icon: Shield, label: "iOS & Android PWA", desc: "Install on your home screen, use anywhere" },
 ];
 
-export function UpgradeWall() {
+interface UpgradeWallProps {
+  onClose?: () => void;
+}
+
+export function UpgradeWall({ onClose }: UpgradeWallProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[hsl(160_35%_6%)] overflow-y-auto">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -17,7 +21,18 @@ export function UpgradeWall() {
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-primary/4 blur-3xl" />
       </div>
 
+      {/* Close button — only available during trial (when onClose is provided) */}
+      {onClose && (
+        <button
+          onClick={onClose}
+          className="absolute top-5 right-5 p-2 rounded-full text-white/30 hover:text-white/70 hover:bg-white/8 transition-all z-10"
+        >
+          <X size={18} />
+        </button>
+      )}
+
       <div className="relative w-full max-w-lg mx-auto px-6 py-12 flex flex-col items-center text-center gap-6">
+        {/* Logo */}
         <div className="flex flex-col items-center gap-3">
           <div className="w-14 h-14 rounded-2xl gradient-emerald flex items-center justify-center shadow-2xl shadow-primary/30">
             <Leaf size={26} className="text-white" strokeWidth={2.5} />
@@ -28,19 +43,23 @@ export function UpgradeWall() {
           </div>
         </div>
 
+        {/* Headline */}
         <div className="flex flex-col items-center gap-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/25 text-amber-400 text-[11px] font-semibold uppercase tracking-wide">
             <Zap size={11} />
-            Free Trial Ended
+            {onClose ? "Upgrade Early & Save" : "Free Trial Ended"}
           </div>
           <h1 className="font-serif font-bold text-3xl text-white leading-tight mt-1">
-            Continue with Pro
+            {onClose ? "Go Pro Today" : "Continue with Pro"}
           </h1>
           <p className="text-white/45 text-sm leading-relaxed max-w-sm">
-            Your 3-day free trial has ended. Upgrade to keep using AI meal planning, calorie scanning, and all premium features.
+            {onClose
+              ? "Unlock all features and lock in the best rate before your trial ends."
+              : "Your 3-day free trial has ended. Upgrade to keep using AI meal planning, calorie scanning, and all premium features."}
           </p>
         </div>
 
+        {/* Feature list */}
         <div className="w-full rounded-2xl border border-primary/20 bg-primary/8 p-5 flex flex-col gap-3">
           {features.map(({ icon: Icon, label, desc }) => (
             <div key={label} className="flex items-start gap-3 text-left">
@@ -55,6 +74,7 @@ export function UpgradeWall() {
           ))}
         </div>
 
+        {/* Pricing */}
         <div className="w-full rounded-2xl border border-white/10 bg-white/5 p-5 flex flex-col items-center gap-1">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500 text-white text-[10px] font-bold uppercase tracking-wider mb-2">
             Best Value
@@ -66,9 +86,10 @@ export function UpgradeWall() {
             </div>
           </div>
           <p className="text-white/40 text-xs mt-1">Billed annually — $144.00 USD / year</p>
-          <p className="text-primary/80 text-xs font-medium mt-0.5">Save vs. monthly billing · Cancel anytime</p>
+          <p className="text-primary/80 text-xs font-medium mt-0.5">Cancel anytime · No hidden fees</p>
         </div>
 
+        {/* CTA */}
         <button className="w-full py-4 rounded-2xl gradient-emerald text-white font-bold text-base tracking-wide shadow-2xl shadow-primary/30 hover:opacity-90 active:scale-[0.98] transition-all">
           Start Pro Plan — $12 / month
         </button>
