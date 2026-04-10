@@ -38,9 +38,9 @@ export function UpgradeWall({ onClose }: UpgradeWallProps) {
             <Leaf size={26} className="text-white" strokeWidth={2.5} />
           </div>
           <div>
-            <p className="font-serif font-bold text-xl text-white leading-tight">NutriPlan's</p>
-            <p className="text-[11px] text-white/80 font-semibold tracking-wide mt-0.5">Clean Eating & Weightloss</p>
-            <p className="text-[10px] text-white/40 font-medium uppercase tracking-widest mt-0.5">A Meal Prep for Busy Moms</p>
+            <p className="font-serif font-bold text-xl text-white leading-tight">NutriPrep</p>
+            <p className="text-[11px] text-white/80 font-semibold tracking-wide mt-0.5">Clean Eating & Weight Loss</p>
+            <p className="text-[10px] text-white/40 font-medium uppercase tracking-widest mt-0.5">Simple Meal Prep for Busy Moms</p>
           </div>
         </div>
 
