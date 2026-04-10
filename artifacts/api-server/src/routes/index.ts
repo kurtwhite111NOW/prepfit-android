@@ -5,6 +5,7 @@ import savedMealsRouter from "./saved-meals";
 import shoppingListsRouter from "./shopping-lists";
 import aiRouter from "./ai";
 import weightEntriesRouter from "./weight-entries";
+import stripeRouter from "./stripe";
 
 const router: IRouter = Router();
 
@@ -14,5 +15,6 @@ router.use(savedMealsRouter);
 router.use(shoppingListsRouter);
 router.use(aiRouter);
 router.use(weightEntriesRouter);
+router.use(stripeRouter);
 
 export default router;

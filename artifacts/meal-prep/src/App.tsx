@@ -11,12 +11,41 @@ import Scan from "@/pages/scan";
 import Weight from "@/pages/weight";
 import AndroidPage from "@/pages/android";
 import NotFound from "@/pages/not-found";
+import { useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const queryClient = new QueryClient();
+
+function CheckoutResultHandler() {
+  const { toast } = useToast();
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const checkout = params.get('checkout');
+    if (checkout === 'success') {
+      toast({
+        title: "Welcome to NutriPrep Pro!",
+        description: "Your subscription is active. Enjoy unlimited AI meal planning!",
+      });
+      const url = new URL(window.location.href);
+      url.searchParams.delete('checkout');
+      window.history.replaceState({}, '', url.toString());
+    } else if (checkout === 'cancelled') {
+      toast({
+        title: "Checkout cancelled",
+        description: "No worries — your trial is still active. Upgrade anytime.",
+      });
+      const url = new URL(window.location.href);
+      url.searchParams.delete('checkout');
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, []);
+  return null;
+}
 
 function Router() {
   return (
     <Layout>
+      <CheckoutResultHandler />
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/planner" component={Planner} />
