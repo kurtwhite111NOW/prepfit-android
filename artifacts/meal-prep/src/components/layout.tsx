@@ -11,8 +11,10 @@ import {
   Zap,
 } from "lucide-react";
 import { useTrial } from "@/hooks/use-trial";
+import { useTheme } from "@/hooks/use-theme";
 import { TrialBanner } from "@/components/trial-banner";
 import { UpgradeWall } from "@/components/upgrade-wall";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -26,6 +28,7 @@ const navItems = [
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const trial = useTrial();
+  const { isDark, toggle } = useTheme();
   const [showUpgrade, setShowUpgrade] = useState(false);
 
   const isActive = (href: string) =>
@@ -33,7 +36,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      {/* Full-screen paywall — shown when trial expired or user clicks upgrade */}
       {(trial.expired || showUpgrade) && !trial.loading && (
         <UpgradeWall onClose={trial.expired ? undefined : () => setShowUpgrade(false)} />
       )}
@@ -49,20 +51,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
               NutriPlan
             </span>
           </div>
-          {!trial.expired && !trial.loading && (
-            <button
-              onClick={() => setShowUpgrade(true)}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary/15 text-primary text-[11px] font-semibold border border-primary/20"
-            >
-              <Zap size={11} />
-              {trial.daysLeft}d left
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            <ThemeToggle isDark={isDark} toggle={toggle} variant="header" />
+            {!trial.expired && !trial.loading && (
+              <button
+                onClick={() => setShowUpgrade(true)}
+                className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary/15 text-primary text-[11px] font-semibold border border-primary/20"
+              >
+                <Zap size={11} />
+                {trial.daysLeft}d left
+              </button>
+            )}
+          </div>
         </header>
 
         {/* Desktop Sidebar */}
         <aside className="hidden md:flex w-[232px] flex-col bg-sidebar border-r border-sidebar-border h-screen sticky top-0 overflow-hidden">
-          {/* Subtle top gradient accent */}
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
 
           {/* Logo */}
@@ -108,11 +112,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     {active && (
                       <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r-full bg-primary" />
                     )}
-                    <Icon
-                      size={17}
-                      strokeWidth={active ? 2.5 : 1.75}
-                      className={active ? "text-primary" : ""}
-                    />
+                    <Icon size={17} strokeWidth={active ? 2.5 : 1.75} className={active ? "text-primary" : ""} />
                     <span>{item.label}</span>
                   </div>
                 </Link>
@@ -120,8 +120,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
             })}
           </nav>
 
-          {/* Bottom card — Pro Plan */}
-          <div className="px-4 pb-3 pt-4">
+          {/* Theme toggle */}
+          <div className="px-3 pb-2">
+            <ThemeToggle isDark={isDark} toggle={toggle} variant="sidebar" />
+          </div>
+
+          {/* Trial / Pro Plan card */}
+          <div className="px-4 pb-3 pt-2">
             <div className="rounded-2xl bg-primary/10 border border-primary/15 p-4">
               {!trial.loading && !trial.expired ? (
                 <>
@@ -135,7 +140,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   </div>
                   <div className="w-full h-1 rounded-full bg-sidebar-foreground/10 mb-3">
                     <div
-                      className="h-1 rounded-full bg-amber-400"
+                      className="h-1 rounded-full bg-amber-400 transition-all"
                       style={{ width: `${Math.round((trial.daysLeft / 3) * 100)}%` }}
                     />
                   </div>
@@ -164,29 +169,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          {/* Install links */}
+          {/* Android install link */}
           <div className="px-4 pb-5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-sidebar-foreground/25 mb-2 px-1">
-              Install App
-            </p>
-            <div className="grid grid-cols-2 gap-1.5">
-              <Link href="/ios">
-                <div className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-xl text-sidebar-foreground/45 hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors cursor-pointer text-[11px] font-medium">
-                  🍎 iOS
-                </div>
-              </Link>
-              <Link href="/android">
-                <div className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-xl text-sidebar-foreground/45 hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors cursor-pointer text-[11px] font-medium">
-                  🤖 Android
-                </div>
-              </Link>
-            </div>
+            <Link href="/android">
+              <div className="flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-sidebar-foreground/45 hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors cursor-pointer text-[11px] font-medium border border-sidebar-border/50">
+                🤖 Install on Android
+              </div>
+            </Link>
           </div>
         </aside>
 
         {/* Main Content */}
         <main className="flex-1 min-h-screen pb-24 md:pb-0 overflow-y-auto">
-          {/* Trial banner — top of content area */}
           <TrialBanner trial={trial} onUpgrade={() => setShowUpgrade(true)} />
           <div className="max-w-4xl mx-auto px-4 md:px-10 py-6 md:py-10">
             {children}

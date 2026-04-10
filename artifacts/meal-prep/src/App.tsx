@@ -9,7 +9,6 @@ import Shopping from "@/pages/shopping";
 import Meals from "@/pages/meals";
 import Scan from "@/pages/scan";
 import Weight from "@/pages/weight";
-import IOSPage from "@/pages/ios";
 import AndroidPage from "@/pages/android";
 import NotFound from "@/pages/not-found";
 
@@ -25,7 +24,6 @@ function Router() {
         <Route path="/meals" component={Meals} />
         <Route path="/scan" component={Scan} />
         <Route path="/weight" component={Weight} />
-        <Route path="/ios" component={IOSPage} />
         <Route path="/android" component={AndroidPage} />
         <Route component={NotFound} />
       </Switch>
