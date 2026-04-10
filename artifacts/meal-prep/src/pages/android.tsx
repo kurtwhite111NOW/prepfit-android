@@ -41,7 +41,7 @@ const STEPS = [
     visual: (
       <div className="flex items-center gap-2 mt-3 p-2.5 rounded-xl bg-muted/50 border border-border text-xs font-mono text-muted-foreground">
         <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
-        nutriplan.app
+        nutriprep.app
       </div>
     ),
     tip: null,
@@ -301,7 +301,7 @@ export default function AndroidPage() {
           {[
             { label: "What is a Progressive Web App?", href: "https://developer.chrome.com/docs/capabilities/", src: "developer.chrome.com" },
             { label: "Add to Home Screen on Android — Google Support", href: "https://support.google.com/chrome/answer/9658361", src: "support.google.com" },
-            { label: "Samsung Internet: Add sites to home screen", href: "https://www.samsung.com/uk/support/mobile-devices/what-is-samsung-internet/", src: "samsung.com" },
+            { label: "Samsung Internet: Add page to Home screen", href: "https://www.samsung.com/global/galaxy/apps/samsung-internet/", src: "samsung.com" },
           ].map((link) => (
             <a
               key={link.href}
