@@ -6,7 +6,7 @@ const features = [
   { icon: ScanLine, label: "Photo Calorie Scanner", desc: "AI identifies food and estimates calories" },
   { icon: Scale, label: "Weight Tracker", desc: "Trend chart and progress insights" },
   { icon: Star, label: "My Meals Journal", desc: "Save and review all analyzed meals" },
-  { icon: Shield, label: "iOS & Android PWA", desc: "Install on your home screen, use anywhere" },
+  { icon: Shield, label: "Android PWA Install", desc: "Add to home screen — no Play Store needed" },
 ];
 
 interface UpgradeWallProps {
@@ -52,7 +52,7 @@ export function UpgradeWall({ onClose }: UpgradeWallProps) {
           <h1 className="font-serif font-bold text-3xl text-white leading-tight mt-1">
             {onClose ? "Go Pro Today" : "Continue with Pro"}
           </h1>
-          <p className="text-white/45 text-sm leading-relaxed max-w-sm">
+          <p className="text-white/70 text-sm leading-relaxed max-w-sm">
             {onClose
               ? "Unlock all features and lock in the best rate before your trial ends."
               : "Your 3-day free trial has ended. Upgrade to keep using AI meal planning, calorie scanning, and all premium features."}
@@ -67,8 +67,8 @@ export function UpgradeWall({ onClose }: UpgradeWallProps) {
                 <Check size={12} className="text-primary" strokeWidth={3} />
               </div>
               <div className="min-w-0">
-                <p className="text-white/85 text-sm font-medium leading-none mb-0.5">{label}</p>
-                <p className="text-white/35 text-xs leading-snug">{desc}</p>
+                <p className="text-white text-sm font-medium leading-none mb-0.5">{label}</p>
+                <p className="text-white/60 text-xs leading-snug">{desc}</p>
               </div>
             </div>
           ))}
@@ -85,8 +85,8 @@ export function UpgradeWall({ onClose }: UpgradeWallProps) {
               <span className="text-white/50 text-sm leading-none">/month</span>
             </div>
           </div>
-          <p className="text-white/40 text-xs mt-1">Billed annually — $144.00 USD / year</p>
-          <p className="text-primary/80 text-xs font-medium mt-0.5">Cancel anytime · No hidden fees</p>
+          <p className="text-white/65 text-xs mt-1">Billed annually — $144.00 USD / year</p>
+          <p className="text-primary text-xs font-medium mt-0.5">Cancel anytime · No hidden fees</p>
         </div>
 
         {/* CTA */}
@@ -94,7 +94,7 @@ export function UpgradeWall({ onClose }: UpgradeWallProps) {
           Start Pro Plan — $12 / month
         </button>
 
-        <p className="text-white/20 text-[11px] leading-relaxed max-w-xs">
+        <p className="text-white/45 text-[11px] leading-relaxed max-w-xs">
           Billed as $144.00 USD annually. Cancel anytime from your account settings. Secure payment powered by Stripe.
         </p>
       </div>
