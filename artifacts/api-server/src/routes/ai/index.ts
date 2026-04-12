@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { GenerateMealPlanBody, AnalyzeMealPhotoBody } from "@workspace/api-zod";
 import { openai } from "@workspace/integrations-openai-ai-server";
+import { getRandomMealSample, getRandomCuisines, getRandomIngredients } from "../../data/mealLibrary";
 
 const router: IRouter = Router();
 
@@ -14,51 +15,69 @@ router.post("/ai/generate-meal-plan", async (req, res): Promise<void> => {
   const { mealsPerDay, dailyCalories } = parsed.data;
   const caloriesPerMeal = Math.round(dailyCalories / mealsPerDay);
 
-  const prompt = `Create a clean, healthy one-day meal plan with ${mealsPerDay} meals totaling approximately ${dailyCalories} calories.
+  const mealTypes: Array<"breakfast" | "lunch" | "dinner" | "snack"> =
+    mealsPerDay === 2 ? ["breakfast", "dinner"] :
+    mealsPerDay === 3 ? ["breakfast", "lunch", "dinner"] :
+    mealsPerDay === 4 ? ["breakfast", "lunch", "dinner", "snack"] :
+    ["breakfast", "snack", "lunch", "snack", "dinner"];
 
-Requirements:
-- Focus on whole, minimally processed foods
-- Each meal should be balanced with protein, complex carbs, and healthy fats
-- Calorie targets per meal: approximately ${caloriesPerMeal} calories each (can vary slightly)
-- Total must be close to ${dailyCalories} calories
-- Include practical, easy-to-prepare meals
-- Prefer anti-inflammatory, nutrient-dense ingredients
+  const inspirations = mealTypes.map((type, i) => {
+    const samples = getRandomMealSample(type, 6);
+    return `  Meal ${i + 1} (${type}) — inspiration: ${samples.map(s => `"${s.name}" [${s.cuisine}]`).join(" | ")}`;
+  }).join("\n");
 
-For each meal include:
-- A descriptive name
-- A brief description of what it is and why it's good
-- Exact calorie count
-- List of ingredients (comma-separated)
+  const featuredCuisines = getRandomCuisines(4);
+  const [featuredProtein, featuredVeg, featuredGrain] = getRandomIngredients();
+  const varietySeed = Math.random().toString(36).slice(2, 10);
+  const moodWords = ["bright & zesty", "hearty & warming", "light & refreshing", "bold & spiced", "umami-rich", "sweet & savory", "smoky & charred", "fresh & herbaceous"];
+  const mood = moodWords[Math.floor(Math.random() * moodWords.length)];
 
-Also generate a complete shopping list for all the meals with:
-- Item name
-- Quantity needed
-- Brand suggestion (clean, minimally processed brands preferred: e.g. Bob's Red Mill, Simple Truth, Amy's, Kite Hill, Siggis, etc.)
-- Notes (e.g. organic preferred, grass-fed)
-- Category (Produce, Proteins, Dairy & Eggs, Grains & Bread, Pantry Staples, Frozen, Condiments & Sauces)
+  const prompt = `Create a UNIQUE one-day clean eating meal plan for a busy mom.
 
-Return ONLY valid JSON in this exact format, no additional text:
+VARIETY TOKEN (internal only, do NOT include in output): ${varietySeed} — every plan must be completely different.
+TODAY'S MOOD: ${mood}
+FEATURED CUISINES: ${featuredCuisines.join(", ")}
+STAR INGREDIENTS TO FEATURE: protein = ${featuredProtein} | vegetable = ${featuredVeg} | grain = ${featuredGrain}
+
+PLAN: ${mealsPerDay} meals, ~${dailyCalories} total calories (~${caloriesPerMeal} per meal ±100).
+
+MANDATORY RULES:
+1. NO generic fallbacks — avoid plain chicken breast salads, basic smoothies, "overnight oats with berries", or any dish you've likely generated before
+2. Feature the star ingredients somewhere across the plan
+3. Draw at least 2 meals from the featured cuisines
+4. Every meal must have a completely different protein + vegetable + grain combination
+5. Minimum 1 vegetarian/plant-based meal
+6. Minimum 1 globally-inspired meal (non-American)
+7. Meal names must be specific and appetizing (e.g. "Harissa-Spiced Salmon over Freekeh with Mint Yogurt" NOT "Salmon with Grain")
+8. Be creative — surprise the user with something they wouldn't think to make
+
+INSPIRATION (use as style inspiration only — create your own original versions):
+${inspirations}
+
+Return ONLY valid JSON, no markdown:
 {
-  "name": "Clean Eating ${dailyCalories}-Calorie Meal Plan",
+  "name": "Creative themed plan name (e.g. 'Moroccan-Korean Fusion Clean Day')",
   "meals": [
     {
       "mealNumber": 1,
-      "name": "Meal name",
-      "description": "What it is and why it's good",
-      "calories": 450,
-      "ingredients": "ingredient1, ingredient2, ingredient3"
+      "name": "Specific descriptive meal name",
+      "description": "What it is, why it's delicious and nutritious, one quick prep tip",
+      "calories": ${caloriesPerMeal},
+      "ingredients": "ingredient1, ingredient2, ingredient3, ingredient4, ingredient5"
     }
   ],
   "shoppingItems": [
     {
       "category": "Produce",
       "name": "Item name",
-      "quantity": "2 cups",
-      "brandSuggestion": "Brand or 'Any fresh'",
-      "notes": "Organic preferred"
+      "quantity": "Amount needed",
+      "brandSuggestion": "Clean brand or 'Any fresh'",
+      "notes": "Optional tip like organic preferred"
     }
   ]
-}`;
+}
+
+Shopping categories: Produce, Proteins, Dairy & Eggs, Grains & Bread, Pantry Staples, Frozen, Condiments & Sauces, Nuts & Seeds`;
 
   const response = await openai.chat.completions.create({
     model: "gpt-5.2",
@@ -66,7 +85,7 @@ Return ONLY valid JSON in this exact format, no additional text:
     messages: [
       {
         role: "system",
-        content: "You are a registered dietitian and meal prep expert specializing in clean, whole-food nutrition. You only respond with valid JSON.",
+        content: "You are a creative registered dietitian and world cuisine expert specializing in globally-inspired clean eating. You NEVER repeat meal combinations. You draw from 50+ cuisines. Each plan is completely original and surprising. You respond with valid JSON only.",
       },
       { role: "user", content: prompt },
     ],
@@ -74,9 +93,18 @@ Return ONLY valid JSON in this exact format, no additional text:
 
   const content = response.choices[0]?.message?.content ?? "{}";
 
-  let result: { name: string; meals: Array<{ mealNumber: number; name: string; description: string; calories: number; ingredients: string }>; shoppingItems: Array<{ category: string; name: string; quantity: string; brandSuggestion: string; notes: string }> };
+  let result: {
+    name: string;
+    meals: Array<{ mealNumber: number; name: string; description: string; calories: number; ingredients: string }>;
+    shoppingItems: Array<{ category: string; name: string; quantity: string; brandSuggestion: string; notes: string }>;
+  };
+
   try {
-    result = JSON.parse(content);
+    const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+    result = JSON.parse(cleaned);
+    if (result.name) {
+      result.name = result.name.replace(/^[a-z0-9]{6,12}\s+/i, "").trim();
+    }
   } catch {
     res.status(500).json({ error: "Failed to generate meal plan" });
     return;
@@ -93,7 +121,6 @@ router.post("/ai/analyze-meal-photo", async (req, res): Promise<void> => {
   }
 
   const { imageBase64 } = parsed.data;
-
   const imageUrl = imageBase64.startsWith("data:") ? imageBase64 : `data:image/jpeg;base64,${imageBase64}`;
 
   const response = await openai.chat.completions.create({
