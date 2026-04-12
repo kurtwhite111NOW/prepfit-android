@@ -51,6 +51,7 @@ MANDATORY RULES:
 6. Minimum 1 globally-inspired meal (non-American)
 7. Meal names must be specific and appetizing (e.g. "Harissa-Spiced Salmon over Freekeh with Mint Yogurt" NOT "Salmon with Grain")
 8. Be creative — surprise the user with something they wouldn't think to make
+9. ALWAYS include specific measured amounts for every ingredient (e.g. "3 oz salmon, 1 cup cooked quinoa, 2 cups baby spinach, 1 tbsp olive oil, ½ lemon juiced") — no bare ingredient names without a quantity
 
 INSPIRATION (use as style inspiration only — create your own original versions):
 ${inspirations}
@@ -64,7 +65,7 @@ Return ONLY valid JSON, no markdown:
       "name": "Specific descriptive meal name",
       "description": "What it is, why it's delicious and nutritious, one quick prep tip",
       "calories": ${caloriesPerMeal},
-      "ingredients": "ingredient1, ingredient2, ingredient3, ingredient4, ingredient5"
+      "ingredients": "3 oz ingredient1, 1 cup ingredient2, 2 tbsp ingredient3, ½ tsp ingredient4"
     }
   ],
   "shoppingItems": [
