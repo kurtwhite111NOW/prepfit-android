@@ -326,3 +326,18 @@
     border-left: 2px solid hsl(142 60% 48%);
   }
 }
+
+@keyframes dot-blink {
+  0%, 60%, 100% {
+    opacity: 0.18;
+    transform: scale(0.75);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.dot-blink {
+  animation: dot-blink 1.2s ease-in-out infinite;
+}
