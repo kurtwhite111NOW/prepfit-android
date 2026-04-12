@@ -6,33 +6,34 @@ import { getRandomMealSample, getRandomCuisines, getRandomIngredients } from "..
 const router: IRouter = Router();
 
 router.post("/ai/generate-meal-plan", async (req, res): Promise<void> => {
-  const parsed = GenerateMealPlanBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
-  }
+  try {
+    const parsed = GenerateMealPlanBody.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: parsed.error.message });
+      return;
+    }
 
-  const { mealsPerDay, dailyCalories } = parsed.data;
-  const caloriesPerMeal = Math.round(dailyCalories / mealsPerDay);
+    const { mealsPerDay, dailyCalories } = parsed.data;
+    const caloriesPerMeal = Math.round(dailyCalories / mealsPerDay);
 
-  const mealTypes: Array<"breakfast" | "lunch" | "dinner" | "snack"> =
-    mealsPerDay === 2 ? ["breakfast", "dinner"] :
-    mealsPerDay === 3 ? ["breakfast", "lunch", "dinner"] :
-    mealsPerDay === 4 ? ["breakfast", "lunch", "dinner", "snack"] :
-    ["breakfast", "snack", "lunch", "snack", "dinner"];
+    const mealTypes: Array<"breakfast" | "lunch" | "dinner" | "snack"> =
+      mealsPerDay === 2 ? ["breakfast", "dinner"] :
+      mealsPerDay === 3 ? ["breakfast", "lunch", "dinner"] :
+      mealsPerDay === 4 ? ["breakfast", "lunch", "dinner", "snack"] :
+      ["breakfast", "snack", "lunch", "snack", "dinner"];
 
-  const inspirations = mealTypes.map((type, i) => {
-    const samples = getRandomMealSample(type, 6);
-    return `  Meal ${i + 1} (${type}) — inspiration: ${samples.map(s => `"${s.name}" [${s.cuisine}]`).join(" | ")}`;
-  }).join("\n");
+    const inspirations = mealTypes.map((type, i) => {
+      const samples = getRandomMealSample(type, 6);
+      return `  Meal ${i + 1} (${type}) — inspiration: ${samples.map(s => `"${s.name}" [${s.cuisine}]`).join(" | ")}`;
+    }).join("\n");
 
-  const featuredCuisines = getRandomCuisines(4);
-  const [featuredProtein, featuredVeg, featuredGrain] = getRandomIngredients();
-  const varietySeed = Math.random().toString(36).slice(2, 10);
-  const moodWords = ["bright & zesty", "hearty & warming", "light & refreshing", "bold & spiced", "umami-rich", "sweet & savory", "smoky & charred", "fresh & herbaceous"];
-  const mood = moodWords[Math.floor(Math.random() * moodWords.length)];
+    const featuredCuisines = getRandomCuisines(4);
+    const [featuredProtein, featuredVeg, featuredGrain] = getRandomIngredients();
+    const varietySeed = Math.random().toString(36).slice(2, 10);
+    const moodWords = ["bright & zesty", "hearty & warming", "light & refreshing", "bold & spiced", "umami-rich", "sweet & savory", "smoky & charred", "fresh & herbaceous"];
+    const mood = moodWords[Math.floor(Math.random() * moodWords.length)];
 
-  const prompt = `Create a UNIQUE one-day clean eating meal plan for a busy mom.
+    const prompt = `Create a UNIQUE one-day clean eating meal plan for a busy mom.
 
 VARIETY TOKEN (internal only, do NOT include in output): ${varietySeed} — every plan must be completely different.
 TODAY'S MOOD: ${mood}
@@ -79,99 +80,83 @@ Return ONLY valid JSON, no markdown:
 
 Shopping categories: Produce, Proteins, Dairy & Eggs, Grains & Bread, Pantry Staples, Frozen, Condiments & Sauces, Nuts & Seeds`;
 
-  const response = await openai.chat.completions.create({
-    model: "gpt-5.2",
-    max_completion_tokens: 8192,
-    messages: [
-      {
-        role: "system",
-        content: "You are a creative registered dietitian and world cuisine expert specializing in globally-inspired clean eating. You NEVER repeat meal combinations. You draw from 50+ cuisines. Each plan is completely original and surprising. You respond with valid JSON only.",
-      },
-      { role: "user", content: prompt },
-    ],
-  });
+    const response = await openai.chat.completions.create({
+      model: "gpt-5.2",
+      max_completion_tokens: 8192,
+      messages: [
+        {
+          role: "system",
+          content: "You are a creative registered dietitian and world cuisine expert specializing in globally-inspired clean eating. You NEVER repeat meal combinations. You draw from 50+ cuisines. Each plan is completely original and surprising. You respond with valid JSON only.",
+        },
+        { role: "user", content: prompt },
+      ],
+    });
 
-  const content = response.choices[0]?.message?.content ?? "{}";
-
-  let result: {
-    name: string;
-    meals: Array<{ mealNumber: number; name: string; description: string; calories: number; ingredients: string }>;
-    shoppingItems: Array<{ category: string; name: string; quantity: string; brandSuggestion: string; notes: string }>;
-  };
-
-  try {
+    const content = response.choices[0]?.message?.content ?? "{}";
     const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-    result = JSON.parse(cleaned);
+    const result = JSON.parse(cleaned);
     if (result.name) {
       result.name = result.name.replace(/^[a-z0-9]{6,12}\s+/i, "").trim();
     }
-  } catch {
-    res.status(500).json({ error: "Failed to generate meal plan" });
-    return;
+    res.json(result);
+  } catch (err: any) {
+    console.error("generate-meal-plan error:", err?.message ?? err);
+    res.status(500).json({ error: "Failed to generate meal plan. Please try again." });
   }
-
-  res.json(result);
 });
 
 router.post("/ai/analyze-meal-photo", async (req, res): Promise<void> => {
-  const parsed = AnalyzeMealPhotoBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
-  }
+  try {
+    const parsed = AnalyzeMealPhotoBody.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: parsed.error.message });
+      return;
+    }
 
-  const { imageBase64 } = parsed.data;
-  const imageUrl = imageBase64.startsWith("data:") ? imageBase64 : `data:image/jpeg;base64,${imageBase64}`;
+    const { imageBase64 } = parsed.data;
+    const imageUrl = imageBase64.startsWith("data:") ? imageBase64 : `data:image/jpeg;base64,${imageBase64}`;
 
-  const response = await openai.chat.completions.create({
-    model: "gpt-5.2",
-    max_completion_tokens: 8192,
-    messages: [
-      {
-        role: "system",
-        content: "You are a nutrition expert who can analyze food photos and estimate calories. Be thorough and accurate. Always respond with valid JSON only.",
-      },
-      {
-        role: "user",
-        content: [
-          {
-            type: "text",
-            text: `Analyze this meal photo and provide:
-1. The name of the meal/dish
-2. A brief description of what you see
-3. Estimated total calorie count (be as accurate as possible)
-4. List of visible ingredients
-5. Your confidence level (High, Medium, or Low) based on how clearly you can see the food
-
-Return ONLY valid JSON in this exact format:
+    const response = await openai.chat.completions.create({
+      model: "gpt-5.2",
+      max_completion_tokens: 1024,
+      messages: [
+        {
+          role: "system",
+          content: "You are a nutrition expert who analyzes food photos and estimates calories. Always respond with valid JSON only — no markdown, no extra text.",
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: `Analyze this meal photo and return ONLY valid JSON in this exact format (no markdown):
 {
-  "name": "Meal name",
-  "description": "Brief description of what you see",
+  "name": "Descriptive meal name",
+  "description": "Brief description of what you see in the photo",
   "estimatedCalories": 550,
   "ingredients": "ingredient1, ingredient2, ingredient3",
   "confidence": "High"
-}`,
-          },
-          {
-            type: "image_url",
-            image_url: { url: imageUrl },
-          },
-        ],
-      },
-    ],
-  });
+}
 
-  const content = response.choices[0]?.message?.content ?? "{}";
+Confidence is High/Medium/Low based on how clearly you can identify the food. If you cannot identify food at all, still return the JSON with your best guess and Low confidence.`,
+            },
+            {
+              type: "image_url",
+              image_url: { url: imageUrl, detail: "low" },
+            },
+          ],
+        },
+      ],
+    });
 
-  let result: { name: string; description: string; estimatedCalories: number; ingredients: string; confidence: string };
-  try {
-    result = JSON.parse(content);
-  } catch {
-    res.status(500).json({ error: "Failed to analyze photo" });
-    return;
+    const content = response.choices[0]?.message?.content ?? "{}";
+    const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+    const result = JSON.parse(cleaned);
+    res.json(result);
+  } catch (err: any) {
+    console.error("analyze-meal-photo error:", err?.message ?? err);
+    res.status(500).json({ error: "Failed to analyze photo. Please try a clearer, well-lit image." });
   }
-
-  res.json(result);
 });
 
 export default router;
