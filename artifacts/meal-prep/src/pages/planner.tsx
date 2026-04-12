@@ -293,7 +293,7 @@ export default function Planner() {
                           className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 hover:underline transition-colors"
                         >
                           <ExternalLink size={11} />
-                          Watch for general guidance, but stay with the portions listed here
+                          Watch for general guidance, but stay with the ingredients listed above for better calorie control
                         </a>
                       </div>
                     </div>
