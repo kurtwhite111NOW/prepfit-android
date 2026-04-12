@@ -21,6 +21,7 @@ import {
   CalendarDays,
   Clock,
   Leaf,
+  ExternalLink,
 } from "lucide-react";
 
 const MEAL_LABELS: Record<number, string> = {
@@ -285,6 +286,15 @@ export default function Planner() {
                           </p>
                           <p className="text-xs text-foreground/80 leading-relaxed">{meal.ingredients}</p>
                         </div>
+                        <a
+                          href={`https://www.youtube.com/results?search_query=${encodeURIComponent(`how to make ${meal.name} recipe`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 hover:underline transition-colors"
+                        >
+                          <ExternalLink size={11} />
+                          Watch how to make this
+                        </a>
                       </div>
                     </div>
                   </div>

@@ -13,6 +13,7 @@ import {
   Flame,
   ScanLine,
   Utensils,
+  ExternalLink,
 } from "lucide-react";
 import { Link } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
@@ -179,13 +180,24 @@ export default function Meals() {
               </div>
 
               <div className="px-4 pb-4 flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-muted-foreground text-[11px]">
-                  <Calendar size={11} />
-                  {new Date(meal.createdAt).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1.5 text-muted-foreground text-[11px]">
+                    <Calendar size={11} />
+                    {new Date(meal.createdAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </div>
+                  <a
+                    href={`https://www.youtube.com/results?search_query=${encodeURIComponent(`how to make ${meal.name} recipe`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:text-primary/80 hover:underline transition-colors"
+                  >
+                    <ExternalLink size={10} />
+                    Recipe
+                  </a>
                 </div>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
