@@ -76,11 +76,22 @@ export default function Shopping() {
         <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">
           Smart Grocery List
         </p>
-        <h1 className="font-serif text-4xl font-bold text-foreground leading-tight mb-2">
+        <h1 className="font-serif text-4xl font-bold text-foreground leading-tight mb-2 flex items-center gap-3">
           Grocery List
+          {isLoading && (
+            <span className="flex items-center gap-1 pb-1">
+              {[0, 1, 2].map((i) => (
+                <span
+                  key={i}
+                  className="w-2 h-2 rounded-full bg-primary dot-blink inline-block"
+                  style={{ animationDelay: `${i * 400}ms` }}
+                />
+              ))}
+            </span>
+          )}
         </h1>
         <p className="text-muted-foreground">
-          Clean-brand picks, organized by aisle.
+          Clean-brand picks, organized by group.
         </p>
       </section>
 
