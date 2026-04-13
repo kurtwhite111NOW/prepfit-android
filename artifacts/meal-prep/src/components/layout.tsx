@@ -180,7 +180,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           {/* Android install link */}
           <div className="px-4 pb-5">
             <Link href="/android">
-              <div className="flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-sidebar-foreground/45 hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors cursor-pointer text-[11px] font-medium border border-sidebar-border/50">
+              <div className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sidebar-foreground/85 hover:text-white hover:bg-sidebar-accent/60 transition-colors cursor-pointer text-[12px] font-semibold border border-sidebar-border/70">
                 🤖 Install on Android
               </div>
             </Link>
