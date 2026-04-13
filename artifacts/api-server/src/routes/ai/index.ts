@@ -14,13 +14,21 @@ router.post("/ai/generate-meal-plan", async (req, res): Promise<void> => {
     }
 
     const { mealsPerDay, dailyCalories } = parsed.data;
-    const caloriesPerMeal = Math.round(dailyCalories / mealsPerDay);
-
     const mealTypes: Array<"breakfast" | "lunch" | "dinner" | "snack"> =
       mealsPerDay === 2 ? ["breakfast", "dinner"] :
       mealsPerDay === 3 ? ["breakfast", "lunch", "dinner"] :
       mealsPerDay === 4 ? ["breakfast", "lunch", "dinner", "snack"] :
       ["breakfast", "snack", "lunch", "snack", "dinner"];
+
+    const mealWeights: Record<string, number> = {
+      breakfast: 0.25, lunch: 0.30, dinner: 0.35, snack: 0.10,
+    };
+    const rawWeights = mealTypes.map((t) => mealWeights[t] ?? 0.25);
+    const totalWeight = rawWeights.reduce((a, b) => a + b, 0);
+    const mealCalorieTargets = rawWeights.map((w) =>
+      Math.round((w / totalWeight) * dailyCalories)
+    );
+    const caloriesPerMeal = Math.round(dailyCalories / mealsPerDay);
 
     const inspirations = mealTypes.map((type, i) => {
       const samples = getRandomMealSample(type, 6);
@@ -33,6 +41,10 @@ router.post("/ai/generate-meal-plan", async (req, res): Promise<void> => {
     const moodWords = ["bright & zesty", "hearty & warming", "light & refreshing", "bold & spiced", "umami-rich", "sweet & savory", "smoky & charred", "fresh & herbaceous"];
     const mood = moodWords[Math.floor(Math.random() * moodWords.length)];
 
+    const mealTargetLines = mealTypes.map((type, i) =>
+      `  Meal ${i + 1} (${type}): EXACTLY ${mealCalorieTargets[i]} calories`
+    ).join("\n");
+
     const prompt = `Create a UNIQUE one-day clean eating meal plan for a busy mom.
 
 VARIETY TOKEN (internal only, do NOT include in output): ${varietySeed} — every plan must be completely different.
@@ -40,7 +52,9 @@ TODAY'S MOOD: ${mood}
 FEATURED CUISINES: ${featuredCuisines.join(", ")}
 STAR INGREDIENTS TO FEATURE: protein = ${featuredProtein} | vegetable = ${featuredVeg} | grain = ${featuredGrain}
 
-PLAN: ${mealsPerDay} meals, ~${dailyCalories} total calories (~${caloriesPerMeal} per meal ±100).
+CALORIE TARGETS — YOU MUST HIT THESE EXACTLY:
+${mealTargetLines}
+DAILY TOTAL: ${dailyCalories} calories (the sum of all meal calories must equal exactly ${dailyCalories})
 
 MANDATORY RULES:
 1. NO generic fallbacks — avoid plain chicken breast salads, basic smoothies, "overnight oats with berries", or any dish you've likely generated before
@@ -52,6 +66,7 @@ MANDATORY RULES:
 7. Meal names must be specific and appetizing (e.g. "Harissa-Spiced Salmon over Freekeh with Mint Yogurt" NOT "Salmon with Grain")
 8. Be creative — surprise the user with something they wouldn't think to make
 9. ALWAYS include specific measured amounts for every ingredient (e.g. "3 oz salmon, 1 cup cooked quinoa, 2 cups baby spinach, 1 tbsp olive oil, ½ lemon juiced") — no bare ingredient names without a quantity
+10. CRITICAL: Each meal's "calories" field in the JSON must match the target above. Do NOT exceed the daily total of ${dailyCalories}.
 
 INSPIRATION (use as style inspiration only — create your own original versions):
 ${inspirations}
@@ -99,6 +114,22 @@ Shopping categories: Produce, Proteins, Dairy & Eggs, Grains & Bread, Pantry Sta
     if (result.name) {
       result.name = result.name.replace(/^[a-z0-9]{6,12}\s+/i, "").trim();
     }
+
+    // Hard-enforce calorie targets: override each meal's calorie field with the
+    // pre-calculated target so the total always equals dailyCalories exactly.
+    if (Array.isArray(result.meals)) {
+      result.meals = result.meals.map((meal: any, i: number) => ({
+        ...meal,
+        calories: mealCalorieTargets[i] ?? Math.round(dailyCalories / mealsPerDay),
+      }));
+      // Patch rounding: make sure the sum hits the target exactly by adjusting last meal
+      const currentTotal = result.meals.reduce((s: number, m: any) => s + m.calories, 0);
+      const diff = dailyCalories - currentTotal;
+      if (diff !== 0 && result.meals.length > 0) {
+        result.meals[result.meals.length - 1].calories += diff;
+      }
+    }
+
     res.json(result);
   } catch (err: any) {
     console.error("generate-meal-plan error:", err?.message ?? err);
