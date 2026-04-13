@@ -34,6 +34,10 @@ export default function Home() {
           <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-primary/60 blur-3xl" />
         </div>
 
+        <span className="absolute top-4 right-5 text-[10px] font-semibold text-primary/70 tracking-wide select-none">
+          version 2.10
+        </span>
+
         <div className="relative">
           <p className="text-primary text-sm font-semibold uppercase tracking-widest mb-1">
             {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
