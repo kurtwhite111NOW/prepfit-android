@@ -57,7 +57,7 @@ ${mealTargetLines}
 DAILY TOTAL: ${dailyCalories} calories (the sum of all meal calories must equal exactly ${dailyCalories})
 
 MANDATORY RULES:
-1. NO generic fallbacks — avoid plain chicken breast salads, basic smoothies, "overnight oats with berries", or any dish you've likely generated before
+1. VARIETY is key — avoid repeating the same combinations you've likely generated before. Simple classics (scrambled eggs on toast, grilled chicken with rice, spaghetti with marinara, a sandwich, a basic quesadilla) ARE allowed and encouraged — not every meal needs to be exotic or complex
 2. Feature the star ingredients somewhere across the plan
 3. Draw at least 2 meals from the featured cuisines
 4. Every meal must have a completely different protein + vegetable + grain combination

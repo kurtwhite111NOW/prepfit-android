@@ -70,6 +70,13 @@ export const breakfastMeals: MealIdea[] = [
   { name: "Vegetable Upma with Cashews", cuisine: "Indian", ingredients: "semolina, cashews, peas, carrot, mustard seeds, curry leaves", approxCalories: 350, type: "breakfast" },
   { name: "Warm Açaí & Banana Porridge", cuisine: "Brazilian", ingredients: "açaí, banana, oat milk, cinnamon, pumpkin seeds, honey", approxCalories: 370, type: "breakfast" },
   { name: "Amaranth Porridge with Apples", cuisine: "Latin", ingredients: "amaranth, apple, cinnamon, honey, pecans, almond milk", approxCalories: 360, type: "breakfast" },
+  { name: "Peanut Butter Banana Toast", cuisine: "American", ingredients: "whole grain bread, peanut butter, banana, honey", approxCalories: 310, type: "breakfast" },
+  { name: "Scrambled Eggs on Toast", cuisine: "American", ingredients: "eggs, whole grain bread, butter, salt, pepper", approxCalories: 280, type: "breakfast" },
+  { name: "Yogurt with Honey & Granola", cuisine: "American", ingredients: "Greek yogurt, honey, granola", approxCalories: 260, type: "breakfast" },
+  { name: "Banana & Almond Butter", cuisine: "American", ingredients: "banana, almond butter", approxCalories: 210, type: "breakfast" },
+  { name: "Cereal with Milk & Berries", cuisine: "American", ingredients: "whole grain cereal, oat milk, mixed berries", approxCalories: 270, type: "breakfast" },
+  { name: "Boiled Eggs with Fruit", cuisine: "Classic", ingredients: "eggs, apple, orange slices, sea salt", approxCalories: 220, type: "breakfast" },
+  { name: "Toast with Cottage Cheese & Jam", cuisine: "American", ingredients: "whole grain toast, cottage cheese, strawberry jam", approxCalories: 260, type: "breakfast" },
 ];
 
 export const lunchMeals: MealIdea[] = [
@@ -136,6 +143,13 @@ export const lunchMeals: MealIdea[] = [
   { name: "Mango & Shrimp Rice Paper Rolls", cuisine: "Vietnamese", ingredients: "rice paper, shrimp, mango, avocado, cucumber, herbs, peanut sauce", approxCalories: 350, type: "lunch" },
   { name: "Warm Freekeh Salad with Roasted Carrots", cuisine: "Middle Eastern", ingredients: "freekeh, roasted carrots, dried apricots, almonds, yogurt, ras el hanout", approxCalories: 420, type: "lunch" },
   { name: "Pozole Verde with Hominy", cuisine: "Mexican", ingredients: "hominy, chicken, tomatillos, pepitas, cilantro, avocado, lime", approxCalories: 420, type: "lunch" },
+  { name: "Turkey & Cheese Sandwich", cuisine: "American", ingredients: "whole grain bread, turkey breast, cheddar, lettuce, tomato, mustard", approxCalories: 350, type: "lunch" },
+  { name: "Grilled Cheese with Tomato Soup", cuisine: "American", ingredients: "whole grain bread, cheddar, butter, canned tomato soup", approxCalories: 420, type: "lunch" },
+  { name: "Tuna Salad Sandwich", cuisine: "American", ingredients: "whole grain bread, canned tuna, mayo, celery, pickle, lettuce", approxCalories: 370, type: "lunch" },
+  { name: "Simple Bean & Rice Bowl", cuisine: "American", ingredients: "brown rice, canned black beans, salsa, shredded cheese, sour cream", approxCalories: 400, type: "lunch" },
+  { name: "PB&J on Whole Grain", cuisine: "American", ingredients: "whole grain bread, peanut butter, strawberry jam", approxCalories: 360, type: "lunch" },
+  { name: "Hard-Boiled Eggs & Veggie Snack Box", cuisine: "American", ingredients: "hard-boiled eggs, baby carrots, celery, hummus, apple slices", approxCalories: 300, type: "lunch" },
+  { name: "Quesadilla with Black Beans & Cheese", cuisine: "Mexican-American", ingredients: "flour tortilla, black beans, cheddar, salsa, sour cream", approxCalories: 430, type: "lunch" },
 ];
 
 export const dinnerMeals: MealIdea[] = [
@@ -203,6 +217,13 @@ export const dinnerMeals: MealIdea[] = [
   { name: "Baked Feta with Cherry Tomatoes & Olives", cuisine: "Greek", ingredients: "feta block, cherry tomatoes, kalamata olives, red onion, thyme, crusty bread", approxCalories: 430, type: "dinner" },
   { name: "Lemon Caper Chicken Piccata", cuisine: "Italian", ingredients: "chicken breast, capers, lemon, white wine, butter, parsley, whole wheat pasta", approxCalories: 460, type: "dinner" },
   { name: "Za'atar Roasted Chicken with Tabbouleh", cuisine: "Lebanese", ingredients: "chicken, za'atar, olive oil, lemon, tabbouleh, hummus, pita", approxCalories: 470, type: "dinner" },
+  { name: "Spaghetti with Marinara & Parmesan", cuisine: "Italian-American", ingredients: "whole wheat spaghetti, marinara sauce, parmesan, garlic bread", approxCalories: 450, type: "dinner" },
+  { name: "Grilled Chicken with Steamed Broccoli & Rice", cuisine: "American", ingredients: "chicken breast, broccoli, brown rice, olive oil, garlic, lemon", approxCalories: 430, type: "dinner" },
+  { name: "Baked Potato with Toppings", cuisine: "American", ingredients: "russet potato, cheddar, sour cream, broccoli, butter, chives", approxCalories: 420, type: "dinner" },
+  { name: "Simple Egg Fried Rice", cuisine: "Asian-American", ingredients: "brown rice, eggs, frozen peas, soy sauce, sesame oil, scallion", approxCalories: 400, type: "dinner" },
+  { name: "Chicken Noodle Soup", cuisine: "American", ingredients: "chicken, egg noodles, carrots, celery, onion, chicken broth, parsley", approxCalories: 360, type: "dinner" },
+  { name: "Bean & Cheese Tacos", cuisine: "Mexican-American", ingredients: "corn tortillas, refried beans, cheddar, lettuce, tomato, sour cream", approxCalories: 420, type: "dinner" },
+  { name: "Rotisserie Chicken with Roasted Veggies", cuisine: "American", ingredients: "rotisserie chicken, zucchini, bell pepper, olive oil, garlic, herbs", approxCalories: 450, type: "dinner" },
 ];
 
 export const snackMeals: MealIdea[] = [
@@ -248,6 +269,12 @@ export const snackMeals: MealIdea[] = [
   { name: "Frozen Banana Bites with Dark Chocolate", cuisine: "American", ingredients: "banana, dark chocolate, peanut butter, sea salt", approxCalories: 190, type: "snack" },
   { name: "Roasted Seaweed Snack with Sesame", cuisine: "Korean", ingredients: "dried seaweed, sesame oil, sea salt, sesame seeds", approxCalories: 90, type: "snack" },
   { name: "Cucumber Rounds with Tuna & Avocado", cuisine: "American", ingredients: "cucumber, tuna, avocado, lemon, dill, capers", approxCalories: 160, type: "snack" },
+  { name: "Apple with Peanut Butter", cuisine: "American", ingredients: "apple, peanut butter", approxCalories: 180, type: "snack" },
+  { name: "String Cheese & Grapes", cuisine: "American", ingredients: "string cheese, red grapes", approxCalories: 140, type: "snack" },
+  { name: "Baby Carrots with Ranch Dip", cuisine: "American", ingredients: "baby carrots, ranch dressing", approxCalories: 120, type: "snack" },
+  { name: "Graham Crackers with Peanut Butter", cuisine: "American", ingredients: "graham crackers, peanut butter", approxCalories: 190, type: "snack" },
+  { name: "Banana with a Handful of Nuts", cuisine: "American", ingredients: "banana, mixed nuts", approxCalories: 200, type: "snack" },
+  { name: "Sliced Cheese & Apple", cuisine: "American", ingredients: "cheddar cheese slices, apple", approxCalories: 160, type: "snack" },
 ];
 
 export const ALL_MEALS: MealIdea[] = [
