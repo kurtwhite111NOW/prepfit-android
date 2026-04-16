@@ -76,7 +76,7 @@ export default function Meals() {
             <div className="calorie-pill px-3.5 py-2 rounded-xl text-sm flex items-center gap-1.5">
               <Flame size={14} />
               <span className="font-bold">{totalCalories.toLocaleString()}</span>
-              <span className="font-normal opacity-70 text-xs">kcal logged</span>
+              <span className="font-normal opacity-70 text-xs">cal logged</span>
             </div>
           )}
           <Link href="/scan">

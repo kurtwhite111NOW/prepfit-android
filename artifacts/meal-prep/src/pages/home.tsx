@@ -47,7 +47,7 @@ export default function Home() {
           </h1>
           <p className="text-sidebar-foreground/50 text-base max-w-sm">
             {latestPlan
-              ? `Active plan: ${latestPlan.name} · ${latestPlan.dailyCalories} kcal/day`
+              ? `Active plan: ${latestPlan.name} · ${latestPlan.dailyCalories} cal/day`
               : "No active plan yet. Let's build one."}
           </p>
 
@@ -69,7 +69,7 @@ export default function Home() {
                 </div>
                 <div>
                   <p className="text-[10px] text-sidebar-foreground/40 uppercase tracking-wider font-semibold">Daily Target</p>
-                  <p className="text-sidebar-foreground font-bold text-sm leading-none">{latestPlan.dailyCalories.toLocaleString()} kcal</p>
+                  <p className="text-sidebar-foreground font-bold text-sm leading-none">{latestPlan.dailyCalories.toLocaleString()} cal</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 bg-white/5 border border-white/8 rounded-xl px-3.5 py-2">
@@ -79,7 +79,7 @@ export default function Home() {
                 <div>
                   <p className="text-[10px] text-sidebar-foreground/40 uppercase tracking-wider font-semibold">Per Meal</p>
                   <p className="text-sidebar-foreground font-bold text-sm leading-none">
-                    {Math.round(latestPlan.dailyCalories / latestPlan.mealsPerDay)} kcal
+                    {Math.round(latestPlan.dailyCalories / latestPlan.mealsPerDay)} cal
                   </p>
                 </div>
               </div>
@@ -162,7 +162,7 @@ export default function Home() {
                 </div>
                 <span className="calorie-pill px-3 py-1.5 rounded-full text-sm flex items-center gap-1.5 whitespace-nowrap">
                   <Flame size={13} />
-                  {latestPlan.dailyCalories.toLocaleString()} kcal
+                  {latestPlan.dailyCalories.toLocaleString()} cal
                 </span>
               </div>
 

@@ -160,8 +160,8 @@ export default function Planner() {
               />
 
               <div className="flex justify-between text-[10px] text-muted-foreground font-medium px-0.5">
-                <span>1,200 kcal</span>
-                <span>4,000 kcal</span>
+                <span>1,200 cal</span>
+                <span>4,000 cal</span>
               </div>
 
               {/* Per meal estimate */}
@@ -170,7 +170,7 @@ export default function Planner() {
                   <Clock size={13} />
                   <span>Per meal estimate</span>
                 </div>
-                <span className="font-bold text-foreground text-sm">~{calPerMeal} kcal</span>
+                <span className="font-bold text-foreground text-sm">~{calPerMeal} cal</span>
               </div>
             </div>
 
@@ -248,7 +248,7 @@ export default function Planner() {
                   </div>
                   <span className="calorie-pill px-3.5 py-2 rounded-xl text-sm flex items-center gap-1.5 whitespace-nowrap">
                     <Flame size={14} />
-                    {generateMealPlan.data.meals.reduce((s, m) => s + m.calories, 0).toLocaleString()} kcal total
+                    {generateMealPlan.data.meals.reduce((s, m) => s + m.calories, 0).toLocaleString()} cal total
                   </span>
                 </div>
               </div>

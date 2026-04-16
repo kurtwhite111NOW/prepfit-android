@@ -225,7 +225,7 @@ export default function Scan() {
                     </h3>
                     <span className="calorie-pill px-3 py-1.5 rounded-xl text-sm flex items-center gap-1.5 whitespace-nowrap shrink-0">
                       <Flame size={13} />
-                      {analyzePhoto.data.estimatedCalories} kcal
+                      {analyzePhoto.data.estimatedCalories} cal
                     </span>
                   </div>
                   <p className="text-muted-foreground text-sm leading-relaxed">
