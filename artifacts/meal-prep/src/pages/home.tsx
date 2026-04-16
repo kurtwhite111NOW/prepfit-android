@@ -35,7 +35,7 @@ export default function Home() {
         </div>
 
         <span className="absolute top-4 right-5 text-[10px] font-semibold text-emerald-400 tracking-wide select-none">
-          version 2.12
+          Android version 2.12
         </span>
 
         <div className="relative">
