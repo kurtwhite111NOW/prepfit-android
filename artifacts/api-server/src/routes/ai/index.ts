@@ -67,6 +67,7 @@ MANDATORY RULES:
 8. Be creative — surprise the user with something they wouldn't think to make
 9. ALWAYS include specific measured amounts for every ingredient (e.g. "3 oz salmon, 1 cup cooked quinoa, 2 cups baby spinach, 1 tbsp olive oil, ½ lemon juiced") — no bare ingredient names without a quantity
 10. CRITICAL: Each meal's "calories" field in the JSON must match the target above. Do NOT exceed the daily total of ${dailyCalories}.
+11. BALANCE complexity: at least 1 meal per plan must be genuinely quick and simple (5 ingredients or fewer, under 15 minutes — e.g. "Greek Yogurt Bowl with Berries & Honey", "Tuna & Avocado Rice Cake", "Cottage Cheese with Sliced Peaches & Walnuts", "Hard-Boiled Eggs with Sliced Cucumber & Hummus"). Not every meal should require a long ingredient list or exotic techniques.
 
 INSPIRATION (use as style inspiration only — create your own original versions):
 ${inspirations}
