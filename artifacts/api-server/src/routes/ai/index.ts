@@ -45,10 +45,12 @@ router.post("/ai/generate-meal-plan", async (req, res): Promise<void> => {
       `  Meal ${i + 1} (${type}): EXACTLY ${mealCalorieTargets[i]} calories`
     ).join("\n");
 
-    const prompt = `Create a simple, practical one-day meal plan for a busy mom. All meals must be VERY EASY — things a real family actually eats every day.
+    const prompt = `Create a simple, practical one-day meal plan. All meals must be VERY EASY — things a real family actually eats every day.
 
 VARIETY TOKEN (internal only, do NOT include in output): ${varietySeed}
 STAR INGREDIENTS: protein = ${featuredProtein} | vegetable = ${featuredVeg} | grain = ${featuredGrain}
+
+⚠️ MEAL COUNT: You MUST return EXACTLY ${mealsPerDay} meal${mealsPerDay === 1 ? "" : "s"} — no more, no less. Not ${mealsPerDay + 1}, not ${mealsPerDay - 1}. Exactly ${mealsPerDay}.
 
 CALORIE TARGETS — YOU MUST HIT THESE EXACTLY:
 ${mealTargetLines}
@@ -112,13 +114,19 @@ Shopping categories: Produce, Proteins, Dairy & Eggs, Grains & Bread, Pantry Sta
       result.name = result.name.replace(/^[a-z0-9]{6,12}\s+/i, "").trim();
     }
 
-    // Hard-enforce calorie targets: override each meal's calorie field with the
-    // pre-calculated target so the total always equals dailyCalories exactly.
+    // Hard-enforce meal count: trim or flag if AI returned wrong number
     if (Array.isArray(result.meals)) {
+      // Trim to exactly mealsPerDay — AI sometimes adds extra meals
+      result.meals = result.meals.slice(0, mealsPerDay);
+
+      // Hard-enforce calorie targets: override each meal's calorie field with the
+      // pre-calculated target so the total always equals dailyCalories exactly.
       result.meals = result.meals.map((meal: any, i: number) => ({
         ...meal,
+        mealNumber: i + 1,
         calories: mealCalorieTargets[i] ?? Math.round(dailyCalories / mealsPerDay),
       }));
+
       // Patch rounding: make sure the sum hits the target exactly by adjusting last meal
       const currentTotal = result.meals.reduce((s: number, m: any) => s + m.calories, 0);
       const diff = dailyCalories - currentTotal;
