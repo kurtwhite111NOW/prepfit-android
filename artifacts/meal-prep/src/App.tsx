@@ -23,7 +23,7 @@ function CheckoutResultHandler() {
     const checkout = params.get('checkout');
     if (checkout === 'success') {
       toast({
-        title: "Welcome to NutriPrep Pro!",
+        title: "Welcome to Simple Meal Prep Planner Pro!",
         description: "Your subscription is active. Enjoy unlimited AI meal planning!",
       });
       const url = new URL(window.location.href);

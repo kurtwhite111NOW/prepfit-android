@@ -49,7 +49,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </div>
             <div>
               <span className="font-serif font-bold text-base text-sidebar-foreground tracking-tight leading-none block">
-                NutriPrep
+                Simple Meal Prep Planner
               </span>
               <span className="text-[9px] text-sidebar-foreground/50 font-medium leading-none">
                 Clean Eating & Weight Loss
@@ -82,7 +82,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </div>
               <div>
                 <span className="font-serif font-bold text-[1.05rem] text-sidebar-foreground leading-none block">
-                  NutriPrep
+                  Simple Meal Prep Planner
                 </span>
                 <span className="text-[10px] text-primary font-semibold tracking-wide leading-none block mt-0.5">
                   Clean Eating & Weight Loss
