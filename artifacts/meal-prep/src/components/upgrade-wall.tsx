@@ -1,4 +1,4 @@
-import { Leaf, Check, Star, Shield, Zap, Brain, ShoppingCart, ScanLine, Scale, X, Loader2 } from "lucide-react";
+import { Check, Star, Shield, Zap, Brain, ShoppingCart, ScanLine, Scale, X, Loader2 } from "lucide-react";
 import { useStripeCheckout } from "../hooks/use-stripe-checkout";
 
 const features = [
@@ -36,7 +36,7 @@ export function UpgradeWall({ onClose }: UpgradeWallProps) {
       <div className="relative w-full max-w-lg mx-auto px-6 py-12 flex flex-col items-center text-center gap-6">
         <div className="flex flex-col items-center gap-3">
           <div className="w-14 h-14 rounded-2xl gradient-emerald flex items-center justify-center shadow-2xl shadow-primary/30">
-            <Leaf size={26} className="text-white" strokeWidth={2.5} />
+            <span className="text-3xl">💪</span>
           </div>
           <div>
             <p className="font-serif font-bold text-xl text-white leading-tight">Simple Meal Prep</p>
