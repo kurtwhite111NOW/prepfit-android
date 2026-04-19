@@ -45,43 +45,39 @@ router.post("/ai/generate-meal-plan", async (req, res): Promise<void> => {
       `  Meal ${i + 1} (${type}): EXACTLY ${mealCalorieTargets[i]} calories`
     ).join("\n");
 
-    const prompt = `Create a UNIQUE one-day clean eating meal plan for a busy mom.
+    const prompt = `Create a simple, practical one-day meal plan for a busy mom. All meals must be VERY EASY — things a real family actually eats every day.
 
-VARIETY TOKEN (internal only, do NOT include in output): ${varietySeed} — every plan must be completely different.
-TODAY'S MOOD: ${mood}
-FEATURED CUISINES: ${featuredCuisines.join(", ")}
-STAR INGREDIENTS TO FEATURE: protein = ${featuredProtein} | vegetable = ${featuredVeg} | grain = ${featuredGrain}
+VARIETY TOKEN (internal only, do NOT include in output): ${varietySeed}
+STAR INGREDIENTS: protein = ${featuredProtein} | vegetable = ${featuredVeg} | grain = ${featuredGrain}
 
 CALORIE TARGETS — YOU MUST HIT THESE EXACTLY:
 ${mealTargetLines}
 DAILY TOTAL: ${dailyCalories} calories (the sum of all meal calories must equal exactly ${dailyCalories})
 
 MANDATORY RULES:
-1. VARIETY is key — avoid repeating the same combinations you've likely generated before. Simple classics (scrambled eggs on toast, grilled chicken with rice, spaghetti with marinara, a sandwich, a basic quesadilla) ARE allowed and encouraged — not every meal needs to be exotic or complex
-2. Feature the star ingredients somewhere across the plan
-3. Draw at least 2 meals from the featured cuisines
-4. Every meal must have a completely different protein + vegetable + grain combination
-5. Minimum 1 vegetarian/plant-based meal
-6. Minimum 1 globally-inspired meal (non-American)
-7. Meal names must be specific and appetizing (e.g. "Harissa-Spiced Salmon over Freekeh with Mint Yogurt" NOT "Salmon with Grain")
-8. Be creative — surprise the user with something they wouldn't think to make
-9. ALWAYS include specific measured amounts for every ingredient (e.g. "3 oz salmon, 1 cup cooked quinoa, 2 cups baby spinach, 1 tbsp olive oil, ½ lemon juiced") — no bare ingredient names without a quantity
-10. CRITICAL: Each meal's "calories" field in the JSON must match the target above. Do NOT exceed the daily total of ${dailyCalories}.
-11. BALANCE complexity: at least 1 meal per plan must be genuinely quick and simple (5 ingredients or fewer, under 15 minutes — e.g. "Greek Yogurt Bowl with Berries & Honey", "Tuna & Avocado Rice Cake", "Cottage Cheese with Sliced Peaches & Walnuts", "Hard-Boiled Eggs with Sliced Cucumber & Hummus"). Not every meal should require a long ingredient list or exotic techniques.
+1. SIMPLICITY IS THE #1 PRIORITY — every meal must be something a beginner cook can make in under 20 minutes with basic pantry staples
+2. Use everyday, familiar ingredients — things you can find at any grocery store (eggs, bread, chicken, pasta, canned beans, frozen veggies, rice, peanut butter, etc.)
+3. Meal names should be plain and familiar (e.g. "Scrambled Eggs on Toast", "Spaghetti with Marinara", "Grilled Chicken with Rice and Broccoli", "PB&J Sandwich", "Tuna Salad Wrap")
+4. NO exotic ingredients, NO complex techniques, NO international fusion dishes
+5. Canned, frozen, and store-bought items are totally acceptable (canned soup, frozen veggies, rotisserie chicken, boxed mac & cheese)
+6. Every meal must have a completely different protein
+7. ALWAYS include specific measured amounts for every ingredient (e.g. "2 eggs, 1 slice whole grain toast, 1 tbsp butter, salt and pepper")
+8. CRITICAL: Each meal's "calories" field in the JSON must match the target above. Do NOT exceed the daily total of ${dailyCalories}.
+9. Keep ingredient lists SHORT — 3 to 6 ingredients max per meal
 
-INSPIRATION (use as style inspiration only — create your own original versions):
+INSPIRATION (simple, everyday meals to inspire you):
 ${inspirations}
 
 Return ONLY valid JSON, no markdown:
 {
-  "name": "Creative themed plan name (e.g. 'Moroccan-Korean Fusion Clean Day')",
+  "name": "Simple, friendly plan name (e.g. 'Easy Weekday Plan', 'Simple Family Day')",
   "meals": [
     {
       "mealNumber": 1,
-      "name": "Specific descriptive meal name",
-      "description": "What it is, why it's delicious and nutritious, one quick prep tip",
+      "name": "Plain familiar meal name",
+      "description": "What it is and one simple tip for making it quickly",
       "calories": ${caloriesPerMeal},
-      "ingredients": "3 oz ingredient1, 1 cup ingredient2, 2 tbsp ingredient3, ½ tsp ingredient4"
+      "ingredients": "2 eggs, 1 slice toast, 1 tbsp butter, salt and pepper"
     }
   ],
   "shoppingItems": [
@@ -89,8 +85,8 @@ Return ONLY valid JSON, no markdown:
       "category": "Produce",
       "name": "Item name",
       "quantity": "Amount needed",
-      "brandSuggestion": "Clean brand or 'Any fresh'",
-      "notes": "Optional tip like organic preferred"
+      "brandSuggestion": "Any brand or store brand",
+      "notes": "Optional simple tip"
     }
   ]
 }
@@ -103,7 +99,7 @@ Shopping categories: Produce, Proteins, Dairy & Eggs, Grains & Bread, Pantry Sta
       messages: [
         {
           role: "system",
-          content: "You are a creative registered dietitian and world cuisine expert specializing in globally-inspired clean eating. You NEVER repeat meal combinations. You draw from 50+ cuisines. Each plan is completely original and surprising. You respond with valid JSON only.",
+          content: "You are a practical meal planning assistant for busy moms. You specialize in SIMPLE, everyday meals that real families actually eat — scrambled eggs, sandwiches, pasta, chicken and rice, tacos, soup, etc. You never suggest complicated recipes or exotic ingredients. Every meal you suggest can be made by a beginner in under 20 minutes using basic grocery store items. You respond with valid JSON only.",
         },
         { role: "user", content: prompt },
       ],

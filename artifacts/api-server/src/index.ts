@@ -43,7 +43,11 @@ async function initStripe() {
   }
 }
 
-await initStripe();
+try {
+  await initStripe();
+} catch (err) {
+  logger.warn({ err }, 'Stripe initialization skipped — continuing without Stripe');
+}
 
 app.listen(port, (err) => {
   if (err) {
