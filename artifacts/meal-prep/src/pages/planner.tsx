@@ -152,7 +152,7 @@ export default function Planner() {
 
               <Slider
                 min={1200}
-                max={4000}
+                max={6000}
                 step={50}
                 value={[dailyCalories]}
                 onValueChange={(val) => setDailyCalories(val[0])}
@@ -161,7 +161,7 @@ export default function Planner() {
 
               <div className="flex justify-between text-[10px] text-muted-foreground font-medium px-0.5">
                 <span>1,200 cal</span>
-                <span>4,000 cal</span>
+                <span>6,000 cal</span>
               </div>
 
               {/* Per meal estimate */}
