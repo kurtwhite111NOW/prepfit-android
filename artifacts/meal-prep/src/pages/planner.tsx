@@ -151,7 +151,7 @@ export default function Planner() {
               </div>
 
               <Slider
-                min={1200}
+                min={1000}
                 max={6000}
                 step={50}
                 value={[dailyCalories]}
@@ -160,7 +160,7 @@ export default function Planner() {
               />
 
               <div className="flex justify-between text-[10px] text-muted-foreground font-medium px-0.5">
-                <span>1,200 cal</span>
+                <span>1,000 cal</span>
                 <span>6,000 cal</span>
               </div>
 
