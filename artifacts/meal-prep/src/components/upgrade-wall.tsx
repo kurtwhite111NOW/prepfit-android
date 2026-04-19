@@ -18,7 +18,7 @@ export function UpgradeWall({ onClose }: UpgradeWallProps) {
   const { startCheckout, loading, error } = useStripeCheckout();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[hsl(160_35%_6%)] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[hsl(220_22%_7%)] overflow-y-auto">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary/5 blur-3xl" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-primary/4 blur-3xl" />

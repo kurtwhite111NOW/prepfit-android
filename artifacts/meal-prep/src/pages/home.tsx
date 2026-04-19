@@ -34,12 +34,12 @@ export default function Home() {
           <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-primary/60 blur-3xl" />
         </div>
 
-        <span className="absolute top-4 right-5 text-[10px] font-semibold text-emerald-400 tracking-wide select-none">
+        <span className="absolute top-4 right-5 text-[10px] font-semibold text-orange-400 tracking-wide select-none">
           Android version 2.12
         </span>
 
         <div className="relative">
-          <p className="text-emerald-400 text-sm font-semibold uppercase tracking-widest mb-1">
+          <p className="text-orange-400 text-sm font-semibold uppercase tracking-widest mb-1">
             {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
           </p>
           <h1 className="font-serif text-4xl md:text-5xl font-bold text-sidebar-foreground leading-tight mb-3">
