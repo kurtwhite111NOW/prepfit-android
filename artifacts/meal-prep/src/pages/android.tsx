@@ -151,6 +151,7 @@ export default function AndroidPage() {
               <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-lg">🤖</div>
               <span className="text-primary text-xs font-bold uppercase tracking-widest">Android</span>
             </div>
+            <p className="font-extrabold text-2xl text-primary mb-1">PrepFit</p>
             <h1 className="font-serif text-4xl font-bold text-sidebar-foreground leading-tight mb-3">
               Install Simple Meal Prep Planner<br />on Android
             </h1>
