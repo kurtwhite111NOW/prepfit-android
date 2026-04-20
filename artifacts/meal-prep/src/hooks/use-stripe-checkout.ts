@@ -7,7 +7,7 @@ async function getAnnualPriceId(): Promise<string | null> {
     const res = await fetch(`${BASE_URL}/api/stripe/products`);
     const data = await res.json();
     for (const product of data.data || []) {
-      if (product.name === 'NutriPrep Pro') {
+      if (product.name === 'PrepFit Pro') {
         const annual = product.prices?.find((p: any) => p.recurring?.interval === 'year');
         if (annual) return annual.id;
       }

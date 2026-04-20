@@ -1,13 +1,13 @@
 import { getUncachableStripeClient } from './stripeClient';
 
-async function createNutriPrepProducts() {
+async function createPrepFitProducts() {
   try {
     const stripe = await getUncachableStripeClient();
-    console.log('Creating NutriPrep Pro subscription in Stripe...');
+    console.log('Setting up PrepFit Pro subscription in Stripe...');
 
-    const existing = await stripe.products.search({ query: "name:'NutriPrep Pro' AND active:'true'" });
+    const existing = await stripe.products.search({ query: "name:'PrepFit Pro' AND active:'true'" });
     if (existing.data.length > 0) {
-      console.log('NutriPrep Pro already exists:', existing.data[0].id);
+      console.log('PrepFit Pro already exists:', existing.data[0].id);
       const prices = await stripe.prices.list({ product: existing.data[0].id, active: true });
       for (const price of prices.data) {
         console.log(`  Price: ${price.id} — $${(price.unit_amount! / 100).toFixed(2)} / ${(price.recurring as any)?.interval}`);
@@ -16,30 +16,30 @@ async function createNutriPrepProducts() {
     }
 
     const product = await stripe.products.create({
-      name: 'NutriPrep Pro',
-      description: 'AI-powered meal prep planner for busy moms. Unlimited AI meal plans, photo calorie scanning, smart grocery lists, and weight tracking.',
+      name: 'PrepFit Pro',
+      description: 'AI-powered gym & fitness meal prep planner. Unlimited AI meal plans, photo calorie scanning, smart grocery lists, weight & water tracking.',
     });
     console.log('Created product:', product.id);
 
     const yearlyPrice = await stripe.prices.create({
       product: product.id,
-      unit_amount: 14400,
+      unit_amount: 16800,
       currency: 'usd',
       recurring: { interval: 'year' },
-      nickname: 'Annual Plan',
+      nickname: 'Annual Plan — $168/year',
     });
-    console.log('Created annual price:', yearlyPrice.id, '— $144.00/year');
+    console.log('Created annual price:', yearlyPrice.id, '— $168.00/year');
 
     const monthlyPrice = await stripe.prices.create({
       product: product.id,
-      unit_amount: 1200,
+      unit_amount: 1400,
       currency: 'usd',
       recurring: { interval: 'month' },
-      nickname: 'Monthly Plan',
+      nickname: 'Monthly Plan — $14/month',
     });
-    console.log('Created monthly price:', monthlyPrice.id, '— $12.00/month');
+    console.log('Created monthly price:', monthlyPrice.id, '— $14.00/month');
 
-    console.log('\nDone! Save these IDs:');
+    console.log('\nDone! IDs:');
     console.log('  Annual price ID:', yearlyPrice.id);
     console.log('  Monthly price ID:', monthlyPrice.id);
   } catch (error: any) {
@@ -48,4 +48,4 @@ async function createNutriPrepProducts() {
   }
 }
 
-createNutriPrepProducts();
+createPrepFitProducts();
