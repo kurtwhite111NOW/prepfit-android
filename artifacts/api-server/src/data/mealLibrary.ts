@@ -37,6 +37,15 @@ export const breakfastMeals: MealIdea[] = [
   { name: "Chia Pudding with Mango", cuisine: "Classic", ingredients: "3 tbsp chia seeds, 1 cup coconut milk, 1 mango sliced, 1 tsp honey", approxCalories: 320, type: "breakfast" },
   { name: "Protein Oatmeal with Peanut Butter", cuisine: "Classic", ingredients: "½ cup oats, 1 scoop vanilla protein powder, 1 tbsp peanut butter, banana, 1 cup water", approxCalories: 420, type: "breakfast" },
   { name: "Baked Egg in Avocado", cuisine: "Classic", ingredients: "1 avocado, 2 eggs, salt, pepper, paprika, chives", approxCalories: 310, type: "breakfast" },
+  // Mono Breakfasts
+  { name: "Egg Whites & Sautéed Spinach", cuisine: "Mono", ingredients: "5 egg whites, 2 cups spinach, 1 tsp olive oil, salt, pepper, garlic powder", approxCalories: 180, type: "breakfast" },
+  { name: "Whole Eggs & Roasted Asparagus", cuisine: "Mono", ingredients: "3 eggs, 8 asparagus spears, 1 tsp olive oil, salt, pepper", approxCalories: 260, type: "breakfast" },
+  { name: "Hard-Boiled Eggs & Sliced Avocado", cuisine: "Mono", ingredients: "3 hard-boiled eggs, ½ avocado, salt, pepper, red pepper flakes", approxCalories: 280, type: "breakfast" },
+  { name: "Turkey Bacon & Sautéed Kale", cuisine: "Mono", ingredients: "3 strips turkey bacon, 2 cups kale, 1 tsp olive oil, garlic, salt", approxCalories: 210, type: "breakfast" },
+  { name: "Chicken Sausage & Steamed Broccoli", cuisine: "Mono", ingredients: "2 chicken sausage links, 2 cups broccoli florets, mustard, salt, pepper", approxCalories: 290, type: "breakfast" },
+  { name: "Cottage Cheese & Sliced Strawberries", cuisine: "Mono", ingredients: "1½ cups cottage cheese, 1 cup sliced strawberries, dash of cinnamon", approxCalories: 220, type: "breakfast" },
+  { name: "Smoked Salmon & Cucumber Slices", cuisine: "Mono", ingredients: "4 oz smoked salmon, 1 large cucumber sliced, lemon juice, dill, capers", approxCalories: 200, type: "breakfast" },
+  { name: "Greek Yogurt & Walnuts & Blueberries", cuisine: "Mono", ingredients: "1 cup plain Greek yogurt, ¼ cup walnuts, ½ cup blueberries", approxCalories: 290, type: "breakfast" },
 ];
 
 export const lunchMeals: MealIdea[] = [
@@ -70,6 +79,39 @@ export const lunchMeals: MealIdea[] = [
   { name: "Cottage Cheese & Turkey Bowl", cuisine: "Classic", ingredients: "1 cup cottage cheese, 3 oz deli turkey, cherry tomatoes, cucumber, 5 crackers", approxCalories: 350, type: "lunch" },
   { name: "Black Bean Burger", cuisine: "American", ingredients: "1 black bean patty, 1 whole grain bun, lettuce, tomato, avocado, sriracha mayo", approxCalories: 450, type: "lunch" },
   { name: "Cold Sesame Noodles", cuisine: "Asian", ingredients: "2 oz soba noodles, 2 tbsp peanut butter, soy sauce, sesame oil, cucumber, green onion", approxCalories: 400, type: "lunch" },
+  // Mono Lunches
+  { name: "Chicken Breast & Steamed Broccoli", cuisine: "Mono", ingredients: "6 oz chicken breast, 2 cups broccoli, 1 tsp olive oil, salt, pepper, garlic powder", approxCalories: 300, type: "lunch" },
+  { name: "Chicken Breast & Roasted Asparagus", cuisine: "Mono", ingredients: "6 oz chicken breast, 10 asparagus spears, 1 tsp olive oil, lemon, salt, pepper", approxCalories: 290, type: "lunch" },
+  { name: "Chicken Breast & Green Beans", cuisine: "Mono", ingredients: "6 oz chicken breast, 2 cups green beans, 1 tsp olive oil, garlic, salt, pepper", approxCalories: 280, type: "lunch" },
+  { name: "Chicken Breast & Roasted Brussels Sprouts", cuisine: "Mono", ingredients: "6 oz chicken breast, 2 cups Brussels sprouts halved, 1 tsp olive oil, salt, garlic powder", approxCalories: 310, type: "lunch" },
+  { name: "Chicken Breast & Roasted Zucchini", cuisine: "Mono", ingredients: "6 oz chicken breast, 2 zucchini sliced, 1 tsp olive oil, Italian seasoning, salt", approxCalories: 290, type: "lunch" },
+  { name: "Chicken Breast & Roasted Carrots", cuisine: "Mono", ingredients: "6 oz chicken breast, 2 cups carrots, 1 tsp olive oil, cumin, salt, pepper", approxCalories: 300, type: "lunch" },
+  { name: "Ground Beef & Roasted Broccoli", cuisine: "Mono", ingredients: "6 oz lean ground beef, 2 cups broccoli, 1 tsp olive oil, garlic, salt, pepper", approxCalories: 380, type: "lunch" },
+  { name: "Ground Turkey & Roasted Zucchini", cuisine: "Mono", ingredients: "6 oz ground turkey, 2 zucchini sliced, 1 tsp olive oil, Italian seasoning, salt", approxCalories: 340, type: "lunch" },
+  { name: "Ground Turkey & Steamed Asparagus", cuisine: "Mono", ingredients: "6 oz ground turkey, 10 asparagus spears, 1 tsp olive oil, lemon, salt, pepper", approxCalories: 320, type: "lunch" },
+  { name: "Steak & Steamed Broccoli", cuisine: "Mono", ingredients: "6 oz sirloin steak, 2 cups broccoli, 1 tsp olive oil, salt, pepper, garlic", approxCalories: 380, type: "lunch" },
+  { name: "Steak & Roasted Green Beans", cuisine: "Mono", ingredients: "6 oz sirloin steak, 2 cups green beans, 1 tsp olive oil, salt, pepper, lemon", approxCalories: 370, type: "lunch" },
+  { name: "Salmon & Steamed Broccoli", cuisine: "Mono", ingredients: "6 oz salmon fillet, 2 cups broccoli, 1 tsp olive oil, lemon, dill, salt", approxCalories: 380, type: "lunch" },
+  { name: "Salmon & Roasted Asparagus", cuisine: "Mono", ingredients: "6 oz salmon fillet, 10 asparagus spears, 1 tsp olive oil, lemon, garlic, salt", approxCalories: 370, type: "lunch" },
+  { name: "Tuna & Sliced Cucumber & Avocado", cuisine: "Mono", ingredients: "2 cans tuna, 1 cucumber sliced, ½ avocado, lemon juice, salt, pepper", approxCalories: 320, type: "lunch" },
+  { name: "Shrimp & Roasted Zucchini", cuisine: "Mono", ingredients: "6 oz shrimp, 2 zucchini sliced, 1 tsp olive oil, garlic, paprika, lemon, salt", approxCalories: 260, type: "lunch" },
+  { name: "Shrimp & Steamed Asparagus", cuisine: "Mono", ingredients: "6 oz shrimp, 10 asparagus spears, 1 tsp olive oil, lemon, garlic, red pepper flakes", approxCalories: 250, type: "lunch" },
+  { name: "Tilapia & Steamed Green Beans", cuisine: "Mono", ingredients: "6 oz tilapia, 2 cups green beans, 1 tsp olive oil, lemon, garlic powder, salt", approxCalories: 260, type: "lunch" },
+  { name: "Cod & Roasted Cauliflower", cuisine: "Mono", ingredients: "6 oz cod fillet, 2 cups cauliflower florets, 1 tsp olive oil, paprika, lemon, salt", approxCalories: 270, type: "lunch" },
+  { name: "Turkey Breast & Roasted Bell Peppers", cuisine: "Mono", ingredients: "6 oz turkey breast, 2 bell peppers sliced, 1 tsp olive oil, garlic, Italian seasoning, salt", approxCalories: 300, type: "lunch" },
+  { name: "Pork Chops & Roasted Brussels Sprouts", cuisine: "Mono", ingredients: "6 oz pork chop, 2 cups Brussels sprouts, 1 tsp olive oil, garlic, salt, pepper", approxCalories: 370, type: "lunch" },
+  { name: "Chicken & Roasted Cauliflower", cuisine: "Mono", ingredients: "6 oz chicken breast, 2 cups cauliflower, 1 tsp olive oil, cumin, paprika, salt", approxCalories: 290, type: "lunch" },
+  { name: "Ground Beef & Roasted Sweet Potato", cuisine: "Mono", ingredients: "5 oz lean ground beef, 1 large sweet potato, 1 tsp olive oil, cinnamon, salt, pepper", approxCalories: 440, type: "lunch" },
+  { name: "Chicken & Roasted Sweet Potato", cuisine: "Mono", ingredients: "6 oz chicken breast, 1 large sweet potato, 1 tsp olive oil, paprika, garlic powder, salt", approxCalories: 400, type: "lunch" },
+  { name: "Salmon & Roasted Sweet Potato", cuisine: "Mono", ingredients: "5 oz salmon, 1 medium sweet potato, 1 tsp olive oil, lemon, dill, salt", approxCalories: 420, type: "lunch" },
+  { name: "Turkey Meatballs & Roasted Zucchini", cuisine: "Mono", ingredients: "6 oz ground turkey (formed into balls), 2 zucchini, 1 tsp olive oil, Italian seasoning, garlic, salt", approxCalories: 330, type: "lunch" },
+  { name: "Tilapia & Sautéed Spinach", cuisine: "Mono", ingredients: "6 oz tilapia, 3 cups spinach, 1 tsp olive oil, lemon, garlic, salt", approxCalories: 250, type: "lunch" },
+  { name: "Ground Turkey & Sautéed Kale", cuisine: "Mono", ingredients: "6 oz ground turkey, 3 cups kale, 1 tsp olive oil, garlic, red pepper flakes, salt", approxCalories: 310, type: "lunch" },
+  { name: "Shrimp & Edamame Bowl", cuisine: "Mono", ingredients: "6 oz shrimp, 1 cup edamame shelled, 1 tsp sesame oil, soy sauce, garlic, ginger", approxCalories: 310, type: "lunch" },
+  { name: "Chicken & Snow Peas", cuisine: "Mono", ingredients: "6 oz chicken breast, 2 cups snow peas, 1 tsp olive oil, garlic, soy sauce, sesame seeds", approxCalories: 290, type: "lunch" },
+  { name: "Tuna & Mixed Greens & Olive Oil", cuisine: "Mono", ingredients: "2 cans tuna, 3 cups mixed greens, 1 tbsp olive oil, lemon juice, salt, pepper", approxCalories: 300, type: "lunch" },
+  { name: "Beef & Roasted Mushrooms & Onions", cuisine: "Mono", ingredients: "6 oz lean beef strips, 2 cups mushrooms, 1 onion sliced, 1 tsp olive oil, garlic, salt", approxCalories: 380, type: "lunch" },
+  { name: "Chicken & Roasted Beets", cuisine: "Mono", ingredients: "6 oz chicken breast, 2 medium beets cubed, 1 tsp olive oil, balsamic vinegar, salt, pepper", approxCalories: 320, type: "lunch" },
 ];
 
 export const dinnerMeals: MealIdea[] = [
@@ -103,6 +145,42 @@ export const dinnerMeals: MealIdea[] = [
   { name: "Lemon Herb Chicken with Quinoa", cuisine: "Mediterranean", ingredients: "6 oz chicken breast, ½ cup quinoa, lemon, garlic, olive oil, fresh parsley, roasted cherry tomatoes", approxCalories: 460, type: "dinner" },
   { name: "Tuna Poke Bowl", cuisine: "Hawaiian", ingredients: "5 oz tuna, 1 cup sushi rice, edamame, avocado, cucumber, soy sauce, sesame oil, sesame seeds", approxCalories: 490, type: "dinner" },
   { name: "Ground Beef & Rice Stuffed Peppers", cuisine: "Classic", ingredients: "2 bell peppers, ½ lb ground beef, ½ cup rice, ½ cup tomato sauce, shredded cheese, garlic", approxCalories: 530, type: "dinner" },
+  // Mono Dinners
+  { name: "Steak, Brussels Sprouts & Sweet Potato", cuisine: "Mono", ingredients: "7 oz sirloin steak, 2 cups Brussels sprouts, 1 large sweet potato, 1 tsp olive oil, salt, pepper", approxCalories: 580, type: "dinner" },
+  { name: "Steak, Broccoli & Roasted Potatoes", cuisine: "Mono", ingredients: "7 oz sirloin steak, 2 cups broccoli, 2 medium potatoes cubed, 1 tsp olive oil, garlic, salt", approxCalories: 590, type: "dinner" },
+  { name: "Steak & Roasted Asparagus & Potatoes", cuisine: "Mono", ingredients: "7 oz sirloin steak, 10 asparagus spears, 2 potatoes, 1 tsp olive oil, salt, pepper, garlic", approxCalories: 570, type: "dinner" },
+  { name: "Chicken Breast, Broccoli & Brown Rice", cuisine: "Mono", ingredients: "7 oz chicken breast, 2 cups broccoli, 1 cup brown rice, 1 tsp olive oil, salt, garlic powder", approxCalories: 480, type: "dinner" },
+  { name: "Chicken Thighs, Roasted Carrots & Sweet Potato", cuisine: "Mono", ingredients: "7 oz chicken thighs, 1 cup carrots, 1 large sweet potato, 1 tsp olive oil, paprika, salt", approxCalories: 510, type: "dinner" },
+  { name: "Chicken, Roasted Bell Peppers & Sweet Potato", cuisine: "Mono", ingredients: "7 oz chicken breast, 2 bell peppers, 1 medium sweet potato, 1 tsp olive oil, cumin, salt", approxCalories: 470, type: "dinner" },
+  { name: "Chicken Breast, Green Beans & Rice", cuisine: "Mono", ingredients: "7 oz chicken breast, 2 cups green beans, 1 cup white rice, 1 tsp olive oil, garlic, salt", approxCalories: 460, type: "dinner" },
+  { name: "Chicken, Roasted Mushrooms & Wild Rice", cuisine: "Mono", ingredients: "7 oz chicken breast, 2 cups mushrooms, ½ cup wild rice, 1 tsp olive oil, thyme, salt", approxCalories: 430, type: "dinner" },
+  { name: "Chicken, Roasted Zucchini & Tomatoes", cuisine: "Mono", ingredients: "7 oz chicken breast, 2 zucchini, 1 cup cherry tomatoes, 1 tsp olive oil, basil, garlic, salt", approxCalories: 380, type: "dinner" },
+  { name: "Chicken, Roasted Cauliflower & Potatoes", cuisine: "Mono", ingredients: "7 oz chicken breast, 2 cups cauliflower, 2 small potatoes, 1 tsp olive oil, paprika, salt", approxCalories: 470, type: "dinner" },
+  { name: "Chicken & Roasted Beets & Quinoa", cuisine: "Mono", ingredients: "7 oz chicken breast, 2 medium beets cubed, ½ cup quinoa, 1 tsp olive oil, balsamic, salt", approxCalories: 450, type: "dinner" },
+  { name: "Chicken & Edamame & Brown Rice", cuisine: "Mono", ingredients: "6 oz chicken breast, 1 cup edamame shelled, 1 cup brown rice, 1 tsp sesame oil, soy sauce, garlic", approxCalories: 510, type: "dinner" },
+  { name: "Salmon & Roasted Brussels Sprouts", cuisine: "Mono", ingredients: "7 oz salmon fillet, 2 cups Brussels sprouts halved, 1 tsp olive oil, lemon, garlic, salt", approxCalories: 460, type: "dinner" },
+  { name: "Salmon, Asparagus & Quinoa", cuisine: "Mono", ingredients: "7 oz salmon fillet, 10 asparagus spears, ½ cup quinoa, 1 tsp olive oil, lemon, dill, salt", approxCalories: 510, type: "dinner" },
+  { name: "Salmon, Sautéed Spinach & Brown Rice", cuisine: "Mono", ingredients: "7 oz salmon fillet, 3 cups spinach, 1 cup brown rice, 1 tsp olive oil, lemon, garlic, salt", approxCalories: 510, type: "dinner" },
+  { name: "Salmon, Sweet Potato & Green Beans", cuisine: "Mono", ingredients: "6 oz salmon, 1 medium sweet potato, 1 cup green beans, 1 tsp olive oil, lemon, dill, salt", approxCalories: 490, type: "dinner" },
+  { name: "Ground Beef, Roasted Zucchini & Sweet Potato", cuisine: "Mono", ingredients: "7 oz lean ground beef, 2 zucchini, 1 large sweet potato, 1 tsp olive oil, garlic, salt, pepper", approxCalories: 510, type: "dinner" },
+  { name: "Ground Beef & Roasted Mushrooms & Onions", cuisine: "Mono", ingredients: "7 oz lean ground beef, 2 cups mushrooms, 1 onion, 1 tsp olive oil, garlic, Worcestershire, salt", approxCalories: 430, type: "dinner" },
+  { name: "Ground Turkey, Cauliflower & Green Beans", cuisine: "Mono", ingredients: "7 oz ground turkey, 2 cups cauliflower, 1 cup green beans, 1 tsp olive oil, garlic, salt", approxCalories: 370, type: "dinner" },
+  { name: "Ground Turkey, Roasted Beets & Brown Rice", cuisine: "Mono", ingredients: "6 oz ground turkey, 2 beets cubed, 1 cup brown rice, 1 tsp olive oil, balsamic, salt", approxCalories: 460, type: "dinner" },
+  { name: "Ground Turkey & Roasted Kale & Sweet Potato", cuisine: "Mono", ingredients: "7 oz ground turkey, 2 cups kale, 1 large sweet potato, 1 tsp olive oil, garlic, red pepper flakes", approxCalories: 450, type: "dinner" },
+  { name: "Pork Tenderloin, Brussels Sprouts & Apples", cuisine: "Mono", ingredients: "7 oz pork tenderloin, 2 cups Brussels sprouts, 1 apple sliced, 1 tsp olive oil, mustard, salt", approxCalories: 460, type: "dinner" },
+  { name: "Pork Chops, Sautéed Kale & Sweet Potato", cuisine: "Mono", ingredients: "7 oz pork chop, 2 cups kale, 1 large sweet potato, 1 tsp olive oil, garlic, salt, pepper", approxCalories: 490, type: "dinner" },
+  { name: "Pork Tenderloin, Green Beans & Potatoes", cuisine: "Mono", ingredients: "7 oz pork tenderloin, 2 cups green beans, 2 small potatoes, 1 tsp olive oil, rosemary, garlic, salt", approxCalories: 470, type: "dinner" },
+  { name: "Shrimp, Broccoli & Quinoa", cuisine: "Mono", ingredients: "7 oz shrimp, 2 cups broccoli, ½ cup quinoa, 1 tsp olive oil, garlic, lemon, paprika, salt", approxCalories: 360, type: "dinner" },
+  { name: "Shrimp & Snow Peas & Rice", cuisine: "Mono", ingredients: "7 oz shrimp, 2 cups snow peas, 1 cup white rice, 1 tsp sesame oil, garlic, ginger, soy sauce", approxCalories: 420, type: "dinner" },
+  { name: "Tilapia, Broccoli & Brown Rice", cuisine: "Mono", ingredients: "7 oz tilapia, 2 cups broccoli, 1 cup brown rice, 1 tsp olive oil, lemon, garlic, salt", approxCalories: 430, type: "dinner" },
+  { name: "Cod, Roasted Cauliflower & Green Beans", cuisine: "Mono", ingredients: "7 oz cod fillet, 2 cups cauliflower, 1 cup green beans, 1 tsp olive oil, paprika, lemon, salt", approxCalories: 360, type: "dinner" },
+  { name: "Turkey Breast, Roasted Carrots & Peas", cuisine: "Mono", ingredients: "7 oz turkey breast, 1 cup carrots, 1 cup peas, 1 tsp olive oil, thyme, garlic, salt", approxCalories: 400, type: "dinner" },
+  { name: "Lamb Chops & Roasted Asparagus", cuisine: "Mono", ingredients: "2 lamb chops, 10 asparagus spears, 1 tsp olive oil, rosemary, garlic, lemon, salt", approxCalories: 490, type: "dinner" },
+  { name: "Turkey Meatballs, Zucchini & Tomatoes", cuisine: "Mono", ingredients: "7 oz ground turkey (formed into balls), 2 zucchini, 1 cup cherry tomatoes, 1 tsp olive oil, basil, garlic", approxCalories: 380, type: "dinner" },
+  { name: "Tuna Steak & Roasted Asparagus", cuisine: "Mono", ingredients: "7 oz tuna steak, 10 asparagus spears, 1 tsp olive oil, soy sauce, sesame seeds, lemon, salt", approxCalories: 370, type: "dinner" },
+  { name: "Sirloin Steak, Broccoli & Brown Rice", cuisine: "Mono", ingredients: "7 oz sirloin steak, 2 cups broccoli, 1 cup brown rice, 1 tsp olive oil, garlic, salt, pepper", approxCalories: 560, type: "dinner" },
+  { name: "Ground Pork, Bok Choy & Rice", cuisine: "Mono", ingredients: "6 oz ground pork, 3 heads baby bok choy, 1 cup rice, 2 tbsp soy sauce, garlic, ginger, sesame oil", approxCalories: 480, type: "dinner" },
+  { name: "Beef, Roasted Sweet Potato & Green Beans", cuisine: "Mono", ingredients: "7 oz lean beef strips, 1 large sweet potato, 1 cup green beans, 1 tsp olive oil, garlic, salt", approxCalories: 510, type: "dinner" },
 ];
 
 export const snackMeals: MealIdea[] = [
@@ -128,6 +206,12 @@ export const snackMeals: MealIdea[] = [
   { name: "Oat Energy Balls", cuisine: "Classic", ingredients: "½ cup rolled oats, 2 tbsp peanut butter, 1 tbsp honey, 1 tbsp chocolate chips", approxCalories: 230, type: "snack" },
   { name: "Avocado Toast Bites", cuisine: "Classic", ingredients: "½ avocado, 4 rice cakes, salt, pepper, red pepper flakes", approxCalories: 210, type: "snack" },
   { name: "Smoothie with Spinach & Protein", cuisine: "Classic", ingredients: "1 scoop protein powder, 1 cup spinach, 1 banana, ½ cup almond milk, ice", approxCalories: 260, type: "snack" },
+  // Mono Snacks
+  { name: "Hard-Boiled Eggs & Baby Carrots", cuisine: "Mono", ingredients: "2 hard-boiled eggs, 1 cup baby carrots, salt, pepper", approxCalories: 175, type: "snack" },
+  { name: "Tuna & Celery Sticks", cuisine: "Mono", ingredients: "1 can tuna, 4 stalks celery, lemon juice, salt, pepper", approxCalories: 160, type: "snack" },
+  { name: "Cottage Cheese & Sliced Cucumber", cuisine: "Mono", ingredients: "½ cup cottage cheese, 1 large cucumber sliced, salt, dill", approxCalories: 130, type: "snack" },
+  { name: "Beef Jerky & Apple Slices", cuisine: "Mono", ingredients: "1 oz beef jerky, 1 medium apple sliced", approxCalories: 170, type: "snack" },
+  { name: "Chicken Strips & Raw Veggies", cuisine: "Mono", ingredients: "3 oz grilled chicken strips, 1 cup mixed raw veggies (cucumber, carrots, celery)", approxCalories: 160, type: "snack" },
 ];
 
 const CUISINE_THEMES = [
@@ -141,6 +225,9 @@ const CUISINE_THEMES = [
   { label: "Clean & Simple", cuisines: ["Classic", "Mediterranean", "Classic"] },
   { label: "Tropical & Fresh", cuisines: ["Hawaiian", "Brazilian", "Classic", "Asian"] },
   { label: "Bulk Season", cuisines: ["Classic", "American", "Italian", "BBQ"] },
+  { label: "Gym Mono Meals", cuisines: ["Mono", "Mono", "Mono", "Mono"] },
+  { label: "Clean Mono & Protein", cuisines: ["Mono", "Mono", "Classic"] },
+  { label: "Lean Cuts & Veggies", cuisines: ["Mono", "Mono", "Mediterranean"] },
 ];
 
 export function getRandomTheme(): typeof CUISINE_THEMES[0] {
