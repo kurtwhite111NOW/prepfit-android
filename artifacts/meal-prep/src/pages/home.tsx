@@ -98,11 +98,14 @@ export default function Home() {
             {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
           </p>
 
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-4xl">{greetingEmoji}</span>
-            <h1 className="font-sans text-3xl md:text-4xl font-extrabold text-sidebar-foreground leading-tight">
-              {greeting}!
-            </h1>
+          <div className="flex items-center justify-between gap-3 mb-4">
+            <div className="flex items-center gap-3">
+              <span className="text-4xl">{greetingEmoji}</span>
+              <h1 className="font-sans text-3xl md:text-4xl font-extrabold text-sidebar-foreground leading-tight">
+                {greeting}!
+              </h1>
+            </div>
+            <span className="text-xs font-bold text-primary shrink-0">version 2.0.0</span>
           </div>
 
           {isLoading ? (
