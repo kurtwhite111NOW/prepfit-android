@@ -11,6 +11,7 @@ import Scan from "@/pages/scan";
 import Weight from "@/pages/weight";
 import Water from "@/pages/water";
 import Plans from "@/pages/plans";
+import PlanDetail from "@/pages/plan-detail";
 import AndroidPage from "@/pages/android";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
@@ -57,6 +58,7 @@ function Router() {
         <Route path="/weight" component={Weight} />
         <Route path="/water" component={Water} />
         <Route path="/plans" component={Plans} />
+        <Route path="/plans/:id" component={PlanDetail} />
         <Route path="/android" component={AndroidPage} />
         <Route component={NotFound} />
       </Switch>

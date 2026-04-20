@@ -8,7 +8,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Flame, CalendarDays, ChefHat, Plus, Clock, Trash2 } from "lucide-react";
+import { Flame, CalendarDays, ChefHat, Plus, Clock, Trash2, Eye } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -178,10 +178,17 @@ export default function Plans() {
                             </span>
                           </div>
                         </div>
-                        <span className="calorie-pill px-3 py-1.5 rounded-xl text-sm flex items-center gap-1.5 whitespace-nowrap shrink-0">
-                          <Flame size={13} />
-                          {plan.dailyCalories.toLocaleString()} cal
-                        </span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="calorie-pill px-3 py-1.5 rounded-xl text-sm flex items-center gap-1.5 whitespace-nowrap">
+                            <Flame size={13} />
+                            {plan.dailyCalories.toLocaleString()} cal
+                          </span>
+                          <Link href={`/plans/${plan.id}`} onClick={(e) => e.stopPropagation()}>
+                            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold border border-primary/20 transition-colors whitespace-nowrap">
+                              <Eye size={12} /> View
+                            </button>
+                          </Link>
+                        </div>
                       </div>
 
                       <div className="mt-3 grid grid-cols-3 gap-3">
