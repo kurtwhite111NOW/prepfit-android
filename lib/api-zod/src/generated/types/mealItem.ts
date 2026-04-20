@@ -14,4 +14,7 @@ export interface MealItem {
   calories: number;
   mealNumber: number;
   ingredients: string;
+  protein?: number | null;
+  carbs?: number | null;
+  fat?: number | null;
 }

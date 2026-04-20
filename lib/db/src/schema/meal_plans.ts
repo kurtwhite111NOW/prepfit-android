@@ -22,6 +22,9 @@ export const mealItemsTable = pgTable("meal_items", {
   calories: integer("calories").notNull(),
   mealNumber: integer("meal_number").notNull(),
   ingredients: text("ingredients").notNull(),
+  protein: integer("protein"),
+  carbs: integer("carbs"),
+  fat: integer("fat"),
 });
 
 export const insertMealItemSchema = createInsertSchema(mealItemsTable).omit({ id: true });

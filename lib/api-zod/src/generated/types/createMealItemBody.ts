@@ -12,4 +12,7 @@ export interface CreateMealItemBody {
   calories: number;
   mealNumber: number;
   ingredients: string;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
 }
