@@ -92,6 +92,7 @@ export default function Weight() {
   const [weightInput, setWeightInput] = useState("");
   const [unit, setUnit] = useState<Unit>("lbs");
   const [notes, setNotes] = useState("");
+  const [goalInput, setGoalInput] = useState<string>(() => localStorage.getItem("prepfit_goal_weight") ?? "");
 
   const { data: entries, isLoading } = useListWeightEntries({
     query: { queryKey: getListWeightEntriesQueryKey() },
@@ -168,12 +169,13 @@ export default function Weight() {
       ? undefined
       : undefined;
 
-  const minWeight = chartData
-    ? Math.floor(Math.min(...chartData.map((d) => d.weight)) - 2)
-    : undefined;
-  const maxWeight = chartData
-    ? Math.ceil(Math.max(...chartData.map((d) => d.weight)) + 2)
-    : undefined;
+  const goalWeightNum = parseFloat(goalInput);
+  const goalWeightInUnit = !isNaN(goalWeightNum) && goalWeightNum > 0 ? goalWeightNum : null;
+
+  const allWeights = chartData ? chartData.map((d) => d.weight) : [];
+  if (goalWeightInUnit) allWeights.push(goalWeightInUnit);
+  const minWeight = allWeights.length ? Math.floor(Math.min(...allWeights) - 2) : undefined;
+  const maxWeight = allWeights.length ? Math.ceil(Math.max(...allWeights) + 2) : undefined;
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -268,13 +270,29 @@ export default function Weight() {
 
       {/* Chart */}
       <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
-        <div className="px-5 pt-5 pb-3 flex items-center justify-between">
+        <div className="px-5 pt-5 pb-3 flex items-start justify-between gap-3 flex-wrap">
           <div>
             <h2 className="font-semibold text-foreground">Weight Over Time</h2>
             <p className="text-muted-foreground text-xs mt-0.5">
               {entries?.length ?? 0} entries recorded
             </p>
           </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-1.5 bg-muted/60 rounded-xl px-3 py-1.5 border border-border">
+              <span className="text-xs text-muted-foreground font-medium whitespace-nowrap">🎯 Goal</span>
+              <input
+                type="number"
+                step="0.1"
+                min="1"
+                placeholder={unit}
+                value={goalInput}
+                onChange={(e) => {
+                  setGoalInput(e.target.value);
+                  localStorage.setItem("prepfit_goal_weight", e.target.value);
+                }}
+                className="w-16 bg-transparent text-xs font-bold text-primary outline-none placeholder:text-muted-foreground/50"
+              />
+            </div>
           {/* Unit toggle */}
           <div className="flex items-center gap-1 bg-muted rounded-xl p-1">
             {(["lbs", "kg"] as Unit[]).map((u) => (
@@ -290,6 +308,7 @@ export default function Weight() {
                 {u}
               </button>
             ))}
+          </div>
           </div>
         </div>
 
@@ -382,6 +401,15 @@ export default function Weight() {
                   strokeWidth: 2.5,
                 }}
               />
+              {goalWeightInUnit && (
+                <ReferenceLine
+                  y={goalWeightInUnit}
+                  stroke="#f97316"
+                  strokeDasharray="6 3"
+                  strokeWidth={1.5}
+                  label={{ value: `Goal ${goalWeightInUnit}${unit}`, position: "insideTopRight", fontSize: 10, fill: "#f97316", fontWeight: 700 }}
+                />
+              )}
             </LineChart>
           </ResponsiveContainer>
         )}

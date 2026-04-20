@@ -25,6 +25,20 @@ const GYM_TIPS = [
 ];
 const dailyTip = GYM_TIPS[new Date().getDay() % GYM_TIPS.length];
 
+function getWaterStreak(): number {
+  let streak = 0;
+  const base = new Date();
+  for (let i = 1; i <= 365; i++) {
+    const d = new Date(base);
+    d.setDate(d.getDate() - i);
+    const key = `water_${d.toISOString().split("T")[0]}`;
+    const val = parseInt(localStorage.getItem(key) ?? "0", 10);
+    if (val > 0) streak++;
+    else break;
+  }
+  return streak;
+}
+
 export default function Home() {
   const { data: mealPlans, isLoading } = useListMealPlans({
     query: { queryKey: getListMealPlansQueryKey() },
@@ -37,6 +51,7 @@ export default function Home() {
 
   const today = new Date().toISOString().split("T")[0];
   const waterGlasses = parseInt(localStorage.getItem(`water_${today}`) ?? "0", 10);
+  const streak = getWaterStreak();
 
   const quickActions = [
     {
@@ -153,6 +168,13 @@ export default function Home() {
                   <Zap size={14} /> Build your first plan
                 </button>
               </Link>
+            </div>
+          )}
+
+          {streak > 0 && (
+            <div className="mt-3 inline-flex items-center gap-1.5 bg-amber-500/15 border border-amber-500/25 rounded-full px-3 py-1">
+              <span className="text-sm">🔥</span>
+              <span className="text-amber-400 text-xs font-bold">{streak} day hydration streak</span>
             </div>
           )}
 

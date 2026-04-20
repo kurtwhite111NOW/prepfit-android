@@ -7,15 +7,37 @@ const GOAL = 8;
 export default function Water() {
   const today = new Date().toISOString().split("T")[0];
   const storageKey = `water_${today}`;
+  const lastLoggedKey = `water_lastlogged_${today}`;
 
   const [glasses, setGlasses] = useState<number>(() => {
     const saved = localStorage.getItem(storageKey);
     return saved ? parseInt(saved, 10) : 0;
   });
 
+  const [lastLogged, setLastLogged] = useState<string | null>(
+    () => localStorage.getItem(lastLoggedKey)
+  );
+
   useEffect(() => {
     localStorage.setItem(storageKey, String(glasses));
   }, [glasses, storageKey]);
+
+  const addGlass = () => {
+    const time = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    setGlasses((g) => g + 1);
+    setLastLogged(time);
+    localStorage.setItem(lastLoggedKey, time);
+  };
+
+  const removeGlass = () => {
+    setGlasses((g) => Math.max(0, g - 1));
+  };
+
+  const resetGlasses = () => {
+    setGlasses(0);
+    setLastLogged(null);
+    localStorage.removeItem(lastLoggedKey);
+  };
 
   const pct = Math.min(100, Math.round((glasses / GOAL) * 100));
   const circumference = 2 * Math.PI * 44;
@@ -61,7 +83,7 @@ export default function Water() {
           <Button
             variant="outline" size="icon"
             className="w-14 h-14 rounded-2xl text-lg border-2"
-            onClick={() => setGlasses((g) => Math.max(0, g - 1))}
+            onClick={removeGlass}
             disabled={glasses === 0}
           >
             <Minus size={20} />
@@ -72,16 +94,20 @@ export default function Water() {
           <Button
             size="icon"
             className="w-14 h-14 rounded-2xl gradient-emerald border-0 shadow-md"
-            onClick={() => setGlasses((g) => g + 1)}
+            onClick={addGlass}
           >
             <Plus size={20} />
           </Button>
         </div>
 
+        {lastLogged && (
+          <p className="mt-3 text-xs text-muted-foreground">Last logged: <span className="font-semibold text-foreground">{lastLogged}</span></p>
+        )}
+
         {glasses > 0 && (
           <button
-            className="mt-6 text-xs text-muted-foreground hover:text-foreground underline transition-colors"
-            onClick={() => setGlasses(0)}
+            className="mt-2 text-xs text-muted-foreground hover:text-foreground underline transition-colors"
+            onClick={resetGlasses}
           >
             Reset today's count
           </button>
