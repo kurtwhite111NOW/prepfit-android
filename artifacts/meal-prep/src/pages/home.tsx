@@ -94,18 +94,18 @@ export default function Home() {
         </div>
 
         <div className="relative px-6 pt-7 pb-6">
-          <p className="text-primary text-xs font-bold uppercase tracking-widest mb-3">
-            {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
-          </p>
-
-          <div className="flex items-center justify-between gap-3 mb-4">
-            <div className="flex items-center gap-3">
-              <span className="text-4xl">{greetingEmoji}</span>
-              <h1 className="font-sans text-3xl md:text-4xl font-extrabold text-sidebar-foreground leading-tight">
-                {greeting}!
-              </h1>
-            </div>
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-primary text-xs font-bold uppercase tracking-widest">
+              {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+            </p>
             <span className="text-xs font-bold text-primary shrink-0">version 2.0.0</span>
+          </div>
+
+          <div className="flex items-center gap-3 mb-4">
+            <span className="text-4xl">{greetingEmoji}</span>
+            <h1 className="font-sans text-3xl md:text-4xl font-extrabold text-sidebar-foreground leading-tight">
+              {greeting}!
+            </h1>
           </div>
 
           {isLoading ? (
