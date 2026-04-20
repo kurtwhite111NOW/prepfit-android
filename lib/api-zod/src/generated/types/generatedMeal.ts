@@ -12,4 +12,7 @@ export interface GeneratedMeal {
   description: string;
   calories: number;
   ingredients: string;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
 }

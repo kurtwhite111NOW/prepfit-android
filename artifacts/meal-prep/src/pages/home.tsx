@@ -11,10 +11,19 @@ import {
   ChefHat,
   TrendingUp,
   Plus,
-  Scale,
   Zap,
   ArrowRight,
 } from "lucide-react";
+
+const GYM_TIPS = [
+  "Cook proteins in bulk on Sundays — chicken, ground beef, or hard-boiled eggs keep for 4–5 days and make weekday meals instant.",
+  "Aim for 0.7–1g of protein per pound of bodyweight daily. High protein = better muscle retention on a cut.",
+  "Prep your containers first — portion meals into separate containers right after cooking so grab-and-go is effortless.",
+  "Frozen veggies are just as nutritious as fresh and cut prep time in half. Stock your freezer.",
+  "Rotisserie chicken is one of the best meal prep hacks — cheap, ready-made, and packed with protein.",
+  "Stay hydrated — aim for 8+ glasses of water daily. Dehydration tanks gym performance more than most people realize.",
+];
+const dailyTip = GYM_TIPS[new Date().getDay() % GYM_TIPS.length];
 
 export default function Home() {
   const { data: mealPlans, isLoading } = useListMealPlans({
@@ -23,16 +32,18 @@ export default function Home() {
 
   const latestPlan = mealPlans?.[0];
   const hour = new Date().getHours();
-  const greeting =
-    hour < 12 ? "Let's crush today" : hour < 17 ? "Keep it going" : "Finish strong";
+  const greeting = hour < 12 ? "Let's crush today" : hour < 17 ? "Keep it going" : "Finish strong";
   const greetingEmoji = hour < 12 ? "💪" : hour < 17 ? "🔥" : "⚡";
+
+  const today = new Date().toISOString().split("T")[0];
+  const waterGlasses = parseInt(localStorage.getItem(`water_${today}`) ?? "0", 10);
 
   const quickActions = [
     {
       href: "/planner",
       emoji: "🥗",
       label: "Build a Meal Plan",
-      desc: "AI picks simple meals for your calorie goal",
+      desc: "AI picks high-protein meals for your calorie goal",
       color: "bg-orange-500",
     },
     {
@@ -50,6 +61,13 @@ export default function Home() {
       color: "bg-blue-500",
     },
     {
+      href: "/water",
+      emoji: "💧",
+      label: "Water Tracker",
+      desc: `${waterGlasses}/8 glasses today`,
+      color: "bg-cyan-500",
+    },
+    {
       href: "/weight",
       emoji: "📊",
       label: "Track Weight",
@@ -57,10 +75,10 @@ export default function Home() {
       color: "bg-purple-500",
     },
     {
-      href: "/meals",
-      emoji: "📓",
-      label: "Meal Journal",
-      desc: "All your scanned meals",
+      href: "/plans",
+      emoji: "📋",
+      label: "Saved Plans",
+      desc: "All your meal plan history",
       color: "bg-rose-500",
     },
   ];
@@ -68,7 +86,7 @@ export default function Home() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
 
-      {/* ── Hero Banner ────────────────────────── */}
+      {/* Hero Banner */}
       <section className="relative overflow-hidden rounded-3xl bg-sidebar">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-primary/20 blur-3xl" />
@@ -76,12 +94,10 @@ export default function Home() {
         </div>
 
         <div className="relative px-6 pt-7 pb-6">
-          {/* Date */}
           <p className="text-primary text-xs font-bold uppercase tracking-widest mb-3">
             {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
           </p>
 
-          {/* Greeting */}
           <div className="flex items-center gap-3 mb-4">
             <span className="text-4xl">{greetingEmoji}</span>
             <h1 className="font-sans text-3xl md:text-4xl font-extrabold text-sidebar-foreground leading-tight">
@@ -89,7 +105,6 @@ export default function Home() {
             </h1>
           </div>
 
-          {/* Plan stats or CTA */}
           {isLoading ? (
             <div className="flex gap-3">
               <Skeleton className="h-16 w-36 rounded-2xl bg-white/10" />
@@ -118,14 +133,12 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex items-center gap-3 bg-white/8 border border-white/10 rounded-2xl px-4 py-3">
-                <div className="w-9 h-9 rounded-xl bg-blue-500/25 flex items-center justify-center shrink-0">
-                  <TrendingUp size={16} className="text-blue-400" />
+                <div className="w-9 h-9 rounded-xl bg-cyan-500/25 flex items-center justify-center shrink-0">
+                  <span className="text-lg">💧</span>
                 </div>
                 <div>
-                  <p className="text-2xl font-extrabold text-white leading-none">
-                    {Math.round(latestPlan.dailyCalories / latestPlan.mealsPerDay)}
-                  </p>
-                  <p className="text-[11px] text-sidebar-foreground/50 font-semibold uppercase tracking-wide mt-0.5">cal / meal</p>
+                  <p className="text-2xl font-extrabold text-white leading-none">{waterGlasses}/8</p>
+                  <p className="text-[11px] text-sidebar-foreground/50 font-semibold uppercase tracking-wide mt-0.5">glasses</p>
                 </div>
               </div>
             </div>
@@ -140,7 +153,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* Active plan label */}
           {latestPlan && (
             <div className="mt-4 flex items-center justify-between">
               <p className="text-sidebar-foreground/40 text-xs">
@@ -156,7 +168,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Quick Actions ────────────────────── */}
+      {/* Quick Actions */}
       <section>
         <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 px-0.5">
           What do you want to do?
@@ -177,17 +189,17 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Bottom 2 — compact horizontal */}
-        <div className="grid grid-cols-2 gap-3">
+        {/* Bottom 3 — compact horizontal */}
+        <div className="grid grid-cols-3 gap-3">
           {quickActions.slice(3).map((action) => (
             <Link key={action.href} href={action.href}>
-              <div className="group cursor-pointer rounded-2xl border border-border bg-card px-4 py-3.5 hover:border-primary/30 hover:shadow-md card-glow transition-all duration-200 flex items-center gap-3">
+              <div className="group cursor-pointer rounded-2xl border border-border bg-card px-3 py-3.5 hover:border-primary/30 hover:shadow-md card-glow transition-all duration-200 flex flex-col items-center text-center gap-2">
                 <div className={`w-10 h-10 ${action.color} rounded-xl flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform shadow-sm`}>
                   {action.emoji}
                 </div>
                 <div>
-                  <h3 className="font-bold text-foreground text-sm">{action.label}</h3>
-                  <p className="text-muted-foreground text-xs">{action.desc}</p>
+                  <h3 className="font-bold text-foreground text-xs leading-tight">{action.label}</h3>
+                  <p className="text-muted-foreground text-[10px] mt-0.5 leading-tight">{action.desc}</p>
                 </div>
               </div>
             </Link>
@@ -195,15 +207,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Active Plan Preview ───────────────── */}
+      {/* Active Plan Preview */}
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-            Your Current Plan
-          </h2>
-          <Link href="/planner">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Your Current Plan</h2>
+          <Link href="/plans">
             <button className="text-xs font-bold text-primary flex items-center gap-1 hover:gap-2 transition-all">
-              View planner <ArrowRight size={12} />
+              All plans <ArrowRight size={12} />
             </button>
           </Link>
         </div>
@@ -231,7 +241,6 @@ export default function Home() {
                 </span>
               </div>
 
-              {/* Stat row */}
               <div className="grid grid-cols-3 gap-2">
                 <div className="rounded-xl bg-muted/60 border border-border p-3 text-center">
                   <p className="text-xl font-extrabold text-foreground">{latestPlan.mealsPerDay}</p>
@@ -254,12 +263,10 @@ export default function Home() {
           </div>
         ) : (
           <div className="rounded-2xl border-2 border-dashed border-border bg-transparent p-10 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center text-3xl mx-auto mb-4">
-              🍽️
-            </div>
+            <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center text-3xl mx-auto mb-4">🍽️</div>
             <h3 className="font-bold text-foreground text-lg mb-1.5">No plan yet</h3>
             <p className="text-muted-foreground text-sm max-w-xs mx-auto mb-5">
-              Build your first meal plan in seconds — just set your daily calorie goal and we'll handle the rest.
+              Build your first meal plan in seconds — set your calorie goal and we'll handle the rest.
             </p>
             <Link href="/planner">
               <Button className="gap-2 font-bold shadow-sm">
@@ -270,14 +277,12 @@ export default function Home() {
         )}
       </section>
 
-      {/* ── Tips Strip ───────────────────────── */}
+      {/* Tips Strip */}
       <section className="rounded-2xl bg-primary/8 border border-primary/15 p-4 flex gap-4 items-start">
         <span className="text-2xl shrink-0 mt-0.5">💡</span>
         <div>
-          <p className="font-bold text-foreground text-sm mb-0.5">Meal prep tip</p>
-          <p className="text-muted-foreground text-xs leading-relaxed">
-            Cook proteins in bulk on Sundays — chicken, ground beef, or hard-boiled eggs keep well in the fridge for 4–5 days and make weekday meals instant.
-          </p>
+          <p className="font-bold text-foreground text-sm mb-0.5">Gym & meal prep tip</p>
+          <p className="text-muted-foreground text-xs leading-relaxed">{dailyTip}</p>
         </div>
       </section>
 

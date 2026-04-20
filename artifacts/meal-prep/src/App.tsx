@@ -9,6 +9,8 @@ import Shopping from "@/pages/shopping";
 import Meals from "@/pages/meals";
 import Scan from "@/pages/scan";
 import Weight from "@/pages/weight";
+import Water from "@/pages/water";
+import Plans from "@/pages/plans";
 import AndroidPage from "@/pages/android";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
@@ -20,23 +22,23 @@ function CheckoutResultHandler() {
   const { toast } = useToast();
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const checkout = params.get('checkout');
-    if (checkout === 'success') {
+    const checkout = params.get("checkout");
+    if (checkout === "success") {
       toast({
-        title: "Welcome to Simple Meal Prep Planner Pro!",
+        title: "Welcome to Simple Meal Prep Pro!",
         description: "Your subscription is active. Enjoy unlimited AI meal planning!",
       });
       const url = new URL(window.location.href);
-      url.searchParams.delete('checkout');
-      window.history.replaceState({}, '', url.toString());
-    } else if (checkout === 'cancelled') {
+      url.searchParams.delete("checkout");
+      window.history.replaceState({}, "", url.toString());
+    } else if (checkout === "cancelled") {
       toast({
         title: "Checkout cancelled",
         description: "No worries — your trial is still active. Upgrade anytime.",
       });
       const url = new URL(window.location.href);
-      url.searchParams.delete('checkout');
-      window.history.replaceState({}, '', url.toString());
+      url.searchParams.delete("checkout");
+      window.history.replaceState({}, "", url.toString());
     }
   }, []);
   return null;
@@ -53,6 +55,8 @@ function Router() {
         <Route path="/meals" component={Meals} />
         <Route path="/scan" component={Scan} />
         <Route path="/weight" component={Weight} />
+        <Route path="/water" component={Water} />
+        <Route path="/plans" component={Plans} />
         <Route path="/android" component={AndroidPage} />
         <Route component={NotFound} />
       </Switch>

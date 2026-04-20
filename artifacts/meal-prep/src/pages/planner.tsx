@@ -20,8 +20,11 @@ import {
   Flame,
   CalendarDays,
   Clock,
-  Leaf,
+  Zap,
   ExternalLink,
+  Share2,
+  CheckSquare,
+  Dumbbell,
 } from "lucide-react";
 
 const MEAL_LABELS: Record<number, string> = {
@@ -32,6 +35,43 @@ const MEAL_LABELS: Record<number, string> = {
   5: "Evening Snack",
 };
 
+const GYM_TIPS = [
+  "Cook proteins in bulk on Sundays — chicken, ground beef, or hard-boiled eggs keep for 4–5 days and make weekday meals instant.",
+  "Aim for 0.7–1g of protein per pound of bodyweight daily. That's about 140–200g for a 200 lb athlete.",
+  "Prep your containers first — portion your meals into separate containers right after cooking so grab-and-go is effortless.",
+  "Frozen veggies are just as nutritious as fresh and cut prep time in half. Stock your freezer.",
+  "Rotisserie chicken is one of the best meal prep hacks — cheap, ready-made, and high protein.",
+];
+const tip = GYM_TIPS[Math.floor(Math.random() * GYM_TIPS.length)];
+
+function buildShareText(planName: string, meals: any[], dailyCalories: number): string {
+  const lines: string[] = [`💪 ${planName}`, `📊 ${dailyCalories.toLocaleString()} cal/day`, ""];
+  meals.forEach((m) => {
+    lines.push(`${MEAL_LABELS[m.mealNumber] ?? `Meal ${m.mealNumber}`}: ${m.name} (${m.calories} cal)`);
+    if (m.protein) lines.push(`  🥩 ${m.protein}g protein · 🍚 ${m.carbs}g carbs · 🥑 ${m.fat}g fat`);
+    lines.push(`  Ingredients: ${m.ingredients}`);
+    lines.push("");
+  });
+  lines.push("Generated with Simple Meal Prep — Gym & Fitness 🏋️");
+  return lines.join("\n");
+}
+
+function buildPrepChecklist(meals: any[]): string[] {
+  const steps: string[] = ["Gather all ingredients and containers before you start"];
+  const proteins: string[] = [];
+  meals.forEach((m) => {
+    const first = m.ingredients?.split(",")[0]?.trim();
+    if (first && !proteins.includes(first)) {
+      proteins.push(first);
+      steps.push(`Cook/prepare: ${first} (for ${m.name})`);
+    }
+  });
+  steps.push("Portion each meal into separate airtight containers");
+  steps.push("Label containers with meal name and calories");
+  steps.push("Refrigerate — stays fresh for 4–5 days");
+  return steps;
+}
+
 export default function Planner() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -40,6 +80,7 @@ export default function Planner() {
   const [mealsPerDay, setMealsPerDay] = useState<number>(3);
   const [dailyCalories, setDailyCalories] = useState<number>(2000);
   const [planName, setPlanName] = useState<string>("My Clean Plan");
+  const [checklistDone, setChecklistDone] = useState<Record<number, boolean>>({});
 
   const generateMealPlan = useGenerateMealPlan();
   const createMealPlan = useCreateMealPlan();
@@ -47,6 +88,7 @@ export default function Planner() {
   const calPerMeal = Math.round(dailyCalories / mealsPerDay);
 
   const handleGenerate = () => {
+    setChecklistDone({});
     generateMealPlan.mutate({ data: { mealsPerDay, dailyCalories } });
   };
 
@@ -80,19 +122,37 @@ export default function Planner() {
     );
   };
 
+  const handleShare = async () => {
+    if (!generateMealPlan.data) return;
+    const text = buildShareText(
+      generateMealPlan.data.name,
+      generateMealPlan.data.meals,
+      dailyCalories
+    );
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: generateMealPlan.data.name, text });
+        return;
+      } catch {}
+    }
+    await navigator.clipboard.writeText(text);
+    toast({ title: "Copied to clipboard!", description: "Share your plan anywhere." });
+  };
+
+  const plan = generateMealPlan.data;
+  const totalProtein = plan?.meals.reduce((s, m) => s + (m.protein ?? 0), 0) ?? 0;
+  const totalCarbs = plan?.meals.reduce((s, m) => s + (m.carbs ?? 0), 0) ?? 0;
+  const totalFat = plan?.meals.reduce((s, m) => s + (m.fat ?? 0), 0) ?? 0;
+  const hasMacros = totalProtein > 0;
+
+  const prepSteps = plan ? buildPrepChecklist(plan.meals) : [];
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      {/* Header */}
       <section>
-        <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">
-          AI Meal Planner
-        </p>
-        <h1 className="font-serif text-4xl font-bold text-foreground leading-tight mb-2">
-          Build Your Plan
-        </h1>
-        <p className="text-muted-foreground">
-          Set your daily targets and let AI design a clean, balanced menu.
-        </p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">AI Meal Planner</p>
+        <h1 className="font-serif text-4xl font-bold text-foreground leading-tight mb-2">Build Your Plan</h1>
+        <p className="text-muted-foreground">Set your daily targets and let AI design a high-protein, gym-ready menu.</p>
       </section>
 
       <div className="grid md:grid-cols-[300px_1fr] gap-8 items-start">
@@ -111,19 +171,16 @@ export default function Planner() {
                 </div>
               </div>
 
-              {/* Custom meal selector */}
               <div className="grid grid-cols-4 gap-2">
                 {[2, 3, 4, 5].map((n) => (
                   <button
                     key={n}
                     onClick={() => setMealsPerDay(n)}
-                    className={`
-                      rounded-xl py-2.5 text-sm font-bold transition-all duration-150 border
-                      ${mealsPerDay === n
+                    className={`rounded-xl py-2.5 text-sm font-bold transition-all duration-150 border ${
+                      mealsPerDay === n
                         ? "gradient-emerald text-white border-transparent shadow-sm"
                         : "bg-muted text-muted-foreground border-border hover:border-primary/30 hover:text-foreground"
-                      }
-                    `}
+                    }`}
                   >
                     {n}
                   </button>
@@ -164,7 +221,6 @@ export default function Planner() {
                 <span>6,000 cal</span>
               </div>
 
-              {/* Per meal estimate */}
               <div className="bg-muted/50 border border-border rounded-xl p-3 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-muted-foreground text-xs">
                   <Clock size={13} />
@@ -196,11 +252,9 @@ export default function Planner() {
           {/* Tip */}
           <div className="rounded-2xl border border-primary/15 bg-primary/5 p-4 flex gap-3">
             <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center shrink-0 mt-0.5">
-              <Leaf size={13} className="text-primary" />
+              <Dumbbell size={13} className="text-primary" />
             </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              All plans prioritize <strong className="text-foreground">whole, minimally processed</strong> ingredients for clean eating and sustained energy.
-            </p>
+            <p className="text-xs text-muted-foreground leading-relaxed">{tip}</p>
           </div>
         </div>
 
@@ -216,46 +270,63 @@ export default function Planner() {
                   <Sparkles size={10} className="text-white" />
                 </div>
               </div>
-              <h3 className="font-serif text-xl font-semibold text-foreground mb-2">
-                Building your menu
-              </h3>
+              <h3 className="font-serif text-xl font-semibold text-foreground mb-2">Building your menu</h3>
               <p className="text-muted-foreground text-sm max-w-xs">
-                Designing {mealsPerDay} balanced meals totaling {dailyCalories.toLocaleString()} calories with clean ingredients.
+                Designing {mealsPerDay} high-protein meals totaling {dailyCalories.toLocaleString()} calories.
               </p>
               <div className="flex gap-1.5 mt-6">
                 {[0, 1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className="w-2 h-2 rounded-full bg-primary dot-blink"
-                    style={{ animationDelay: `${i * 400}ms` }}
-                  />
+                  <div key={i} className="w-2 h-2 rounded-full bg-primary dot-blink" style={{ animationDelay: `${i * 400}ms` }} />
                 ))}
               </div>
             </div>
-          ) : generateMealPlan.data ? (
+          ) : plan ? (
             <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-500">
               {/* Plan header */}
               <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm">
                 <div className="h-1 gradient-emerald" />
                 <div className="p-5 flex items-center justify-between gap-4">
                   <div>
-                    <h3 className="font-serif text-xl font-bold text-foreground">
-                      {generateMealPlan.data.name}
-                    </h3>
-                    <p className="text-muted-foreground text-xs mt-1">
-                      Balanced menu · Clean eating focused
-                    </p>
+                    <h3 className="font-serif text-xl font-bold text-foreground">{plan.name}</h3>
+                    <p className="text-muted-foreground text-xs mt-1">High-protein · Gym-focused · Simple</p>
                   </div>
-                  <span className="calorie-pill px-3.5 py-2 rounded-xl text-sm flex items-center gap-1.5 whitespace-nowrap">
-                    <Flame size={14} />
-                    {generateMealPlan.data.meals.reduce((s, m) => s + m.calories, 0).toLocaleString()} cal total
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleShare}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                    >
+                      <Share2 size={13} />
+                      Share
+                    </button>
+                    <span className="calorie-pill px-3.5 py-2 rounded-xl text-sm flex items-center gap-1.5 whitespace-nowrap">
+                      <Flame size={14} />
+                      {plan.meals.reduce((s, m) => s + m.calories, 0).toLocaleString()} cal
+                    </span>
+                  </div>
                 </div>
+
+                {/* Daily macro summary */}
+                {hasMacros && (
+                  <div className="px-5 pb-5 grid grid-cols-3 gap-3">
+                    <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-3 text-center">
+                      <p className="text-base font-extrabold text-blue-400">{totalProtein}g</p>
+                      <p className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold mt-0.5">Protein</p>
+                    </div>
+                    <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-3 text-center">
+                      <p className="text-base font-extrabold text-amber-400">{totalCarbs}g</p>
+                      <p className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold mt-0.5">Carbs</p>
+                    </div>
+                    <div className="rounded-xl bg-green-500/10 border border-green-500/20 p-3 text-center">
+                      <p className="text-base font-extrabold text-green-400">{totalFat}g</p>
+                      <p className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold mt-0.5">Fat</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Meal cards */}
               <div className="space-y-3">
-                {generateMealPlan.data.meals.map((meal) => (
+                {plan.meals.map((meal) => (
                   <div
                     key={meal.mealNumber}
                     className="rounded-2xl border border-border bg-card p-5 transition-all hover:border-primary/25 hover:shadow-sm card-glow"
@@ -277,13 +348,32 @@ export default function Planner() {
                             {meal.calories}
                           </span>
                         </div>
-                        <p className="text-muted-foreground text-sm leading-relaxed mt-1.5">
-                          {meal.description}
-                        </p>
+
+                        <p className="text-muted-foreground text-sm leading-relaxed mt-1.5">{meal.description}</p>
+
+                        {/* Per-meal macros */}
+                        {(meal.protein || meal.carbs || meal.fat) && (
+                          <div className="mt-2.5 flex gap-2 flex-wrap">
+                            {meal.protein != null && (
+                              <span className="text-[11px] font-semibold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 rounded-lg">
+                                🥩 {meal.protein}g protein
+                              </span>
+                            )}
+                            {meal.carbs != null && (
+                              <span className="text-[11px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-lg">
+                                🍚 {meal.carbs}g carbs
+                              </span>
+                            )}
+                            {meal.fat != null && (
+                              <span className="text-[11px] font-semibold text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-lg">
+                                🥑 {meal.fat}g fat
+                              </span>
+                            )}
+                          </div>
+                        )}
+
                         <div className="mt-3 bg-muted/40 border border-border rounded-xl p-3">
-                          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">
-                            Ingredients
-                          </p>
+                          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">Ingredients</p>
                           <p className="text-xs text-foreground/80 leading-relaxed">{meal.ingredients}</p>
                         </div>
                         <a
@@ -293,7 +383,7 @@ export default function Planner() {
                           className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 hover:underline transition-colors"
                         >
                           <ExternalLink size={11} />
-                          Watch for general guidance, but stay with the ingredients listed above for better calorie control
+                          Watch recipe guidance
                         </a>
                       </div>
                     </div>
@@ -301,11 +391,43 @@ export default function Planner() {
                 ))}
               </div>
 
+              {/* Meal Prep Checklist */}
+              <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm">
+                <div className="px-5 py-4 border-b border-border flex items-center gap-2">
+                  <CheckSquare size={15} className="text-primary" />
+                  <p className="text-sm font-bold text-foreground">Batch Prep Checklist</p>
+                  <span className="text-[10px] text-muted-foreground ml-auto">Do this on Sunday 🗓</span>
+                </div>
+                <div className="divide-y divide-border">
+                  {prepSteps.map((step, i) => (
+                    <div
+                      key={i}
+                      className={`flex items-start gap-3 px-5 py-3.5 cursor-pointer transition-colors ${
+                        checklistDone[i] ? "bg-primary/3" : "hover:bg-muted/30"
+                      }`}
+                      onClick={() => setChecklistDone((prev) => ({ ...prev, [i]: !prev[i] }))}
+                    >
+                      <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
+                        checklistDone[i] ? "bg-primary border-primary" : "border-border"
+                      }`}>
+                        {checklistDone[i] && <Zap size={11} className="text-white" />}
+                      </div>
+                      <p className={`text-sm transition-colors ${checklistDone[i] ? "line-through text-muted-foreground" : "text-foreground"}`}>
+                        {step}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <div className="px-5 py-3 bg-muted/30 border-t border-border">
+                  <p className="text-[11px] text-muted-foreground">
+                    {Object.values(checklistDone).filter(Boolean).length} of {prepSteps.length} steps done
+                  </p>
+                </div>
+              </div>
+
               {/* Save footer */}
               <div className="rounded-2xl border border-border bg-card p-5">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                  Save this plan
-                </p>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Save this plan</p>
                 <div className="flex gap-3">
                   <Input
                     value={planName}
@@ -335,11 +457,9 @@ export default function Planner() {
               <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground mb-5">
                 <ChefHat size={28} />
               </div>
-              <h3 className="font-serif text-xl font-medium text-muted-foreground mb-2">
-                Ready to plan
-              </h3>
+              <h3 className="font-serif text-xl font-medium text-muted-foreground mb-2">Ready to plan</h3>
               <p className="text-muted-foreground text-sm max-w-sm">
-                Set your preferences on the left and click Generate — your custom clean-eating menu will appear here.
+                Set your preferences and click Generate — your high-protein gym menu will appear here.
               </p>
             </div>
           )}

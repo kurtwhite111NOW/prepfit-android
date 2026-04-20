@@ -8,6 +8,8 @@ import {
   ScanLine,
   Scale,
   Zap,
+  Droplets,
+  ClipboardList,
 } from "lucide-react";
 import { useTrial } from "@/hooks/use-trial";
 import { useTheme } from "@/hooks/use-theme";
@@ -22,7 +24,11 @@ const navItems = [
   { href: "/meals", label: "My Meals", emoji: "📓", icon: BookOpen },
   { href: "/scan", label: "Scan Photo", emoji: "📸", icon: ScanLine },
   { href: "/weight", label: "Weight", emoji: "📊", icon: Scale },
+  { href: "/water", label: "Water", emoji: "💧", icon: Droplets },
+  { href: "/plans", label: "Saved Plans", emoji: "📋", icon: ClipboardList },
 ];
+
+const mobileNavItems = navItems.slice(0, 6);
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
@@ -41,19 +47,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       <div className="min-h-screen bg-background flex flex-col md:flex-row">
 
-        {/* ── Mobile Header ──────────────────────── */}
+        {/* Mobile Header */}
         <header className="md:hidden flex items-center justify-between px-4 py-3 bg-sidebar border-b border-sidebar-border sticky top-0 z-20">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl gradient-emerald flex items-center justify-center shrink-0 shadow-md">
               <span className="text-base">💪</span>
             </div>
             <div>
-              <span className="font-bold text-sm text-sidebar-foreground leading-none block">
-                Simple Meal Prep
-              </span>
-              <span className="text-[10px] text-primary font-semibold leading-none">
-                Gym & Fitness
-              </span>
+              <span className="font-bold text-sm text-sidebar-foreground leading-none block">Simple Meal Prep</span>
+              <span className="text-[10px] text-primary font-semibold leading-none">Gym & Fitness</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -70,7 +72,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        {/* ── Desktop Sidebar ─────────────────────── */}
+        {/* Desktop Sidebar */}
         <aside className="hidden md:flex w-[220px] flex-col bg-sidebar border-r border-sidebar-border h-screen sticky top-0 overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
 
@@ -81,31 +83,25 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 💪
               </div>
               <div>
-                <span className="font-extrabold text-sm text-sidebar-foreground leading-tight block">
-                  Simple Meal Prep
-                </span>
-                <span className="text-[11px] text-primary font-bold tracking-wide leading-none block mt-0.5">
-                  Gym & Fitness
-                </span>
+                <span className="font-extrabold text-sm text-sidebar-foreground leading-tight block">Simple Meal Prep</span>
+                <span className="text-[11px] text-primary font-bold tracking-wide leading-none block mt-0.5">Gym & Fitness</span>
               </div>
             </div>
           </div>
 
           {/* Nav */}
-          <nav className="flex-1 px-3 space-y-0.5">
+          <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.href);
               return (
                 <Link key={item.href} href={item.href}>
                   <div
-                    className={`
-                      relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 cursor-pointer
-                      ${active
+                    className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 cursor-pointer ${
+                      active
                         ? "bg-primary/15 text-primary border border-primary/20"
                         : "text-sidebar-foreground/55 hover:text-sidebar-foreground hover:bg-sidebar-accent/60"
-                      }
-                    `}
+                    }`}
                   >
                     {active && (
                       <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r-full bg-primary" />
@@ -129,12 +125,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
               {!trial.loading && !trial.expired ? (
                 <>
                   <div className="flex items-center justify-between mb-1.5">
-                    <p className="text-sidebar-foreground/80 text-[11px] font-bold uppercase tracking-wider">
-                      🎁 Free Trial
-                    </p>
-                    <span className="text-[10px] font-bold text-amber-400">
-                      {trial.daysLeft}d left
-                    </span>
+                    <p className="text-sidebar-foreground/80 text-[11px] font-bold uppercase tracking-wider">🎁 Free Trial</p>
+                    <span className="text-[10px] font-bold text-amber-400">{trial.daysLeft}d left</span>
                   </div>
                   <div className="w-full h-1.5 rounded-full bg-sidebar-foreground/10 mb-3">
                     <div
@@ -152,9 +144,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </>
               ) : (
                 <>
-                  <p className="text-sidebar-foreground/80 text-[11px] font-bold uppercase tracking-wider mb-1.5">
-                    ⚡ Pro Plan
-                  </p>
+                  <p className="text-sidebar-foreground/80 text-[11px] font-bold uppercase tracking-wider mb-1.5">⚡ Pro Plan</p>
                   <p className="text-sidebar-foreground/50 text-[11px] leading-relaxed">
                     Unlimited meal plans, calorie scanning & more.
                   </p>
@@ -177,7 +167,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </aside>
 
-        {/* ── Main Content ────────────────────────── */}
+        {/* Main Content */}
         <main className="flex-1 min-h-screen pb-24 md:pb-0 overflow-y-auto">
           <TrialBanner trial={trial} onUpgrade={() => setShowUpgrade(true)} />
           <div className="max-w-3xl mx-auto px-4 md:px-8 py-5 md:py-8">
@@ -185,9 +175,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </main>
 
-        {/* ── Mobile Bottom Nav ───────────────────── */}
+        {/* Mobile Bottom Nav — top 6 items */}
         <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-sidebar border-t border-sidebar-border flex items-center justify-around px-1 py-1.5 z-20">
-          {navItems.map((item) => {
+          {mobileNavItems.map((item) => {
             const active = isActive(item.href);
             return (
               <Link key={item.href} href={item.href}>

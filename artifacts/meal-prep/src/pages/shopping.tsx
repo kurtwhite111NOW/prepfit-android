@@ -15,6 +15,8 @@ import {
   PackageOpen,
   CheckCircle2,
   Tag,
+  Copy,
+  Check,
 } from "lucide-react";
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -58,9 +60,24 @@ export default function Shopping() {
   );
 
   const [checkedItems, setCheckedItems] = React.useState<Record<string, boolean>>({});
+  const [copied, setCopied] = React.useState(false);
 
   const toggleItem = (name: string) => {
     setCheckedItems((prev) => ({ ...prev, [name]: !prev[name] }));
+  };
+
+  const handleCopyList = async () => {
+    if (!shoppingList) return;
+    const lines: string[] = [`🛒 ${shoppingList.mealPlanName} — Grocery List`, ""];
+    shoppingList.categories.forEach((cat) => {
+      lines.push(`${getCategoryIcon(cat.category)} ${cat.category}`);
+      cat.items.forEach((item) => lines.push(`  • ${item.name} — ${item.quantity}`));
+      lines.push("");
+    });
+    lines.push("Generated with Simple Meal Prep — Gym & Fitness 💪");
+    await navigator.clipboard.writeText(lines.join("\n"));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const isLoading = isLoadingPlans || isLoadingList;
@@ -122,26 +139,36 @@ export default function Shopping() {
         <div className="space-y-5">
           {/* Progress card */}
           <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
               <div>
-                <h3 className="font-semibold text-foreground">
-                  {shoppingList.mealPlanName}
-                </h3>
+                <h3 className="font-semibold text-foreground">{shoppingList.mealPlanName}</h3>
                 <p className="text-muted-foreground text-xs mt-0.5">
                   {checkedCount} of {totalItems} items in cart
                 </p>
               </div>
-              {checkedCount === totalItems && totalItems > 0 ? (
-                <div className="flex items-center gap-2 bg-primary/10 text-primary border border-primary/15 rounded-xl px-3.5 py-2 text-sm font-semibold">
-                  <CheckCircle2 size={15} />
-                  All done!
-                </div>
-              ) : (
-                <div className="text-right">
-                  <p className="font-bold text-foreground text-lg">{progress}%</p>
-                  <p className="text-muted-foreground text-[10px] uppercase tracking-wider">complete</p>
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleCopyList}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                >
+                  {copied
+                    ? <Check size={13} className="text-primary" />
+                    : <Copy size={13} />
+                  }
+                  {copied ? "Copied!" : "Copy list"}
+                </button>
+                {checkedCount === totalItems && totalItems > 0 ? (
+                  <div className="flex items-center gap-2 bg-primary/10 text-primary border border-primary/15 rounded-xl px-3.5 py-2 text-sm font-semibold">
+                    <CheckCircle2 size={15} />
+                    All done!
+                  </div>
+                ) : (
+                  <div className="text-right">
+                    <p className="font-bold text-foreground text-lg">{progress}%</p>
+                    <p className="text-muted-foreground text-[10px] uppercase tracking-wider">complete</p>
+                  </div>
+                )}
+              </div>
             </div>
             {/* Progress bar */}
             <div className="mt-4 h-1.5 bg-muted rounded-full overflow-hidden">
