@@ -25,7 +25,7 @@ function CheckoutResultHandler() {
     const checkout = params.get("checkout");
     if (checkout === "success") {
       toast({
-        title: "Welcome to Simple Meal Prep Pro!",
+        title: "Welcome to PrepFit Pro!",
         description: "Your subscription is active. Enjoy unlimited AI meal planning!",
       });
       const url = new URL(window.location.href);

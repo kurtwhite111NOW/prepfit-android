@@ -39,8 +39,8 @@ export function UpgradeWall({ onClose }: UpgradeWallProps) {
             <span className="text-3xl">💪</span>
           </div>
           <div>
-            <p className="font-serif font-bold text-xl text-white leading-tight">Simple Meal Prep</p>
-            <p className="text-[10px] text-white font-medium uppercase tracking-widest mt-0.5">Gym & Fitness</p>
+            <p className="font-serif font-bold text-xl text-white leading-tight">PrepFit</p>
+            <p className="text-[11px] text-white/70 font-semibold mt-0.5">Simple Meal Prep · Gym & Fitness</p>
           </div>
         </div>
 

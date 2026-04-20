@@ -54,8 +54,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <span className="text-base">💪</span>
             </div>
             <div>
-              <span className="font-bold text-sm text-sidebar-foreground leading-none block">Simple Meal Prep</span>
-              <span className="text-[10px] text-primary font-semibold leading-none">Gym & Fitness</span>
+              <span className="font-bold text-sm text-sidebar-foreground leading-none block">PrepFit</span>
+              <span className="text-[10px] text-sidebar-foreground/60 font-semibold leading-none">Simple Meal Prep</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -83,8 +83,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 💪
               </div>
               <div>
-                <span className="font-extrabold text-sm text-sidebar-foreground leading-tight block">Simple Meal Prep</span>
-                <span className="text-[11px] text-primary font-bold tracking-wide leading-none block mt-0.5">Gym & Fitness</span>
+                <span className="font-extrabold text-sm text-sidebar-foreground leading-tight block">PrepFit</span>
+                <span className="text-[11px] text-sidebar-foreground/55 font-bold tracking-wide leading-none block">Simple Meal Prep</span>
               </div>
             </div>
           </div>
