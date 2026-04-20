@@ -307,12 +307,12 @@ export default function Weight() {
           </div>
         ) : !chartData || chartData.length === 0 ? (
           <div className="h-56 flex flex-col items-center justify-center text-center px-8">
-            <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground mb-3">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-3">
               <Scale size={22} />
             </div>
-            <p className="font-medium text-foreground mb-1">No data yet</p>
+            <p className="font-semibold text-foreground mb-1">No entries yet</p>
             <p className="text-muted-foreground text-sm">
-              Log your first weight below to start tracking your trend.
+              Log your first weight below to start seeing your progress trend.
             </p>
           </div>
         ) : chartData.length === 1 ? (

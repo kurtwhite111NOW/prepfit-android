@@ -121,8 +121,8 @@ export default function Shopping() {
           </div>
         </div>
       ) : !latestPlan || !shoppingList ? (
-        <div className="rounded-2xl border-2 border-dashed border-border bg-transparent p-12 text-center">
-          <div className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground mx-auto mb-4">
+        <div className="rounded-2xl border-2 border-dashed border-primary/20 bg-primary/5 p-12 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4">
             <PackageOpen size={26} />
           </div>
           <h3 className="font-semibold text-foreground text-lg mb-1.5">No grocery list yet</h3>

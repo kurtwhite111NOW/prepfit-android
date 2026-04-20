@@ -89,7 +89,16 @@ export default function Water() {
       </div>
 
       <div className="rounded-2xl border border-border bg-card p-5">
-        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">Today's Progress</p>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Today's Progress</p>
+          <span className="text-xs font-bold text-primary">{pct}%</span>
+        </div>
+        <div className="w-full h-2.5 rounded-full bg-muted overflow-hidden mb-4">
+          <div
+            className="h-full rounded-full bg-primary transition-all duration-500"
+            style={{ width: `${pct}%` }}
+          />
+        </div>
         <div className="grid grid-cols-8 gap-2">
           {Array.from({ length: GOAL }, (_, i) => (
             <button

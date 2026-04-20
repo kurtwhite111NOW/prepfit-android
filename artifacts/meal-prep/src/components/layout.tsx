@@ -104,7 +104,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     }`}
                   >
                     {active && (
-                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r-full bg-primary" />
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-primary shadow-[0_0_8px_2px_rgba(249,115,22,0.4)]" />
                     )}
                     <span className="text-base w-5 text-center">{item.emoji}</span>
                     <span>{item.label}</span>
@@ -158,19 +158,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Android install */}
-          <div className="px-4 pb-5">
+          <div className="px-4 pb-3">
             <Link href="/android">
               <div className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sidebar-foreground/70 hover:text-white hover:bg-sidebar-accent/60 transition-colors cursor-pointer text-[12px] font-semibold border border-sidebar-border/60">
                 🤖 Install on Android
               </div>
             </Link>
           </div>
+
+          {/* Footer */}
+          <div className="px-5 pb-4 text-center">
+            <p className="text-[10px] text-primary/50 font-medium">PrepFit © 2025 · version 2.0.0</p>
+          </div>
         </aside>
 
         {/* Main Content */}
         <main className="flex-1 min-h-screen pb-24 md:pb-0 overflow-y-auto">
           <TrialBanner trial={trial} onUpgrade={() => setShowUpgrade(true)} />
-          <div className="max-w-3xl mx-auto px-4 md:px-8 py-5 md:py-8">
+          <div key={location} className="max-w-3xl mx-auto px-3 md:px-8 py-4 md:py-8 animate-in fade-in duration-300">
             {children}
           </div>
         </main>
