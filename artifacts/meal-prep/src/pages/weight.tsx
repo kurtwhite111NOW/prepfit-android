@@ -164,11 +164,6 @@ export default function Weight() {
         normalizedEntries[normalizedEntries.length - 2].displayWeight
       : null;
 
-  const goalLine =
-    normalizedEntries && normalizedEntries.length > 1
-      ? undefined
-      : undefined;
-
   const goalWeightNum = parseFloat(goalInput);
   const goalWeightInUnit = !isNaN(goalWeightNum) && goalWeightNum > 0 ? goalWeightNum : null;
 
