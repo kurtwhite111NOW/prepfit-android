@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 import { GenerateMealPlanBody, AnalyzeMealPhotoBody } from "@workspace/api-zod";
 import { openai } from "@workspace/integrations-openai-ai-server";
-import { getRandomMealSample, getRandomCuisines, getRandomIngredients } from "../../data/mealLibrary";
+import { getRandomMealSample, getRandomCuisines, getRandomIngredients, getRandomTheme } from "../../data/mealLibrary";
 
 const router: IRouter = Router();
 
@@ -30,13 +30,14 @@ router.post("/ai/generate-meal-plan", async (req, res): Promise<void> => {
     );
     const caloriesPerMeal = Math.round(dailyCalories / mealsPerDay);
 
-    const inspirations = mealTypes.map((type, i) => {
-      const samples = getRandomMealSample(type, 6);
-      return `  Meal ${i + 1} (${type}) — inspiration: ${samples.map(s => `"${s.name}" [${s.cuisine}]`).join(" | ")}`;
-    }).join("\n");
-
+    const theme = getRandomTheme();
     const [featuredProtein, featuredVeg, featuredGrain] = getRandomIngredients();
     const varietySeed = Math.random().toString(36).slice(2, 10);
+
+    const inspirations = mealTypes.map((type, i) => {
+      const samples = getRandomMealSample(type, 8, theme.cuisines);
+      return `  Meal ${i + 1} (${type}) — inspiration options: ${samples.map(s => `"${s.name}" [${s.cuisine}]`).join(" | ")}`;
+    }).join("\n");
 
     const mealTargetLines = mealTypes.map((type, i) =>
       `  Meal ${i + 1} (${type}): EXACTLY ${mealCalorieTargets[i]} calories`
@@ -45,6 +46,7 @@ router.post("/ai/generate-meal-plan", async (req, res): Promise<void> => {
     const prompt = `Create a simple, practical one-day meal plan for a gym-goer or fitness enthusiast. All meals must be VERY EASY — high-protein, everyday foods that support muscle building and performance.
 
 VARIETY TOKEN (internal only, do NOT include in output): ${varietySeed}
+TODAY'S THEME: ${theme.label}
 STAR INGREDIENTS: protein = ${featuredProtein} | vegetable = ${featuredVeg} | grain = ${featuredGrain}
 
 ⚠️ MEAL COUNT: You MUST return EXACTLY ${mealsPerDay} meal${mealsPerDay === 1 ? "" : "s"} — no more, no less. Not ${mealsPerDay + 1}, not ${mealsPerDay - 1}. Exactly ${mealsPerDay}.
@@ -55,17 +57,17 @@ DAILY TOTAL: ${dailyCalories} calories (the sum of all meal calories must equal 
 
 MANDATORY RULES:
 1. SIMPLICITY IS THE #1 PRIORITY — every meal must be something a beginner can make in under 20 minutes with basic pantry staples
-2. PRIORITIZE HIGH PROTEIN — gym-goers need protein at every meal (eggs, chicken, ground beef, tuna, Greek yogurt, cottage cheese, protein powder, etc.)
-3. Meal names should be plain and familiar (e.g. "Scrambled Eggs on Toast", "Grilled Chicken with Rice", "Ground Beef Tacos", "Tuna Salad Wrap", "PB&J Sandwich")
-4. NO exotic ingredients, NO complex techniques — keep it simple and practical
-5. Canned, frozen, and store-bought items are totally acceptable (canned tuna, frozen veggies, rotisserie chicken, Greek yogurt)
-6. Every meal must have a completely different protein source
-7. ALWAYS include specific measured amounts for every ingredient (e.g. "2 eggs, 1 slice whole grain toast, 1 tbsp butter, salt and pepper")
-8. CRITICAL: Each meal's "calories" field in the JSON must match the target above. Do NOT exceed the daily total of ${dailyCalories}.
-9. Keep ingredient lists SHORT — 3 to 6 ingredients max per meal
-10. For each meal, estimate macros in grams: protein, carbs, and fat based on the ingredients
+2. PRIORITIZE HIGH PROTEIN — gym-goers need protein at every meal (eggs, chicken, ground beef, tuna, Greek yogurt, cottage cheese, protein powder, shrimp, salmon, turkey, etc.)
+3. LEAN INTO THE THEME: ${theme.label} — let this guide the flavor profile, ingredients, and meal names. Do NOT default to "Scrambled Eggs and Toast" or "Chicken and Rice" unless the theme calls for it.
+4. Canned, frozen, and store-bought items are totally acceptable (canned tuna, frozen veggies, rotisserie chicken, jarred sauce)
+5. Every meal must have a COMPLETELY DIFFERENT protein source — no repeats
+6. ALWAYS include specific measured amounts for every ingredient (e.g. "6 oz chicken, 1 cup rice, 2 tbsp soy sauce, garlic")
+7. CRITICAL: Each meal's "calories" field in the JSON must match the target above. Do NOT exceed the daily total of ${dailyCalories}.
+8. Keep ingredient lists SHORT — 4 to 6 ingredients max per meal
+9. For each meal, estimate macros in grams: protein, carbs, and fat based on the ingredients
+10. Be CREATIVE with the plan name — reflect the theme (e.g. "Mexican Muscle Day", "Asian Gains Plate", "Mediterranean Cut Plan")
 
-INSPIRATION (simple, everyday meals to inspire you):
+INSPIRATION (pick from these or create something similar in the same style — do NOT copy names exactly):
 ${inspirations}
 
 Return ONLY valid JSON, no markdown:
@@ -99,10 +101,11 @@ Shopping categories: Produce, Proteins, Dairy & Eggs, Grains & Bread, Pantry Sta
     const response = await openai.chat.completions.create({
       model: "gpt-5.2",
       max_completion_tokens: 8192,
+      temperature: 1.2,
       messages: [
         {
           role: "system",
-          content: "You are a meal planning assistant for gym-goers, fitness enthusiasts, and athletes. You specialize in SIMPLE, high-protein everyday meals that support muscle building and fat loss — scrambled eggs, chicken and rice, ground beef bowls, sandwiches, pasta, tacos, Greek yogurt, protein shakes, etc. You never suggest complicated recipes or exotic ingredients. Every meal you suggest can be made by a beginner in under 20 minutes using basic grocery store items. You always include estimated macros (protein, carbs, fat) in grams. You respond with valid JSON only.",
+          content: "You are a meal planning assistant for gym-goers, fitness enthusiasts, and athletes. You create VARIED, high-protein meal plans — drawing from global cuisines like Mexican, Asian, Mediterranean, Italian, BBQ, and more. You never repeat the same meals. Every meal must be simple (under 20 minutes, beginner-friendly, basic grocery store ingredients). You always include estimated macros (protein, carbs, fat) in grams. You respond with valid JSON only.",
         },
         { role: "user", content: prompt },
       ],
