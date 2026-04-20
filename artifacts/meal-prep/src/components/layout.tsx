@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import {
   LayoutDashboard,
@@ -10,6 +10,9 @@ import {
   Zap,
   Droplets,
   ClipboardList,
+  Settings,
+  Loader2,
+  ExternalLink,
 } from "lucide-react";
 import { useTrial } from "@/hooks/use-trial";
 import { useTheme } from "@/hooks/use-theme";
@@ -30,11 +33,38 @@ const navItems = [
 
 const mobileNavItems = navItems.slice(0, 6);
 
+const BASE_URL = (import.meta.env.BASE_URL as string)?.replace(/\/$/, '') || '';
+
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const trial = useTrial();
   const { isDark, toggle } = useTheme();
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [showManage, setShowManage] = useState(false);
+  const [manageEmail, setManageEmail] = useState('');
+  const [manageLoading, setManageLoading] = useState(false);
+  const [manageError, setManageError] = useState<string | null>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+
+  const openBillingPortal = async () => {
+    const email = manageEmail.trim();
+    if (!email) return;
+    setManageLoading(true);
+    setManageError(null);
+    try {
+      const res = await fetch(`${BASE_URL}/api/stripe/portal-by-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to open billing portal.');
+      window.location.href = data.url;
+    } catch (err: any) {
+      setManageError(err.message || 'Something went wrong.');
+      setManageLoading(false);
+    }
+  };
 
   const isActive = (href: string) =>
     href === "/" ? location === "/" : location.startsWith(href);
@@ -144,14 +174,65 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </>
               ) : (
                 <>
-                  <p className="text-sidebar-foreground/80 text-[11px] font-bold uppercase tracking-wider mb-1.5">⚡ Pro Plan</p>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <p className="text-sidebar-foreground/80 text-[11px] font-bold uppercase tracking-wider">⚡ Pro Plan</p>
+                    <span className="text-[10px] font-bold text-primary bg-primary/15 px-1.5 py-0.5 rounded-full">Active</span>
+                  </div>
                   <p className="text-sidebar-foreground/50 text-[11px] leading-relaxed">
                     Unlimited meal plans, calorie scanning & more.
                   </p>
-                  <div className="mt-3 flex items-baseline gap-1">
-                    <span className="text-primary font-extrabold text-base">$14</span>
-                    <span className="text-sidebar-foreground/35 text-[11px]">/month</span>
-                  </div>
+
+                  {!showManage ? (
+                    <button
+                      onClick={() => {
+                        setShowManage(true);
+                        setManageError(null);
+                        setTimeout(() => emailRef.current?.focus(), 50);
+                      }}
+                      className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 rounded-xl border border-sidebar-border/60 text-sidebar-foreground/60 hover:text-white hover:border-white/20 text-[11px] font-semibold transition-colors"
+                    >
+                      <Settings size={11} />
+                      Manage Subscription
+                    </button>
+                  ) : (
+                    <div className="mt-3 flex flex-col gap-2">
+                      <p className="text-sidebar-foreground/60 text-[10px] leading-snug">
+                        Enter your billing email to open the Stripe portal.
+                      </p>
+                      <input
+                        ref={emailRef}
+                        type="email"
+                        value={manageEmail}
+                        onChange={(e) => setManageEmail(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && openBillingPortal()}
+                        placeholder="you@example.com"
+                        className="w-full px-2.5 py-1.5 rounded-lg bg-sidebar-accent/40 border border-sidebar-border/60 text-sidebar-foreground text-[11px] placeholder:text-sidebar-foreground/30 outline-none focus:border-primary/50 transition-colors"
+                      />
+                      {manageError && (
+                        <p className="text-red-400 text-[10px] leading-snug">{manageError}</p>
+                      )}
+                      <div className="flex gap-1.5">
+                        <button
+                          onClick={openBillingPortal}
+                          disabled={manageLoading || !manageEmail.trim()}
+                          className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg gradient-emerald text-white text-[11px] font-bold disabled:opacity-50 transition-opacity"
+                        >
+                          {manageLoading ? (
+                            <Loader2 size={10} className="animate-spin" />
+                          ) : (
+                            <ExternalLink size={10} />
+                          )}
+                          {manageLoading ? 'Opening…' : 'Open Portal'}
+                        </button>
+                        <button
+                          onClick={() => { setShowManage(false); setManageError(null); setManageEmail(''); }}
+                          className="px-2.5 py-1.5 rounded-lg text-sidebar-foreground/40 hover:text-sidebar-foreground/70 text-[11px] font-semibold transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
             </div>

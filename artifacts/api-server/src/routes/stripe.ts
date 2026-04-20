@@ -128,6 +128,35 @@ router.post('/stripe/create-checkout-session', async (req, res) => {
   }
 });
 
+router.post('/stripe/portal-by-email', async (req, res) => {
+  try {
+    const { email } = req.body as { email: string };
+    if (!email) {
+      return res.status(400).json({ error: 'email is required' });
+    }
+
+    const stripe = await getUncachableStripeClient();
+    const customers = await stripe.customers.list({ email, limit: 1 });
+
+    if (!customers.data.length) {
+      return res.status(404).json({ error: 'No subscription found for that email address.' });
+    }
+
+    const customerId = customers.data[0].id;
+    const baseUrl = `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
+
+    const portalSession = await stripe.billingPortal.sessions.create({
+      customer: customerId,
+      return_url: baseUrl,
+    });
+
+    res.json({ url: portalSession.url });
+  } catch (err: any) {
+    logger.error({ err }, 'Failed to create portal session by email');
+    res.status(500).json({ error: 'Failed to open billing portal. Please try again.' });
+  }
+});
+
 router.post('/stripe/create-portal-session', async (req, res) => {
   try {
     const { customerId } = req.body as { customerId: string };
