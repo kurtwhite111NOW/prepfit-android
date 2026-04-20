@@ -78,12 +78,12 @@ export function UpgradeWall({ onClose }: UpgradeWallProps) {
             Best Value
           </div>
           <div className="flex items-end gap-1.5">
-            <span className="font-serif font-bold text-5xl text-white leading-none">$12</span>
+            <span className="font-serif font-bold text-5xl text-white leading-none">$14</span>
             <div className="flex flex-col items-start pb-1">
               <span className="text-white/50 text-sm leading-none">/month</span>
             </div>
           </div>
-          <p className="text-white/65 text-xs mt-1">Billed annually — $144.00 USD / year</p>
+          <p className="text-white/65 text-xs mt-1">Billed annually — $168.00 USD / year</p>
           <p className="text-primary text-xs font-medium mt-0.5">Cancel anytime · No hidden fees</p>
         </div>
 
@@ -104,12 +104,12 @@ export function UpgradeWall({ onClose }: UpgradeWallProps) {
               Redirecting to checkout...
             </>
           ) : (
-            "Start Pro Plan — $12 / month"
+            "Start Pro Plan — $14 / month"
           )}
         </button>
 
         <p className="text-white/45 text-[11px] leading-relaxed max-w-xs">
-          Billed as $144.00 USD annually. Cancel anytime from your account settings. Secure payment powered by Stripe.
+          Billed as $168.00 USD annually. Cancel anytime from your account settings. Secure payment powered by Stripe.
         </p>
       </div>
     </div>

@@ -149,7 +149,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     Unlimited meal plans, calorie scanning & more.
                   </p>
                   <div className="mt-3 flex items-baseline gap-1">
-                    <span className="text-primary font-extrabold text-base">$12</span>
+                    <span className="text-primary font-extrabold text-base">$14</span>
                     <span className="text-sidebar-foreground/35 text-[11px]">/month</span>
                   </div>
                 </>
