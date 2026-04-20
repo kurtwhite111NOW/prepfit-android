@@ -40,7 +40,7 @@ export function UpgradeWall({ onClose }: UpgradeWallProps) {
           </div>
           <div>
             <p className="font-serif font-bold text-xl text-white leading-tight">PrepFit</p>
-            <p className="text-[11px] text-white/70 font-semibold mt-0.5">Simple Meal Prep · Gym & Fitness</p>
+            <p className="text-[11px] text-primary font-bold mt-0.5">Simple Meal Prep · Gym & Fitness</p>
           </div>
         </div>
 
