@@ -109,7 +109,7 @@ export function UpgradeWall({ onClose }: UpgradeWallProps) {
         </button>
 
         <p className="text-white/45 text-[11px] leading-relaxed max-w-xs">
-          Billed as $168.00 USD annually. Cancel anytime from your account settings. Secure payment powered by Stripe.
+          Subscription auto-renews annually at $168 unless cancelled at least 24 hours before the renewal date.
         </p>
       </div>
     </div>
