@@ -84,7 +84,7 @@ export function UpgradeWall({ onClose }: UpgradeWallProps) {
             </div>
           </div>
           <p className="text-white/65 text-xs mt-1">Billed annually — $168.00 USD / year</p>
-          <p className="text-primary text-xs font-medium mt-0.5">Cancel anytime · No hidden fees</p>
+          <p className="text-primary text-xs font-medium mt-0.5">Cancel anytime before the renewal date · No hidden fees</p>
         </div>
 
         {error && (
