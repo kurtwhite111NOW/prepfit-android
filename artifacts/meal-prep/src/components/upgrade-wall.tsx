@@ -109,7 +109,7 @@ export function UpgradeWall({ onClose }: UpgradeWallProps) {
         </button>
 
         <p className="text-white/45 text-[11px] leading-relaxed max-w-xs">
-          Subscription auto-renews annually at $168 unless cancelled at least 24 hours before the renewal date.
+          Subscription auto-renews annually at $168.00 unless cancelled at least 24 hours before the renewal date. Billing is powered by Stripe.
         </p>
       </div>
     </div>
