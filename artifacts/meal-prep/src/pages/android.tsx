@@ -41,7 +41,7 @@ const STEPS = [
     visual: (
       <div className="flex items-center gap-2 mt-3 p-2.5 rounded-xl bg-muted/50 border border-border text-xs font-mono text-muted-foreground">
         <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
-        nutriprep.app
+        prepfit.replit.app
       </div>
     ),
     tip: null,
