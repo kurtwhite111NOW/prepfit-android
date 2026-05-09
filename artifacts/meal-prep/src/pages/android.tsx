@@ -74,7 +74,7 @@ const STEPS = [
         <div className="w-10 h-10 rounded-xl gradient-emerald flex items-center justify-center text-white text-lg shrink-0">🌿</div>
         <div>
           <p className="text-sm font-semibold text-foreground">Simple Meal Prep Planner</p>
-          <p className="text-xs text-muted-foreground">nutriplan.app</p>
+          <p className="text-xs text-muted-foreground">prepfit.fit</p>
         </div>
         <div className="ml-auto flex gap-2 text-xs">
           <button className="px-3 py-1 rounded-lg border border-border text-muted-foreground">Cancel</button>
@@ -121,12 +121,12 @@ const FEATURES = [
 function QRCode({ url, size = 160 }: { url: string; size?: number }) {
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(url)}&color=0a1a0a&bgcolor=faf8f5&margin=12&qzone=1`;
   return (
-    <img src={qrUrl} alt="QR code to open NutriPlan" width={size} height={size} className="rounded-xl" />
+    <img src={qrUrl} alt="QR code to open PrepFit" width={size} height={size} className="rounded-xl" />
   );
 }
 
 export default function AndroidPage() {
-  const appUrl = typeof window !== "undefined" ? window.location.origin : "https://nutriplan.app";
+  const appUrl = typeof window !== "undefined" ? window.location.origin : "https://prepfit.fit";
 
   return (
     <div className="space-y-10 animate-in fade-in duration-500 max-w-3xl mx-auto">
