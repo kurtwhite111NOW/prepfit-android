@@ -106,7 +106,7 @@ router.post('/stripe/create-checkout-session', async (req, res) => {
     }
 
     const sessionParams: any = {
-      payment_method_types: ['card'],
+      automatic_payment_methods: { enabled: true },
       line_items: [{ price: priceId, quantity: 1 }],
       mode: 'subscription',
       success_url: `${baseUrl}/?checkout=success`,
