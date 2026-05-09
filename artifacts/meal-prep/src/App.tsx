@@ -14,6 +14,7 @@ import Plans from "@/pages/plans";
 import PlanDetail from "@/pages/plan-detail";
 import AndroidPage from "@/pages/android";
 import IosPage from "@/pages/ios";
+import GuidePage from "@/pages/guide";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -62,6 +63,7 @@ function Router() {
         <Route path="/plans/:id" component={PlanDetail} />
         <Route path="/android" component={AndroidPage} />
         <Route path="/ios" component={IosPage} />
+        <Route path="/guide" component={GuidePage} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

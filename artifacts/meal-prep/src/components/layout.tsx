@@ -10,6 +10,7 @@ import {
   Zap,
   Droplets,
   ClipboardList,
+  BookMarked,
   Settings,
   Loader2,
   ExternalLink,
@@ -29,6 +30,7 @@ const navItems = [
   { href: "/weight", label: "Weight", emoji: "📊", icon: Scale },
   { href: "/water", label: "Water", emoji: "💧", icon: Droplets },
   { href: "/plans", label: "Saved Plans", emoji: "📋", icon: ClipboardList },
+  { href: "/guide", label: "User Guide", emoji: "📖", icon: BookMarked },
 ];
 
 const mobileNavItems = navItems.slice(0, 6);
