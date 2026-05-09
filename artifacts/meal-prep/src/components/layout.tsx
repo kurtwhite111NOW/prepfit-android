@@ -30,7 +30,7 @@ const navItems = [
   { href: "/weight", label: "Weight", emoji: "📊", icon: Scale },
   { href: "/water", label: "Water", emoji: "💧", icon: Droplets },
   { href: "/plans", label: "Saved Plans", emoji: "📋", icon: ClipboardList },
-  { href: "/guide", label: "User Guide", emoji: "📖", icon: BookMarked },
+  { href: "/guide", label: "User Guide (Read Me First)", emoji: "📖", icon: BookMarked },
 ];
 
 const mobileNavItems = navItems.slice(0, 6);
