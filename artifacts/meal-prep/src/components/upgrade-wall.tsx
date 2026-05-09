@@ -1,4 +1,4 @@
-import { Check, Star, Shield, Zap, Brain, ShoppingCart, ScanLine, Scale, X, Loader2 } from "lucide-react";
+import { Check, Star, Shield, Zap, Brain, ShoppingCart, ScanLine, Scale, X, Loader2, Smartphone } from "lucide-react";
 import { useStripeCheckout } from "../hooks/use-stripe-checkout";
 
 const features = [
@@ -8,6 +8,7 @@ const features = [
   { icon: Scale, label: "Weight Tracker", desc: "Trend chart and progress insights" },
   { icon: Star, label: "My Meals Journal", desc: "Save and review all analyzed meals" },
   { icon: Shield, label: "Android PWA Install", desc: "Add to home screen — no Play Store needed" },
+  { icon: Smartphone, label: "iOS PWA Install", desc: "Add to home screen — no App Store needed" },
 ];
 
 interface UpgradeWallProps {
