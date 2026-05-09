@@ -150,7 +150,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Trial / Pro card */}
-          <div className="px-4 pb-3 pt-2">
+          <div className="px-4 pb-2 pt-1">
             <div className="rounded-2xl bg-primary/10 border border-primary/15 p-4">
               {!trial.loading && !trial.expired ? (
                 <>
@@ -239,21 +239,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Install buttons */}
-          <div className="px-4 pb-3 flex flex-col gap-2">
+          <div className="px-4 pb-2 flex flex-col gap-1.5">
             <Link href="/android">
-              <div className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-white hover:bg-sidebar-accent/60 transition-colors cursor-pointer text-[13px] font-bold border border-sidebar-border/60">
-                🤖 Install on Android
+              <div className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl text-white bg-sidebar-accent/40 hover:bg-sidebar-accent/70 transition-colors cursor-pointer text-[14px] font-extrabold border border-sidebar-border tracking-wide">
+                <span className="text-base">🤖</span> Install on Android
               </div>
             </Link>
             <Link href="/ios">
-              <div className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-white hover:bg-sidebar-accent/60 transition-colors cursor-pointer text-[13px] font-bold border border-sidebar-border/60">
-                🍎 Install on iPhone
+              <div className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl text-white bg-sidebar-accent/40 hover:bg-sidebar-accent/70 transition-colors cursor-pointer text-[14px] font-extrabold border border-sidebar-border tracking-wide">
+                <span className="text-base">🍎</span> Install on iPhone
               </div>
             </Link>
           </div>
 
           {/* Footer */}
-          <div className="px-5 pb-4 text-center">
+          <div className="px-5 pb-3 pt-1 text-center">
             <p className="text-[10px] text-primary font-bold">PrepFit © 2025 · version 2.0.0</p>
           </div>
         </aside>
