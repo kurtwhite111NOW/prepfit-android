@@ -108,7 +108,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
           {/* Logo */}
           <div className="px-5 pt-6 pb-5">
-            <div className="flex items-center gap-3">
+            <a href="https://prepfit.fit/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <div className="w-10 h-10 rounded-2xl gradient-emerald flex items-center justify-center shadow-lg text-xl shrink-0">
                 💪
               </div>
@@ -116,7 +116,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <span className="font-extrabold text-sm text-sidebar-foreground leading-tight block">PrepFit</span>
                 <span className="text-[11px] text-primary font-bold tracking-wide leading-none block">Simple Meal Prep · Gym & Fitness</span>
               </div>
-            </div>
+            </a>
           </div>
 
           {/* Nav */}
