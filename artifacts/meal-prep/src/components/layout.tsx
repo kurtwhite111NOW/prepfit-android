@@ -33,7 +33,7 @@ const navItems = [
   { href: "/guide", label: "User Guide", sublabel: "(Read Me First)", emoji: "📖", icon: BookMarked },
 ];
 
-const mobileNavItems = navItems.slice(0, 6);
+const mobileNavItems = navItems;
 
 const BASE_URL = (import.meta.env.BASE_URL as string)?.replace(/\/$/, '') || '';
 
@@ -274,23 +274,25 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </main>
 
-        {/* Mobile Bottom Nav — top 6 items */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-sidebar border-t border-sidebar-border flex items-center justify-around px-1 py-1.5 z-20">
-          {mobileNavItems.map((item) => {
-            const active = isActive(item.href);
-            return (
-              <Link key={item.href} href={item.href}>
-                <div className="flex flex-col items-center gap-0.5 px-2 py-1.5 cursor-pointer min-w-[48px]">
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors text-lg ${active ? "bg-primary/20" : ""}`}>
-                    {item.emoji}
+        {/* Mobile Bottom Nav — all items, horizontally scrollable */}
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-sidebar border-t border-sidebar-border z-20">
+          <div className="flex items-center overflow-x-auto scrollbar-hide px-1 py-1.5 scroll-smooth">
+            {mobileNavItems.map((item) => {
+              const active = isActive(item.href);
+              return (
+                <Link key={item.href} href={item.href}>
+                  <div className="flex flex-col items-center gap-0.5 px-2.5 py-1.5 cursor-pointer shrink-0 min-w-[58px]">
+                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors text-lg ${active ? "bg-primary/20" : ""}`}>
+                      {item.emoji}
+                    </div>
+                    <span className={`text-[9px] font-bold tracking-wide whitespace-nowrap ${active ? "text-primary" : "text-sidebar-foreground/35"}`}>
+                      {item.label.split(" ")[0]}
+                    </span>
                   </div>
-                  <span className={`text-[9px] font-bold tracking-wide ${active ? "text-primary" : "text-sidebar-foreground/35"}`}>
-                    {item.label.split(" ")[0]}
-                  </span>
-                </div>
-              </Link>
-            );
-          })}
+                </Link>
+              );
+            })}
+          </div>
         </nav>
       </div>
     </>
