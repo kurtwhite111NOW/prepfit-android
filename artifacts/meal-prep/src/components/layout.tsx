@@ -30,7 +30,7 @@ const navItems = [
   { href: "/weight", label: "Weight", emoji: "📊", icon: Scale },
   { href: "/water", label: "Water", emoji: "💧", icon: Droplets },
   { href: "/plans", label: "Saved Plans", emoji: "📋", icon: ClipboardList },
-  { href: "/guide", label: "User Guide (Read Me First)", emoji: "📖", icon: BookMarked },
+  { href: "/guide", label: "User Guide", sublabel: "(Read Me First)", emoji: "📖", icon: BookMarked },
 ];
 
 const mobileNavItems = navItems.slice(0, 6);
@@ -139,7 +139,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
                       <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-primary shadow-[0_0_8px_2px_rgba(249,115,22,0.4)]" />
                     )}
                     <span className="text-base w-5 text-center">{item.emoji}</span>
-                    <span>{item.label}</span>
+                    <span className="flex flex-col leading-tight">
+                      <span>{item.label}</span>
+                      {item.sublabel && (
+                        <span className="text-[10px] font-normal opacity-70">{item.sublabel}</span>
+                      )}
+                    </span>
                   </div>
                 </Link>
               );
