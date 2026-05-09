@@ -255,6 +255,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           {/* Footer */}
           <div className="px-5 pb-3 pt-1 text-center">
             <p className="text-[10px] text-primary font-bold">PrepFit © 2025 · version 2.0.0</p>
+            <p className="text-[10px] text-white font-semibold mt-0.5">bestappsmade LLC</p>
           </div>
         </aside>
 
