@@ -13,6 +13,7 @@ import Water from "@/pages/water";
 import Plans from "@/pages/plans";
 import PlanDetail from "@/pages/plan-detail";
 import AndroidPage from "@/pages/android";
+import IosPage from "@/pages/ios";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -60,6 +61,7 @@ function Router() {
         <Route path="/plans" component={Plans} />
         <Route path="/plans/:id" component={PlanDetail} />
         <Route path="/android" component={AndroidPage} />
+        <Route path="/ios" component={IosPage} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

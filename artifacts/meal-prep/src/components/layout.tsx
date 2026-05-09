@@ -238,11 +238,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          {/* Android install */}
-          <div className="px-4 pb-3">
+          {/* Install buttons */}
+          <div className="px-4 pb-3 flex flex-col gap-2">
             <Link href="/android">
               <div className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-white hover:bg-sidebar-accent/60 transition-colors cursor-pointer text-[13px] font-bold border border-sidebar-border/60">
                 🤖 Install on Android
+              </div>
+            </Link>
+            <Link href="/ios">
+              <div className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-white hover:bg-sidebar-accent/60 transition-colors cursor-pointer text-[13px] font-bold border border-sidebar-border/60">
+                🍎 Install on iPhone
               </div>
             </Link>
           </div>
