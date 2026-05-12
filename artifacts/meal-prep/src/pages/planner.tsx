@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { usePageTitle } from "@/hooks/use-page-title";
 import { useLocation } from "wouter";
 import {
   useGenerateMealPlan,
@@ -73,6 +74,7 @@ function buildPrepChecklist(meals: any[]): string[] {
 }
 
 export default function Planner() {
+  usePageTitle("AI Meal Planner", "Generate a personalized weekly meal plan with AI. Set your calorie goal, meals per day, and get a high-protein gym-ready plan in seconds.");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();

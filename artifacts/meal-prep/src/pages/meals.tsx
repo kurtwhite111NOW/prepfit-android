@@ -1,3 +1,4 @@
+import { usePageTitle } from "@/hooks/use-page-title";
 import {
   useListSavedMeals,
   getListSavedMealsQueryKey,
@@ -31,6 +32,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function Meals() {
+  usePageTitle("My Meals Journal", "Browse all your photo-scanned meals with calorie counts, ingredients, and macros saved over time.");
   const { data: savedMeals, isLoading } = useListSavedMeals({
     query: { queryKey: getListSavedMealsQueryKey() },
   });

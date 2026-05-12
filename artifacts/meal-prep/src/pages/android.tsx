@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { usePageTitle } from "@/hooks/use-page-title";
 import {
   ArrowLeft, Chrome, Smartphone, CheckCircle2, Zap,
   Scale, Camera, CalendarDays, ShoppingCart, Download,
@@ -126,6 +127,7 @@ function QRCode({ url, size = 160 }: { url: string; size?: number }) {
 }
 
 export default function AndroidPage() {
+  usePageTitle("Install PrepFit on Android", "Install PrepFit as an app on your Android phone in seconds — no Play Store needed. Add to home screen via Chrome, Samsung Internet, or Edge.");
   const appUrl = typeof window !== "undefined" ? window.location.origin : "https://prepfit.fit";
 
   return (

@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import { usePageTitle } from "@/hooks/use-page-title";
 import { Droplets, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const GOAL = 8;
 
 export default function Water() {
+  usePageTitle("Water Tracker", "Track your daily water intake and stay hydrated for peak gym performance. Log glasses and hit your daily goal.");
   const today = new Date().toISOString().split("T")[0];
   const storageKey = `water_${today}`;
   const lastLoggedKey = `water_lastlogged_${today}`;

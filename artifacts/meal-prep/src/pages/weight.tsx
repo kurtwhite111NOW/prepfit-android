@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { usePageTitle } from "@/hooks/use-page-title";
 import {
   useListWeightEntries,
   getListWeightEntriesQueryKey,
@@ -86,6 +87,7 @@ const CustomTooltip = ({
 };
 
 export default function Weight() {
+  usePageTitle("Weight Tracker", "Log your body weight and track your progress over time with a trend chart. See your total change and weekly stats.");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 

@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { usePageTitle } from "@/hooks/use-page-title";
 import { useLocation } from "wouter";
 import {
   useAnalyzeMealPhoto,
@@ -21,6 +22,7 @@ import {
 } from "lucide-react";
 
 export default function Scan() {
+  usePageTitle("Scan Food & Count Calories", "Take or upload a photo of any meal and AI will instantly identify the food, estimate calories, and list macros.");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();

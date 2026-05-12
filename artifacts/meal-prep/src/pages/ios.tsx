@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { usePageTitle } from "@/hooks/use-page-title";
 import {
   ArrowLeft, CheckCircle2, Zap,
   Scale, Camera, CalendarDays, ShoppingCart, Download,
@@ -116,6 +117,7 @@ function QRCode({ url, size = 160 }: { url: string; size?: number }) {
 }
 
 export default function IosPage() {
+  usePageTitle("Install PrepFit on iPhone", "Install PrepFit as an app on your iPhone in seconds — no App Store needed. Add to home screen via Safari.");
   const appUrl = typeof window !== "undefined" ? window.location.origin : "https://prepfit.fit";
 
   return (

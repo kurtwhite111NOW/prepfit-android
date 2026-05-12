@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { usePageTitle } from "@/hooks/use-page-title";
 import { useListMealPlans, getListMealPlansQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -40,6 +41,7 @@ function getWaterStreak(): number {
 }
 
 export default function Home() {
+  usePageTitle("Dashboard", "Your AI-powered meal prep dashboard. View your active plan, daily macros, and quick actions for gym-focused nutrition.");
   const { data: mealPlans, isLoading } = useListMealPlans({
     query: { queryKey: getListMealPlansQueryKey() },
   });

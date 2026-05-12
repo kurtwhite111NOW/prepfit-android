@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { usePageTitle } from "@/hooks/use-page-title";
 import { Link } from "wouter";
 import {
   ArrowLeft, LayoutDashboard, CalendarDays, ShoppingBasket,
@@ -287,6 +288,7 @@ function Section({ section }: { section: typeof SECTIONS[0] }) {
 }
 
 export default function GuidePage() {
+  usePageTitle("User Guide", "Learn how to use PrepFit — AI meal planning, calorie scanning, grocery lists, weight tracking, and more.");
   return (
     <div className="space-y-8 animate-in fade-in duration-500 max-w-3xl mx-auto">
 

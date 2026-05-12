@@ -3,11 +3,115 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>PrepFit — Simple Meal Prep for Gym & Fitness</title>
+
+    <!-- Primary SEO -->
+    <title>PrepFit — AI Meal Prep App for Gym & Fitness | prepfit.fit</title>
+    <meta name="description" content="PrepFit is the #1 AI-powered meal prep app for gym-goers. Generate personalized weekly meal plans, scan food for calories, track macros & weight, and get smart grocery lists. Start your free 3-day trial." />
+    <meta name="keywords" content="meal prep app, gym meal plan, AI meal planner, macro tracker, calorie scanner, fitness nutrition app, muscle building meal plan, weight loss meal prep, grocery list app, high protein meal plan" />
+    <meta name="author" content="PrepFit — bestappsmade LLC" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://prepfit.fit/" />
+
+    <!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://prepfit.fit/" />
+    <meta property="og:title" content="PrepFit — AI Meal Prep App for Gym & Fitness" />
+    <meta property="og:description" content="Generate AI meal plans, scan food calories, track macros & weight. The meal prep app built for gym-goers. Free 3-day trial — no App Store needed." />
+    <meta property="og:image" content="https://prepfit.fit/opengraph.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="PrepFit" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter / X Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://prepfit.fit/" />
+    <meta name="twitter:title" content="PrepFit — AI Meal Prep App for Gym & Fitness" />
+    <meta name="twitter:description" content="Generate AI meal plans, scan food calories, track macros & weight. Built for gym-goers. Free 3-day trial." />
+    <meta name="twitter:image" content="https://prepfit.fit/opengraph.jpg" />
+
+    <!-- PWA / App -->
+    <meta name="theme-color" content="#e8580a" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="PrepFit" />
+    <meta name="application-name" content="PrepFit" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "@id": "https://prepfit.fit/#app",
+          "name": "PrepFit",
+          "url": "https://prepfit.fit/",
+          "description": "AI-powered meal prep app for gym-goers. Generate personalized weekly meal plans, scan food for calories, track macros and weight, and get smart grocery lists.",
+          "applicationCategory": "HealthApplication",
+          "operatingSystem": "iOS, Android, Web",
+          "browserRequirements": "Requires JavaScript",
+          "offers": {
+            "@type": "Offer",
+            "price": "14.00",
+            "priceCurrency": "USD",
+            "billingIncrement": "P1M",
+            "priceSpecification": {
+              "@type": "UnitPriceSpecification",
+              "price": "168.00",
+              "priceCurrency": "USD",
+              "billingDuration": "P1Y"
+            },
+            "description": "PrepFit Pro — $14/month billed annually at $168/year",
+            "hasMerchantReturnPolicy": {
+              "@type": "MerchantReturnPolicy",
+              "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow"
+            }
+          },
+          "featureList": [
+            "AI Meal Plan Generation",
+            "Photo Calorie Scanner",
+            "Smart Grocery Lists",
+            "Macro & Calorie Tracking",
+            "Weight Tracker",
+            "Water Intake Tracker",
+            "Saved Meal Plans",
+            "Android & iOS PWA Install"
+          ],
+          "screenshot": "https://prepfit.fit/opengraph.jpg",
+          "image": "https://prepfit.fit/opengraph.jpg"
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://prepfit.fit/#org",
+          "name": "PrepFit",
+          "url": "https://prepfit.fit/",
+          "logo": "https://prepfit.fit/opengraph.jpg",
+          "legalName": "bestappsmade LLC",
+          "description": "Makers of PrepFit — AI-powered meal prep and fitness nutrition tools."
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://prepfit.fit/#website",
+          "url": "https://prepfit.fit/",
+          "name": "PrepFit",
+          "description": "AI-powered meal prep app for gym-goers and fitness enthusiasts.",
+          "publisher": { "@id": "https://prepfit.fit/#org" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://prepfit.fit/?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Bricolage+Grotesque:wght@400;500;600;700&display=swap" rel="stylesheet">
   </head>
   <body>
     <div id="root"></div>
