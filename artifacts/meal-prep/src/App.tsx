@@ -3,23 +3,32 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Layout } from "@/components/layout";
-import Home from "@/pages/home";
-import Planner from "@/pages/planner";
-import Shopping from "@/pages/shopping";
-import Meals from "@/pages/meals";
-import Scan from "@/pages/scan";
-import Weight from "@/pages/weight";
-import Water from "@/pages/water";
-import Plans from "@/pages/plans";
-import PlanDetail from "@/pages/plan-detail";
-import AndroidPage from "@/pages/android";
-import IosPage from "@/pages/ios";
-import GuidePage from "@/pages/guide";
-import NotFound from "@/pages/not-found";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
+const Home = lazy(() => import("@/pages/home"));
+const Planner = lazy(() => import("@/pages/planner"));
+const Shopping = lazy(() => import("@/pages/shopping"));
+const Meals = lazy(() => import("@/pages/meals"));
+const Scan = lazy(() => import("@/pages/scan"));
+const Weight = lazy(() => import("@/pages/weight"));
+const Water = lazy(() => import("@/pages/water"));
+const Plans = lazy(() => import("@/pages/plans"));
+const PlanDetail = lazy(() => import("@/pages/plan-detail"));
+const AndroidPage = lazy(() => import("@/pages/android"));
+const IosPage = lazy(() => import("@/pages/ios"));
+const GuidePage = lazy(() => import("@/pages/guide"));
+const NotFound = lazy(() => import("@/pages/not-found"));
+
 const queryClient = new QueryClient();
+
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
 
 function CheckoutResultHandler() {
   const { toast } = useToast();
@@ -51,21 +60,23 @@ function Router() {
   return (
     <Layout>
       <CheckoutResultHandler />
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/planner" component={Planner} />
-        <Route path="/shopping" component={Shopping} />
-        <Route path="/meals" component={Meals} />
-        <Route path="/scan" component={Scan} />
-        <Route path="/weight" component={Weight} />
-        <Route path="/water" component={Water} />
-        <Route path="/plans" component={Plans} />
-        <Route path="/plans/:id" component={PlanDetail} />
-        <Route path="/android" component={AndroidPage} />
-        <Route path="/ios" component={IosPage} />
-        <Route path="/guide" component={GuidePage} />
-        <Route component={NotFound} />
-      </Switch>
+      <Suspense fallback={<PageLoader />}>
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/planner" component={Planner} />
+          <Route path="/shopping" component={Shopping} />
+          <Route path="/meals" component={Meals} />
+          <Route path="/scan" component={Scan} />
+          <Route path="/weight" component={Weight} />
+          <Route path="/water" component={Water} />
+          <Route path="/plans" component={Plans} />
+          <Route path="/plans/:id" component={PlanDetail} />
+          <Route path="/android" component={AndroidPage} />
+          <Route path="/ios" component={IosPage} />
+          <Route path="/guide" component={GuidePage} />
+          <Route component={NotFound} />
+        </Switch>
+      </Suspense>
     </Layout>
   );
 }
