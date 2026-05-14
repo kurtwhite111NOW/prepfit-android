@@ -142,7 +142,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     <span className="flex flex-col leading-tight">
                       <span>{item.label}</span>
                       {item.sublabel && (
-                        <span className="text-[10px] font-normal opacity-70">{item.sublabel}</span>
+                        <span className="text-[10px] font-normal text-sidebar-foreground/50">{item.sublabel}</span>
                       )}
                     </span>
                   </div>
