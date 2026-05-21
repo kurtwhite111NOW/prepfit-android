@@ -18,6 +18,7 @@ const PlanDetail = lazy(() => import("@/pages/plan-detail"));
 const AndroidPage = lazy(() => import("@/pages/android"));
 const IosPage = lazy(() => import("@/pages/ios"));
 const GuidePage = lazy(() => import("@/pages/guide"));
+const PrivacyPage = lazy(() => import("@/pages/privacy"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
 export const queryClient = new QueryClient({
@@ -81,6 +82,7 @@ function Router() {
           <Route path="/android" component={AndroidPage} />
           <Route path="/ios" component={IosPage} />
           <Route path="/guide" component={GuidePage} />
+          <Route path="/privacy" component={PrivacyPage} />
           <Route component={NotFound} />
         </Switch>
       </Suspense>

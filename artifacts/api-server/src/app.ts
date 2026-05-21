@@ -68,6 +68,7 @@ app.get("/sitemap.xml", (req, res) => {
   <url><loc>https://prepfit.fit/guide</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://prepfit.fit/android</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://prepfit.fit/ios</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://prepfit.fit/privacy</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
 </urlset>`);
 });
 
