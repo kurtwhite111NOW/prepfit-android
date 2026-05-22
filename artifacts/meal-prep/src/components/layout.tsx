@@ -111,7 +111,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             {isLoaded && !isSignedIn && (
               <a
                 href={`${BASE_URL}/sign-in`}
-                className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary/15 text-primary text-[11px] font-bold border border-primary/20"
+                className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white text-primary text-[11px] font-bold border-2 border-primary hover:bg-primary/5 transition-colors"
               >
                 <LogIn size={11} />
                 Sign In
@@ -185,7 +185,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <div className="flex gap-1.5">
                   <a
                     href={`${BASE_URL}/sign-in`}
-                    className="flex-1 flex items-center justify-center gap-1 py-2 rounded-xl bg-primary/15 text-primary border border-primary/20 text-[11px] font-bold hover:bg-primary/20 transition-colors"
+                    className="flex-1 flex items-center justify-center gap-1 py-2 rounded-xl bg-white text-primary border-2 border-primary text-[11px] font-bold hover:bg-primary/5 transition-colors"
                   >
                     <LogIn size={11} />
                     Sign In
