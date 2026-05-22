@@ -17,6 +17,7 @@ import {
   LogOut,
   LogIn,
   User,
+  Trash2,
 } from "lucide-react";
 import { useClerk, useUser } from "@clerk/react";
 import { useTrial } from "@/hooks/use-trial";
@@ -24,6 +25,7 @@ import { useTheme } from "@/hooks/use-theme";
 import { TrialBanner } from "@/components/trial-banner";
 import { UpgradeWall } from "@/components/upgrade-wall";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { DeleteAccountDialog } from "@/components/delete-account-dialog";
 
 const navItems = [
   { href: "/", label: "Dashboard", emoji: "🏠", icon: LayoutDashboard },
@@ -46,6 +48,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const trial = useTrial();
   const { isDark, toggle } = useTheme();
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [showManage, setShowManage] = useState(false);
   const [manageEmail, setManageEmail] = useState('');
   const [manageLoading, setManageLoading] = useState(false);
@@ -85,6 +88,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <>
       {(trial.expired || showUpgrade) && !trial.loading && isSignedIn && (
         <UpgradeWall onClose={trial.expired ? undefined : () => setShowUpgrade(false)} />
+      )}
+      {showDeleteAccount && (
+        <DeleteAccountDialog onClose={() => setShowDeleteAccount(false)} />
       )}
 
       <div className="min-h-screen bg-background flex flex-col md:flex-row">
@@ -144,28 +150,37 @@ export function Layout({ children }: { children: React.ReactNode }) {
           {isLoaded && (
             <div className="px-4 pb-3">
               {isSignedIn ? (
-                <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-sidebar-accent/40 border border-sidebar-border/60">
-                  <div className="w-7 h-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
-                    {user?.imageUrl ? (
-                      <img src={user.imageUrl} alt={displayName} className="w-7 h-7 rounded-full object-cover" />
-                    ) : (
-                      <User size={14} className="text-primary" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sidebar-foreground text-[11px] font-bold truncate leading-tight">{displayName}</p>
-                    {userEmail && (
-                      <p className="text-sidebar-foreground/40 text-[10px] truncate leading-tight">{userEmail}</p>
-                    )}
+                <>
+                  <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-sidebar-accent/40 border border-sidebar-border/60">
+                    <div className="w-7 h-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
+                      {user?.imageUrl ? (
+                        <img src={user.imageUrl} alt={displayName} className="w-7 h-7 rounded-full object-cover" />
+                      ) : (
+                        <User size={14} className="text-primary" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sidebar-foreground text-[11px] font-bold truncate leading-tight">{displayName}</p>
+                      {userEmail && (
+                        <p className="text-sidebar-foreground/40 text-[10px] truncate leading-tight">{userEmail}</p>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => signOut({ redirectUrl: BASE_URL || "/" })}
+                      title="Sign out"
+                      className="p-1 rounded-lg text-sidebar-foreground/40 hover:text-red-400 hover:bg-red-400/10 transition-colors shrink-0"
+                    >
+                      <LogOut size={13} />
+                    </button>
                   </div>
                   <button
-                    onClick={() => signOut({ redirectUrl: BASE_URL || "/" })}
-                    title="Sign out"
-                    className="p-1 rounded-lg text-sidebar-foreground/40 hover:text-red-400 hover:bg-red-400/10 transition-colors shrink-0"
+                    onClick={() => setShowDeleteAccount(true)}
+                    className="w-full flex items-center gap-1.5 px-3 py-1 rounded-lg text-sidebar-foreground/25 hover:text-red-400/70 hover:bg-red-500/5 transition-colors text-[10px] font-medium mt-0.5"
                   >
-                    <LogOut size={13} />
+                    <Trash2 size={10} />
+                    Delete account & all data
                   </button>
-                </div>
+                </>
               ) : (
                 <div className="flex gap-1.5">
                   <a
