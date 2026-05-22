@@ -1,5 +1,6 @@
 import { createRoot } from "react-dom/client";
-import App, { queryClient } from "./App";
+import App from "./App";
+import { queryClient } from "./lib/queryClient";
 import "./index.css";
 
 queryClient.prefetchQuery({

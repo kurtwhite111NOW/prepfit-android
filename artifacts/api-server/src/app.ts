@@ -1,9 +1,16 @@
 import express, { type Express } from "express";
 import cors from "cors";
 import pinoHttp from "pino-http";
+import { clerkMiddleware, getAuth } from "@clerk/express";
+import { publishableKeyFromHost } from "@clerk/shared/keys";
 import router from "./routes";
 import { logger } from "./lib/logger";
 import { WebhookHandlers } from "./webhookHandlers";
+import {
+  CLERK_PROXY_PATH,
+  clerkProxyMiddleware,
+  getClerkProxyHost,
+} from "./middlewares/clerkProxyMiddleware";
 
 const app: Express = express();
 
@@ -27,6 +34,10 @@ app.use(
   }),
 );
 
+// Clerk proxy — must be before body parsers (streams raw bytes)
+app.use(CLERK_PROXY_PATH, clerkProxyMiddleware());
+
+// Stripe webhook — raw body before json parser
 app.post(
   '/api/stripe/webhook',
   express.raw({ type: 'application/json' }),
@@ -38,21 +49,57 @@ app.post(
     try {
       const sig = Array.isArray(signature) ? signature[0] : signature;
       await WebhookHandlers.processWebhook(req.body as Buffer, sig);
-      res.status(200).json({ received: true });
+      return res.status(200).json({ received: true });
     } catch (error: any) {
       logger.error({ err: error }, 'Webhook error');
-      res.status(400).json({ error: 'Webhook processing error' });
+      return res.status(400).json({ error: 'Webhook processing error' });
     }
   }
 );
 
-app.use(cors());
+app.use(cors({ credentials: true, origin: true }));
 app.use(express.json({ limit: "15mb" }));
 app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 
+app.use(
+  clerkMiddleware((req) => ({
+    publishableKey: publishableKeyFromHost(
+      getClerkProxyHost(req) ?? "",
+      process.env.CLERK_PUBLISHABLE_KEY,
+    ),
+  })),
+);
+
+// Public paths — no auth needed
+const PUBLIC_PATH_PREFIXES = [
+  "/api/healthz",
+  "/api/stripe/webhook",
+  "/api/stripe/config",
+  "/api/stripe/products",
+  "/api/stripe/create-checkout-session",
+  "/api/stripe/portal-by-email",
+  "/api/stripe/create-portal-session",
+];
+
+export const requireAuth = (req: any, res: any, next: any) => {
+  const isPublic = PUBLIC_PATH_PREFIXES.some(
+    (p) => req.path === p || req.path.startsWith(p + "/"),
+  );
+  if (isPublic) return next();
+
+  const auth = getAuth(req);
+  const userId = auth?.sessionClaims?.userId || auth?.userId;
+  if (!userId) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  req.userId = userId;
+  next();
+};
+
+app.use("/api", requireAuth);
 app.use("/api", router);
 
-app.get("/sitemap.xml", (req, res) => {
+app.get("/sitemap.xml", (_req, res) => {
   res.setHeader("Content-Type", "application/xml; charset=utf-8");
   res.setHeader("Cache-Control", "public, max-age=86400");
   res.send(`<?xml version="1.0" encoding="UTF-8"?>
@@ -72,7 +119,7 @@ app.get("/sitemap.xml", (req, res) => {
 </urlset>`);
 });
 
-app.get("/robots.txt", (req, res) => {
+app.get("/robots.txt", (_req, res) => {
   res.setHeader("Content-Type", "text/plain; charset=utf-8");
   res.setHeader("Cache-Control", "public, max-age=86400");
   res.send("User-agent: *\nAllow: /\n\nSitemap: https://prepfit.fit/sitemap.xml\n");

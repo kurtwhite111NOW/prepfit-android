@@ -4,6 +4,7 @@ import { z } from "zod/v4";
 
 export const weightEntriesTable = pgTable("weight_entries", {
   id: serial("id").primaryKey(),
+  userId: text("user_id"),
   weight: real("weight").notNull(),
   unit: text("unit").notNull().default("lbs"),
   notes: text("notes"),

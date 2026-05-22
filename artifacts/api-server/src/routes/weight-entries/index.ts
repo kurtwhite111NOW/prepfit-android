@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db, weightEntriesTable } from "@workspace/db";
 import {
   CreateWeightEntryBody,
@@ -8,15 +8,16 @@ import {
 
 const router: IRouter = Router();
 
-router.get("/weight-entries", async (_req, res): Promise<void> => {
-  const entries = await db
-    .select()
-    .from(weightEntriesTable)
+router.get("/weight-entries", async (req: any, res): Promise<void> => {
+  const userId: string = req.userId;
+  const entries = await db.select().from(weightEntriesTable)
+    .where(eq(weightEntriesTable.userId, userId))
     .orderBy(weightEntriesTable.recordedAt);
   res.json(entries);
 });
 
-router.post("/weight-entries", async (req, res): Promise<void> => {
+router.post("/weight-entries", async (req: any, res): Promise<void> => {
+  const userId: string = req.userId;
   const parsed = CreateWeightEntryBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: String(parsed.error) });
@@ -30,27 +31,26 @@ router.post("/weight-entries", async (req, res): Promise<void> => {
     recordedAt?: Date;
   };
 
-  const [entry] = await db
-    .insert(weightEntriesTable)
-    .values({
-      ...rest,
-      ...(recordedAt ? { recordedAt } : {}),
-    })
+  const [entry] = await db.insert(weightEntriesTable)
+    .values({ ...rest, userId, ...(recordedAt ? { recordedAt } : {}) })
     .returning();
 
   res.status(201).json(entry);
 });
 
-router.delete("/weight-entries/:id", async (req, res): Promise<void> => {
+router.delete("/weight-entries/:id", async (req: any, res): Promise<void> => {
+  const userId: string = req.userId;
   const params = DeleteWeightEntryParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: String(params.error) });
     return;
   }
 
-  const [deleted] = await db
-    .delete(weightEntriesTable)
-    .where(eq(weightEntriesTable.id, (params.data as { id: number }).id))
+  const [deleted] = await db.delete(weightEntriesTable)
+    .where(and(
+      eq(weightEntriesTable.id, (params.data as { id: number }).id),
+      eq(weightEntriesTable.userId, userId)
+    ))
     .returning();
 
   if (!deleted) {

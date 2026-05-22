@@ -1,19 +1,21 @@
 import { Router, type IRouter } from "express";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db, mealPlansTable, mealItemsTable } from "@workspace/db";
 import { GetShoppingListParams } from "@workspace/api-zod";
 import { openai } from "@workspace/integrations-openai-ai-server";
 
 const router: IRouter = Router();
 
-router.get("/shopping-lists/:mealPlanId", async (req, res): Promise<void> => {
+router.get("/shopping-lists/:mealPlanId", async (req: any, res): Promise<void> => {
+  const userId: string = req.userId;
   const params = GetShoppingListParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
     return;
   }
 
-  const [plan] = await db.select().from(mealPlansTable).where(eq(mealPlansTable.id, params.data.mealPlanId));
+  const [plan] = await db.select().from(mealPlansTable)
+    .where(and(eq(mealPlansTable.id, params.data.mealPlanId), eq(mealPlansTable.userId, userId)));
   if (!plan) {
     res.status(404).json({ error: "Meal plan not found" });
     return;

@@ -14,7 +14,11 @@ import {
   Settings,
   Loader2,
   ExternalLink,
+  LogOut,
+  LogIn,
+  User,
 } from "lucide-react";
+import { useClerk, useUser } from "@clerk/react";
 import { useTrial } from "@/hooks/use-trial";
 import { useTheme } from "@/hooks/use-theme";
 import { TrialBanner } from "@/components/trial-banner";
@@ -48,6 +52,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const [manageError, setManageError] = useState<string | null>(null);
   const emailRef = useRef<HTMLInputElement>(null);
 
+  const { signOut } = useClerk();
+  const { user, isSignedIn, isLoaded } = useUser();
+
   const openBillingPortal = async () => {
     const email = manageEmail.trim();
     if (!email) return;
@@ -71,9 +78,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const isActive = (href: string) =>
     href === "/" ? location === "/" : location.startsWith(href);
 
+  const displayName = user?.firstName || user?.username || user?.emailAddresses?.[0]?.emailAddress?.split('@')[0] || 'User';
+  const userEmail = user?.emailAddresses?.[0]?.emailAddress || '';
+
   return (
     <>
-      {(trial.expired || showUpgrade) && !trial.loading && (
+      {(trial.expired || showUpgrade) && !trial.loading && isSignedIn && (
         <UpgradeWall onClose={trial.expired ? undefined : () => setShowUpgrade(false)} />
       )}
 
@@ -92,7 +102,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle isDark={isDark} toggle={toggle} variant="header" />
-            {!trial.expired && !trial.loading && (
+            {isLoaded && !isSignedIn && (
+              <a
+                href={`${BASE_URL}/sign-in`}
+                className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary/15 text-primary text-[11px] font-bold border border-primary/20"
+              >
+                <LogIn size={11} />
+                Sign In
+              </a>
+            )}
+            {isSignedIn && !trial.expired && !trial.loading && (
               <button
                 onClick={() => setShowUpgrade(true)}
                 className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary/15 text-primary text-[11px] font-bold border border-primary/20"
@@ -109,7 +128,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
 
           {/* Logo */}
-          <div className="px-5 pt-6 pb-5">
+          <div className="px-5 pt-5 pb-3">
             <a href="https://prepfit.fit/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <div className="w-10 h-10 rounded-2xl gradient-emerald flex items-center justify-center shadow-lg text-xl shrink-0">
                 💪
@@ -120,6 +139,52 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </div>
             </a>
           </div>
+
+          {/* User Account Section */}
+          {isLoaded && (
+            <div className="px-4 pb-3">
+              {isSignedIn ? (
+                <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-sidebar-accent/40 border border-sidebar-border/60">
+                  <div className="w-7 h-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
+                    {user?.imageUrl ? (
+                      <img src={user.imageUrl} alt={displayName} className="w-7 h-7 rounded-full object-cover" />
+                    ) : (
+                      <User size={14} className="text-primary" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sidebar-foreground text-[11px] font-bold truncate leading-tight">{displayName}</p>
+                    {userEmail && (
+                      <p className="text-sidebar-foreground/40 text-[10px] truncate leading-tight">{userEmail}</p>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => signOut({ redirectUrl: BASE_URL || "/" })}
+                    title="Sign out"
+                    className="p-1 rounded-lg text-sidebar-foreground/40 hover:text-red-400 hover:bg-red-400/10 transition-colors shrink-0"
+                  >
+                    <LogOut size={13} />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-1.5">
+                  <a
+                    href={`${BASE_URL}/sign-in`}
+                    className="flex-1 flex items-center justify-center gap-1 py-2 rounded-xl bg-primary/15 text-primary border border-primary/20 text-[11px] font-bold hover:bg-primary/20 transition-colors"
+                  >
+                    <LogIn size={11} />
+                    Sign In
+                  </a>
+                  <a
+                    href={`${BASE_URL}/sign-up`}
+                    className="flex-1 flex items-center justify-center gap-1 py-2 rounded-xl gradient-emerald text-white text-[11px] font-bold"
+                  >
+                    Sign Up
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Nav */}
           <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
@@ -156,94 +221,96 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <ThemeToggle isDark={isDark} toggle={toggle} variant="sidebar" />
           </div>
 
-          {/* Trial / Pro card */}
-          <div className="px-4 pb-2 pt-1">
-            <div className="rounded-2xl bg-primary/10 border border-primary/15 p-4">
-              {!trial.loading && !trial.expired ? (
-                <>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <p className="text-sidebar-foreground/80 text-[11px] font-bold uppercase tracking-wider">🎁 Free Trial</p>
-                    <span className="text-[10px] font-bold text-amber-400">{trial.daysLeft}d left</span>
-                  </div>
-                  <div className="w-full h-1.5 rounded-full bg-sidebar-foreground/10 mb-3">
-                    <div
-                      className="h-1.5 rounded-full bg-amber-400 transition-all"
-                      style={{ width: `${Math.round((trial.daysLeft / 3) * 100)}%` }}
-                    />
-                  </div>
-                  <button
-                    onClick={() => setShowUpgrade(true)}
-                    className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl gradient-emerald text-white text-[11px] font-bold uppercase tracking-wide"
-                  >
-                    <Zap size={11} />
-                    Upgrade to Pro
-                  </button>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <p className="text-sidebar-foreground/80 text-[11px] font-bold uppercase tracking-wider">⚡ Pro Plan</p>
-                    <span className="text-[10px] font-bold text-primary bg-primary/15 px-1.5 py-0.5 rounded-full">Active</span>
-                  </div>
-                  <p className="text-sidebar-foreground/50 text-[11px] leading-relaxed">
-                    Unlimited meal plans, calorie scanning & more.
-                  </p>
-
-                  {!showManage ? (
-                    <button
-                      onClick={() => {
-                        setShowManage(true);
-                        setManageError(null);
-                        setTimeout(() => emailRef.current?.focus(), 50);
-                      }}
-                      className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 rounded-xl border border-sidebar-border/60 text-sidebar-foreground/60 hover:text-white hover:border-white/20 text-[11px] font-semibold transition-colors"
-                    >
-                      <Settings size={11} />
-                      Manage Subscription
-                    </button>
-                  ) : (
-                    <div className="mt-3 flex flex-col gap-2">
-                      <p className="text-sidebar-foreground/60 text-[10px] leading-snug">
-                        Enter your billing email to open the Stripe portal.
-                      </p>
-                      <input
-                        ref={emailRef}
-                        type="email"
-                        value={manageEmail}
-                        onChange={(e) => setManageEmail(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && openBillingPortal()}
-                        placeholder="you@example.com"
-                        className="w-full px-2.5 py-1.5 rounded-lg bg-sidebar-accent/40 border border-sidebar-border/60 text-sidebar-foreground text-[11px] placeholder:text-sidebar-foreground/30 outline-none focus:border-primary/50 transition-colors"
-                      />
-                      {manageError && (
-                        <p className="text-red-400 text-[10px] leading-snug">{manageError}</p>
-                      )}
-                      <div className="flex gap-1.5">
-                        <button
-                          onClick={openBillingPortal}
-                          disabled={manageLoading || !manageEmail.trim()}
-                          className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg gradient-emerald text-white text-[11px] font-bold disabled:opacity-50 transition-opacity"
-                        >
-                          {manageLoading ? (
-                            <Loader2 size={10} className="animate-spin" />
-                          ) : (
-                            <ExternalLink size={10} />
-                          )}
-                          {manageLoading ? 'Opening…' : 'Open Portal'}
-                        </button>
-                        <button
-                          onClick={() => { setShowManage(false); setManageError(null); setManageEmail(''); }}
-                          className="px-2.5 py-1.5 rounded-lg text-sidebar-foreground/40 hover:text-sidebar-foreground/70 text-[11px] font-semibold transition-colors"
-                        >
-                          Cancel
-                        </button>
-                      </div>
+          {/* Trial / Pro card — only for signed-in users */}
+          {isSignedIn && (
+            <div className="px-4 pb-2 pt-1">
+              <div className="rounded-2xl bg-primary/10 border border-primary/15 p-4">
+                {!trial.loading && !trial.expired ? (
+                  <>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <p className="text-sidebar-foreground/80 text-[11px] font-bold uppercase tracking-wider">🎁 Free Trial</p>
+                      <span className="text-[10px] font-bold text-amber-400">{trial.daysLeft}d left</span>
                     </div>
-                  )}
-                </>
-              )}
+                    <div className="w-full h-1.5 rounded-full bg-sidebar-foreground/10 mb-3">
+                      <div
+                        className="h-1.5 rounded-full bg-amber-400 transition-all"
+                        style={{ width: `${Math.round((trial.daysLeft / 3) * 100)}%` }}
+                      />
+                    </div>
+                    <button
+                      onClick={() => setShowUpgrade(true)}
+                      className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl gradient-emerald text-white text-[11px] font-bold uppercase tracking-wide"
+                    >
+                      <Zap size={11} />
+                      Upgrade to Pro
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <p className="text-sidebar-foreground/80 text-[11px] font-bold uppercase tracking-wider">⚡ Pro Plan</p>
+                      <span className="text-[10px] font-bold text-primary bg-primary/15 px-1.5 py-0.5 rounded-full">Active</span>
+                    </div>
+                    <p className="text-sidebar-foreground/50 text-[11px] leading-relaxed">
+                      Unlimited meal plans, calorie scanning & more.
+                    </p>
+
+                    {!showManage ? (
+                      <button
+                        onClick={() => {
+                          setShowManage(true);
+                          setManageError(null);
+                          setTimeout(() => emailRef.current?.focus(), 50);
+                        }}
+                        className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 rounded-xl border border-sidebar-border/60 text-sidebar-foreground/60 hover:text-white hover:border-white/20 text-[11px] font-semibold transition-colors"
+                      >
+                        <Settings size={11} />
+                        Manage Subscription
+                      </button>
+                    ) : (
+                      <div className="mt-3 flex flex-col gap-2">
+                        <p className="text-sidebar-foreground/60 text-[10px] leading-snug">
+                          Enter your billing email to open the Stripe portal.
+                        </p>
+                        <input
+                          ref={emailRef}
+                          type="email"
+                          value={manageEmail}
+                          onChange={(e) => setManageEmail(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && openBillingPortal()}
+                          placeholder="you@example.com"
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-sidebar-accent/40 border border-sidebar-border/60 text-sidebar-foreground text-[11px] placeholder:text-sidebar-foreground/30 outline-none focus:border-primary/50 transition-colors"
+                        />
+                        {manageError && (
+                          <p className="text-red-400 text-[10px] leading-snug">{manageError}</p>
+                        )}
+                        <div className="flex gap-1.5">
+                          <button
+                            onClick={openBillingPortal}
+                            disabled={manageLoading || !manageEmail.trim()}
+                            className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg gradient-emerald text-white text-[11px] font-bold disabled:opacity-50 transition-opacity"
+                          >
+                            {manageLoading ? (
+                              <Loader2 size={10} className="animate-spin" />
+                            ) : (
+                              <ExternalLink size={10} />
+                            )}
+                            {manageLoading ? 'Opening…' : 'Open Portal'}
+                          </button>
+                          <button
+                            onClick={() => { setShowManage(false); setManageError(null); setManageEmail(''); }}
+                            className="px-2.5 py-1.5 rounded-lg text-sidebar-foreground/40 hover:text-sidebar-foreground/70 text-[11px] font-semibold transition-colors"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Install buttons */}
           <div className="px-4 pb-2 flex flex-col gap-1.5">
@@ -271,13 +338,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
         {/* Main Content */}
         <main className="flex-1 min-h-screen pb-24 md:pb-0 overflow-y-auto">
-          <TrialBanner trial={trial} onUpgrade={() => setShowUpgrade(true)} />
+          {isSignedIn && <TrialBanner trial={trial} onUpgrade={() => setShowUpgrade(true)} />}
           <div key={location} className="max-w-3xl mx-auto px-3 md:px-8 py-4 md:py-8 animate-in fade-in duration-300">
             {children}
           </div>
         </main>
 
-        {/* Mobile Bottom Nav — all items, horizontally scrollable */}
+        {/* Mobile Bottom Nav */}
         <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-sidebar border-t border-sidebar-border z-20">
           <div className="flex items-center overflow-x-auto scrollbar-hide px-1 py-1.5 scroll-smooth">
             {mobileNavItems.map((item) => {
