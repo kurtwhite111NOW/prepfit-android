@@ -39,13 +39,7 @@ const navItems = [
   { href: "/guide", label: "User Guide", sublabel: "(Read Me First)", emoji: "📖", icon: BookMarked },
 ];
 
-const mobileNavItems = [
-  { href: "/", label: "Home", emoji: "🏠", icon: LayoutDashboard },
-  { href: "/planner", label: "Planner", emoji: "🥗", icon: CalendarDays },
-  { href: "/scan", label: "Scan", emoji: "📸", icon: ScanLine },
-  { href: "/shopping", label: "Grocery", emoji: "🛒", icon: ShoppingBasket },
-  { href: "/weight", label: "Weight", emoji: "📊", icon: Scale },
-];
+const mobileNavItems = navItems;
 
 const BASE_URL = (import.meta.env.BASE_URL as string)?.replace(/\/$/, '') || '';
 
@@ -367,7 +361,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
         {/* Mobile Bottom Nav */}
         <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-sidebar border-t border-sidebar-border z-20">
-          <div className="flex items-center justify-around px-1 py-1.5">
+          <div className="flex items-center overflow-x-auto scrollbar-hide px-1 py-1.5 scroll-smooth">
             {mobileNavItems.map((item) => {
               const active = isActive(item.href);
               return (
