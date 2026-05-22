@@ -70,15 +70,16 @@ app.use(
   })),
 );
 
-// Public paths — no auth needed
+// Public paths — relative to /api mount point (Express strips the /api prefix
+// from req.path inside app.use("/api", ...) middleware)
 const PUBLIC_PATH_PREFIXES = [
-  "/api/healthz",
-  "/api/stripe/webhook",
-  "/api/stripe/config",
-  "/api/stripe/products",
-  "/api/stripe/create-checkout-session",
-  "/api/stripe/portal-by-email",
-  "/api/stripe/create-portal-session",
+  "/healthz",
+  "/stripe/webhook",
+  "/stripe/config",
+  "/stripe/products",
+  "/stripe/create-checkout-session",
+  "/stripe/portal-by-email",
+  "/stripe/create-portal-session",
 ];
 
 export const requireAuth = (req: any, res: any, next: any) => {

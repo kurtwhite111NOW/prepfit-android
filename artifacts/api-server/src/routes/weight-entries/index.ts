@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { and, desc, eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db, weightEntriesTable } from "@workspace/db";
 import {
   CreateWeightEntryBody,

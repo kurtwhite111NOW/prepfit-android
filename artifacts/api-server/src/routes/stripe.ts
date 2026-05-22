@@ -5,7 +5,7 @@ import { logger } from '../lib/logger';
 
 const router: IRouter = Router();
 
-router.get('/stripe/config', async (_req, res) => {
+router.get('/stripe/config', async (_req, res): Promise<void> => {
   try {
     const publishableKey = await getStripePublishableKey();
     res.json({ publishableKey });
@@ -15,10 +15,10 @@ router.get('/stripe/config', async (_req, res) => {
   }
 });
 
-router.get('/stripe/products', async (_req, res) => {
+router.get('/stripe/products', async (_req, res): Promise<void> => {
   try {
     const rows = await stripeStorage.listProductsWithPrices();
-    
+
     if (rows.length > 0) {
       const productsMap = new Map<string, any>();
       for (const row of rows as any[]) {
@@ -39,7 +39,8 @@ router.get('/stripe/products', async (_req, res) => {
           });
         }
       }
-      return res.json({ data: Array.from(productsMap.values()) });
+      res.json({ data: Array.from(productsMap.values()) });
+      return;
     }
 
     const stripe = await getUncachableStripeClient();
@@ -75,12 +76,13 @@ router.get('/stripe/products', async (_req, res) => {
   }
 });
 
-router.post('/stripe/create-checkout-session', async (req, res) => {
+router.post('/stripe/create-checkout-session', async (req, res): Promise<void> => {
   try {
     const { priceId, userId, email } = req.body as { priceId: string; userId?: string; email?: string };
 
     if (!priceId) {
-      return res.status(400).json({ error: 'priceId is required' });
+      res.status(400).json({ error: 'priceId is required' });
+      return;
     }
 
     const stripe = await getUncachableStripeClient();
@@ -127,18 +129,20 @@ router.post('/stripe/create-checkout-session', async (req, res) => {
   }
 });
 
-router.post('/stripe/portal-by-email', async (req, res) => {
+router.post('/stripe/portal-by-email', async (req, res): Promise<void> => {
   try {
     const { email } = req.body as { email: string };
     if (!email) {
-      return res.status(400).json({ error: 'email is required' });
+      res.status(400).json({ error: 'email is required' });
+      return;
     }
 
     const stripe = await getUncachableStripeClient();
     const customers = await stripe.customers.list({ email, limit: 1 });
 
     if (!customers.data.length) {
-      return res.status(404).json({ error: 'No subscription found for that email address.' });
+      res.status(404).json({ error: 'No subscription found for that email address.' });
+      return;
     }
 
     const customerId = customers.data[0].id;
@@ -156,11 +160,12 @@ router.post('/stripe/portal-by-email', async (req, res) => {
   }
 });
 
-router.post('/stripe/create-portal-session', async (req, res) => {
+router.post('/stripe/create-portal-session', async (req, res): Promise<void> => {
   try {
     const { customerId } = req.body as { customerId: string };
     if (!customerId) {
-      return res.status(400).json({ error: 'customerId is required' });
+      res.status(400).json({ error: 'customerId is required' });
+      return;
     }
 
     const stripe = await getUncachableStripeClient();

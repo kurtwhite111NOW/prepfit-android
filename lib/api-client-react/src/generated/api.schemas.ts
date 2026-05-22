@@ -25,6 +25,9 @@ export interface MealItem {
   calories: number;
   mealNumber: number;
   ingredients: string;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
 }
 
 export interface MealPlanWithMeals {
@@ -70,6 +73,9 @@ export interface CreateMealItemBody {
   calories: number;
   mealNumber: number;
   ingredients: string;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
 }
 
 export interface CreateMealPlanBody {
@@ -102,6 +108,9 @@ export interface GeneratedMeal {
   description: string;
   calories: number;
   ingredients: string;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
 }
 
 export interface GeneratedShoppingItem {

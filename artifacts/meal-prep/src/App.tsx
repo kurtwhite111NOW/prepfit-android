@@ -194,18 +194,9 @@ function ProtectedPage({ children }: { children: React.ReactNode }) {
 
 function HomeRedirect() {
   return (
-    <>
-      <Show when="signed-in">
-        <Suspense fallback={<PageLoader />}>
-          <Home />
-        </Suspense>
-      </Show>
-      <Show when="signed-out">
-        <Suspense fallback={<PageLoader />}>
-          <Home />
-        </Suspense>
-      </Show>
-    </>
+    <Suspense fallback={<PageLoader />}>
+      <Home />
+    </Suspense>
   );
 }
 
@@ -257,7 +248,7 @@ function Router() {
             <ProtectedPage><Plans /></ProtectedPage>
           </Route>
           <Route path="/plans/:id">
-            {(params) => (
+            {() => (
               <ProtectedPage><PlanDetail /></ProtectedPage>
             )}
           </Route>

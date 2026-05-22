@@ -328,6 +328,12 @@ components:
           type: integer
         ingredients:
           type: string
+        protein:
+          type: integer
+        carbs:
+          type: integer
+        fat:
+          type: integer
       required:
         - id
         - mealPlanId
@@ -467,6 +473,12 @@ components:
           type: integer
         ingredients:
           type: string
+        protein:
+          type: integer
+        carbs:
+          type: integer
+        fat:
+          type: integer
       required:
         - name
         - description
@@ -537,6 +549,12 @@ components:
           type: integer
         ingredients:
           type: string
+        protein:
+          type: integer
+        carbs:
+          type: integer
+        fat:
+          type: integer
       required:
         - mealNumber
         - name

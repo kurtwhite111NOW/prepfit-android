@@ -70,9 +70,9 @@ export const GetMealPlanResponse = zod.object({
       calories: zod.number(),
       mealNumber: zod.number(),
       ingredients: zod.string(),
-      protein: zod.number().nullable().optional(),
-      carbs: zod.number().nullable().optional(),
-      fat: zod.number().nullable().optional(),
+      protein: zod.number().optional(),
+      carbs: zod.number().optional(),
+      fat: zod.number().optional(),
     }),
   ),
 });
@@ -195,6 +195,9 @@ export const GenerateMealPlanResponse = zod.object({
       description: zod.string(),
       calories: zod.number(),
       ingredients: zod.string(),
+      protein: zod.number().optional(),
+      carbs: zod.number().optional(),
+      fat: zod.number().optional(),
     }),
   ),
   shoppingItems: zod.array(
