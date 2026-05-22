@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, timestamp, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -11,7 +11,10 @@ export const savedMealsTable = pgTable("saved_meals", {
   ingredients: text("ingredients").notNull(),
   imageData: text("image_data"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-});
+}, (table) => [
+  index("saved_meals_user_id_idx").on(table.userId),
+  index("saved_meals_user_id_created_at_idx").on(table.userId, table.createdAt),
+]);
 
 export const insertSavedMealSchema = createInsertSchema(savedMealsTable).omit({ id: true, createdAt: true });
 export type InsertSavedMeal = z.infer<typeof insertSavedMealSchema>;

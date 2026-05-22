@@ -1,11 +1,12 @@
 import { Router, type IRouter } from "express";
 import { GenerateMealPlanBody, AnalyzeMealPhotoBody } from "@workspace/api-zod";
 import { openai } from "@workspace/integrations-openai-ai-server";
-import { getRandomMealSample, getRandomCuisines, getRandomIngredients, getRandomTheme } from "../../data/mealLibrary";
+import { getRandomMealSample, getRandomIngredients, getRandomTheme } from "../../data/mealLibrary";
+import { aiRateLimit, photoRateLimit } from "../../middlewares/aiRateLimit";
 
 const router: IRouter = Router();
 
-router.post("/ai/generate-meal-plan", async (req, res): Promise<void> => {
+router.post("/ai/generate-meal-plan", aiRateLimit, async (req, res): Promise<void> => {
   try {
     const parsed = GenerateMealPlanBody.safeParse(req.body);
     if (!parsed.success) {
@@ -144,7 +145,7 @@ Shopping categories: Produce, Proteins, Dairy & Eggs, Grains & Bread, Pantry Sta
   }
 });
 
-router.post("/ai/analyze-meal-photo", async (req, res): Promise<void> => {
+router.post("/ai/analyze-meal-photo", photoRateLimit, async (req, res): Promise<void> => {
   try {
     const parsed = AnalyzeMealPhotoBody.safeParse(req.body);
     if (!parsed.success) {

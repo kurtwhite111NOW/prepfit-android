@@ -8,6 +8,7 @@ import {
   ListMealPlansResponse,
   GetMealPlanResponse,
 } from "@workspace/api-zod";
+import { shoppingListCache, shoppingListCacheKey } from "../../lib/shoppingListCache";
 
 const router: IRouter = Router();
 
@@ -78,6 +79,7 @@ router.delete("/meal-plans/:id", async (req: any, res): Promise<void> => {
     return;
   }
 
+  shoppingListCache.delete(shoppingListCacheKey(userId, params.data.id));
   res.sendStatus(204);
 });
 

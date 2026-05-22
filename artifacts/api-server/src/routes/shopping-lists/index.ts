@@ -3,6 +3,7 @@ import { and, eq } from "drizzle-orm";
 import { db, mealPlansTable, mealItemsTable } from "@workspace/db";
 import { GetShoppingListParams } from "@workspace/api-zod";
 import { openai } from "@workspace/integrations-openai-ai-server";
+import { shoppingListCache, shoppingListCacheKey } from "../../lib/shoppingListCache";
 
 const router: IRouter = Router();
 
@@ -11,6 +12,13 @@ router.get("/shopping-lists/:mealPlanId", async (req: any, res): Promise<void> =
   const params = GetShoppingListParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
+    return;
+  }
+
+  const cacheKey = shoppingListCacheKey(userId, params.data.mealPlanId);
+  const cached = shoppingListCache.get(cacheKey);
+  if (cached) {
+    res.json(cached);
     return;
   }
 
@@ -78,11 +86,14 @@ Return the result as valid JSON in this exact format:
     parsed = { categories: [] };
   }
 
-  res.json({
+  const result = {
     mealPlanId: plan.id,
     mealPlanName: plan.name,
     categories: parsed.categories || [],
-  });
+  };
+
+  shoppingListCache.set(cacheKey, result);
+  res.json(result);
 });
 
 export default router;
