@@ -103,12 +103,77 @@
             "target": "https://prepfit.fit/?q={search_term_string}",
             "query-input": "required name=search_term_string"
           }
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://prepfit.fit/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is PrepFit?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "PrepFit is an AI-powered meal prep app for gym-goers and fitness enthusiasts. It generates personalized weekly meal plans, scans food photos for calorie counts, tracks macros and weight, and creates smart grocery lists — all in one app."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is there a free trial for PrepFit?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! PrepFit offers a 3-day free trial with full access to all features — no credit card required. After the trial, plans start at $14/month billed annually at $168/year."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does PrepFit work on iPhone and Android?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. PrepFit is a Progressive Web App (PWA) that works on any device — iPhone, Android, and desktop. You can install it directly from your browser without going through the App Store or Google Play."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does the AI meal plan generator work?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Simply set your daily calorie goal and how many meals per day you want. PrepFit's AI generates a full weekly meal plan with balanced macros (protein, carbs, fat) and per-meal calorie targets, tailored for gym performance and body composition goals."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can PrepFit scan food photos for calories?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. The Photo Scanner feature lets you take or upload a photo of any meal. PrepFit's AI identifies the food, estimates total calories, and lists the ingredients — saving it to your personal meal journal."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How much does PrepFit cost?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "PrepFit Pro costs $14/month billed annually at $168/year. A 3-day free trial is included with every new account — no credit card required to start."
+              }
+            }
+          ]
         }
       ]
     }
     </script>
 
+    <!-- Icons & Manifest -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/pf-icon.ico" />
+    <link rel="apple-touch-icon" href="/pf-icon.ico" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- DNS Prefetch -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="https://api.clerk.com" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Bricolage+Grotesque:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">

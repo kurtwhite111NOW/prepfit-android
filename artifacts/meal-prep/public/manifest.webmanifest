@@ -1,0 +1,58 @@
+{
+  "name": "PrepFit — AI Meal Prep for Gym & Fitness",
+  "short_name": "PrepFit",
+  "description": "AI-powered meal prep app for gym-goers. Generate personalized weekly meal plans, scan food for calories, track macros & weight, and get smart grocery lists.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f1a14",
+  "theme_color": "#e8580a",
+  "categories": ["health", "fitness", "food"],
+  "lang": "en-US",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/pf-icon.ico",
+      "sizes": "any",
+      "type": "image/x-icon",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/opengraph.jpg",
+      "sizes": "1200x630",
+      "type": "image/jpeg",
+      "label": "PrepFit Dashboard — AI Meal Prep App"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Meal Planner",
+      "short_name": "Planner",
+      "description": "Generate your AI weekly meal plan",
+      "url": "/planner",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Scan Food",
+      "short_name": "Scan",
+      "description": "Scan a meal photo for calories",
+      "url": "/scan",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Grocery List",
+      "short_name": "Grocery",
+      "description": "Your AI-generated shopping list",
+      "url": "/shopping",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    }
+  ]
+}
