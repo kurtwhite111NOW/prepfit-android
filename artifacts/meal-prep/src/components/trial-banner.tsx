@@ -1,4 +1,4 @@
-import { Clock, Zap, X } from "lucide-react";
+import { Clock, ArrowRight, X } from "lucide-react";
 import { useState } from "react";
 import type { TrialState } from "@/hooks/use-trial";
 
@@ -15,23 +15,21 @@ export function TrialBanner({ trial, onUpgrade }: TrialBannerProps) {
   const urgency = trial.daysLeft <= 1;
 
   return (
-    <div
-      className={`w-full px-4 py-2.5 flex items-center justify-between gap-3 text-sm ${
-        urgency
-          ? "bg-amber-500/15 border-b border-amber-500/25"
-          : "bg-primary/8 border-b border-primary/15"
-      }`}
-    >
+    <div className="w-full px-4 py-2 flex items-center justify-between gap-3 bg-background border-b border-border/50">
       <div className="flex items-center gap-2.5 min-w-0">
-        <Clock
-          size={14}
-          className={urgency ? "text-amber-500 shrink-0" : "text-primary shrink-0"}
-        />
-        <span className={`font-medium truncate ${urgency ? "text-amber-700" : "text-foreground/75"}`}>
+        <span
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[12px] font-semibold border ${
+            urgency
+              ? "bg-amber-400 border-amber-500 text-amber-900"
+              : "bg-yellow-300 border-yellow-400 text-yellow-900"
+          }`}
+        >
+          <Clock size={12} className="shrink-0" />
           {trial.daysLeft === 1
-            ? `Last day of your free trial — ${trial.hoursLeft} hour${trial.hoursLeft !== 1 ? "s" : ""} remaining`
-            : `${trial.daysLeft} day${trial.daysLeft !== 1 ? "s" : ""} left in your free trial`}
+            ? `Last day — ${trial.hoursLeft}h remaining`
+            : `${trial.daysLeft} days left in your free trial`}
         </span>
+        <ArrowRight size={16} className="text-primary shrink-0" strokeWidth={2.5} />
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
@@ -43,8 +41,7 @@ export function TrialBanner({ trial, onUpgrade }: TrialBannerProps) {
               : "bg-primary text-white hover:bg-primary/90"
           }`}
         >
-          <Zap size={11} />
-          Upgrade
+          ⚡ Upgrade
         </button>
         <button
           onClick={() => setDismissed(true)}
