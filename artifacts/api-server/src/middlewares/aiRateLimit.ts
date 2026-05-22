@@ -5,7 +5,7 @@ export const aiRateLimit = rateLimit({
   max: 10,
   standardHeaders: "draft-7",
   legacyHeaders: false,
-  keyGenerator: (req: any) => req.userId ?? req.ip ?? "anonymous",
+  keyGenerator: (req: any) => req.userId ?? "anonymous",
   message: {
     error: "Too many AI requests. Please wait a moment before trying again.",
   },
@@ -17,7 +17,7 @@ export const photoRateLimit = rateLimit({
   max: 5,
   standardHeaders: "draft-7",
   legacyHeaders: false,
-  keyGenerator: (req: any) => req.userId ?? req.ip ?? "anonymous",
+  keyGenerator: (req: any) => req.userId ?? "anonymous",
   message: {
     error: "Too many photo scans. Please wait a moment before trying again.",
   },
