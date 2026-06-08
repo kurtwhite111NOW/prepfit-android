@@ -93,6 +93,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <DeleteAccountDialog onClose={() => setShowDeleteAccount(false)} />
       )}
 
+      <div className="w-full bg-sidebar text-white text-center text-sm py-1.5 z-50 sticky top-0">
+        Visit{" "}
+        <a
+          href="https://bestappsmade.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline font-semibold text-primary hover:opacity-80"
+        >
+          bestappsmade.com
+        </a>
+      </div>
+
       <div className="min-h-screen bg-background flex flex-col md:flex-row">
 
         {/* Mobile Header */}
