@@ -22,8 +22,9 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
+import { PremiumGate } from "@/components/PremiumGate";
 
-export default function ScanScreen() {
+function ScanScreenContent() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const qc = useQueryClient();
@@ -454,3 +455,11 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       color: colors.mutedForeground,
     },
   });
+
+export default function ScanScreen() {
+  return (
+    <PremiumGate feature="Photo Calorie Scanner">
+      <ScanScreenContent />
+    </PremiumGate>
+  );
+}

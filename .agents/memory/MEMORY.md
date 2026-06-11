@@ -1,3 +1,4 @@
 - [Expo + Replit Clerk key](expo-clerk-key.md) — use publishableKeyFromHost(@clerk/shared/keys) with EXPO_PUBLIC_DOMAIN, not a static env var.
 - [Expo Clerk legacy hooks](expo-clerk-legacy.md) — @clerk/expo v3 useSignIn/useSignUp need @clerk/expo/legacy import; v3 default uses signals API.
 - [Orval mutation pattern](orval-mutation-pattern.md) — Orval-generated mutation hooks require { data: BodyType<T> } wrapper, not flat body args.
+- [RevenueCat proxy API paths](revenuecat-proxy-paths.md) — correct action paths for attach/create; proxy pattern vs v2 connection approach

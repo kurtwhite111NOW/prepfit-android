@@ -21,8 +21,9 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
+import { PremiumGate } from "@/components/PremiumGate";
 
-export default function PlannerScreen() {
+function PlannerScreenContent() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const qc = useQueryClient();
@@ -445,3 +446,11 @@ const mealCardStyles = (colors: ReturnType<typeof useColors>) =>
       lineHeight: 20,
     },
   });
+
+export default function PlannerScreen() {
+  return (
+    <PremiumGate feature="AI Meal Planner">
+      <PlannerScreenContent />
+    </PremiumGate>
+  );
+}

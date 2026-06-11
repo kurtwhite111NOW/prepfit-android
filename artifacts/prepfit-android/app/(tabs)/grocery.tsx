@@ -18,8 +18,9 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
+import { PremiumGate } from "@/components/PremiumGate";
 
-export default function GroceryScreen() {
+function GroceryScreenContent() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
@@ -282,3 +283,11 @@ const catStyles = (colors: ReturnType<typeof useColors>) =>
       color: colors.mutedForeground,
     },
   });
+
+export default function GroceryScreen() {
+  return (
+    <PremiumGate feature="Smart Grocery List">
+      <GroceryScreenContent />
+    </PremiumGate>
+  );
+}

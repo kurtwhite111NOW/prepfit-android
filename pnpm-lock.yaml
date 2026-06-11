@@ -160,6 +160,9 @@ importers:
 
   .:
     dependencies:
+      '@replit/connectors-sdk':
+        specifier: ^0.4.1
+        version: 0.4.1
       '@replit/revenuecat-sdk':
         specifier: ^4.2.0
         version: 4.2.0(typescript@5.9.3)
@@ -859,6 +862,12 @@ importers:
 
   scripts:
     dependencies:
+      '@replit/connectors-sdk':
+        specifier: ^0.4.1
+        version: 0.4.1
+      '@replit/revenuecat-sdk':
+        specifier: ^4.2.0
+        version: 4.2.0(typescript@5.9.3)
       stripe:
         specifier: ^22.0.1
         version: 22.0.1(@types/node@25.3.5)
@@ -2674,6 +2683,9 @@ packages:
 
   '@react-navigation/routers@7.5.6':
     resolution: {integrity: sha512-tV/vSXX1va9xCXcqmLqr8qn56ygkwiC9tYoEEWfkqvTCh8LR9FEG7ZVzHBkzrQ/2hJQz+j/3KoglGSHXYrOK4w==}
+
+  '@replit/connectors-sdk@0.4.1':
+    resolution: {integrity: sha512-iw0uy95+Qul8MPc/bBo8hBfYk1wm6RpBZ9sHyCpcA9A9T4zcUT9deSQxdyMyI0w3sv3+5uGmdfq1TpFTMrjD1g==}
 
   '@replit/revenuecat-sdk@4.2.0':
     resolution: {integrity: sha512-6y1qm4Wn9vJHKy9h6XAUHj8fPbblN6vu+poHD8fPpoTiSk8fv4RevH/EfXLQLusBmWrRDQ4fkYCUoT5Pfe3Cyg==}
@@ -9780,6 +9792,8 @@ snapshots:
   '@react-navigation/routers@7.5.6':
     dependencies:
       nanoid: 3.3.11
+
+  '@replit/connectors-sdk@0.4.1': {}
 
   '@replit/revenuecat-sdk@4.2.0(typescript@5.9.3)':
     dependencies:
