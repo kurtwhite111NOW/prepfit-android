@@ -11,7 +11,32 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import { useSubscription } from "@/lib/revenuecat";
-import { useColors } from "@/hooks/useColors";
+
+const EMERALD = "#22c55e";
+const EMERALD_DIM = "rgba(34,197,94,0.12)";
+const EMERALD_BORDER = "rgba(34,197,94,0.25)";
+const BG = "#0f1117";
+const CARD_BG = "rgba(255,255,255,0.05)";
+const CARD_BORDER = "rgba(255,255,255,0.10)";
+const WHITE = "#ffffff";
+const WHITE_70 = "rgba(255,255,255,0.70)";
+const WHITE_60 = "rgba(255,255,255,0.60)";
+const WHITE_45 = "rgba(255,255,255,0.45)";
+const AMBER = "#f59e0b";
+const AMBER_BG = "rgba(245,158,11,0.15)";
+const AMBER_BORDER = "rgba(245,158,11,0.25)";
+const RED_BG = "rgba(239,68,68,0.10)";
+const RED_BORDER = "rgba(239,68,68,0.30)";
+const RED = "#f87171";
+
+const FEATURES = [
+  { icon: "cpu" as const,          label: "AI Meal Plan Generation",   desc: "Personalised weekly plans in seconds" },
+  { icon: "shopping-cart" as const, label: "Smart Grocery Lists",       desc: "Clean-brand picks, organised by aisle" },
+  { icon: "camera" as const,       label: "Photo Calorie Scanner",     desc: "AI identifies food and estimates calories" },
+  { icon: "trending-up" as const,  label: "Weight Tracker",            desc: "Trend chart and progress insights" },
+  { icon: "book-open" as const,    label: "My Meals Journal",          desc: "Save and review all analysed meals" },
+  { icon: "droplet" as const,      label: "Daily Water Tracking",      desc: "Hit your hydration goals every day" },
+];
 
 interface PaywallModalProps {
   visible: boolean;
@@ -19,56 +44,38 @@ interface PaywallModalProps {
   feature?: string;
 }
 
-type PurchaseConfirmState = {
-  pkg: any;
-  label: string;
-  price: string;
-} | null;
-
-type Plan = "monthly" | "annual";
+type ConfirmState = { pkg: any; price: string } | null;
 
 export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps) {
-  const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { offerings, purchase, restore, isPurchasing, isRestoring } =
-    useSubscription();
-  const [selectedPlan, setSelectedPlan] = useState<Plan>("annual");
-  const [confirmState, setConfirmState] = useState<PurchaseConfirmState>(null);
+  const { offerings, purchase, restore, isPurchasing, isRestoring } = useSubscription();
+  const [confirm, setConfirm] = useState<ConfirmState>(null);
   const [error, setError] = useState<string | null>(null);
 
   const current = offerings?.current;
-  // Use identifier lookup — more reliable than packageType in test store
-  const monthlyPkg = current?.availablePackages.find(
-    (p) => p.identifier === "$rc_monthly",
-  );
   const annualPkg = current?.availablePackages.find(
     (p) => p.identifier === "$rc_annual",
   );
 
-  const selectedPkg = selectedPlan === "annual" ? annualPkg : monthlyPkg;
-  const monthlyPrice = monthlyPkg?.product.priceString ?? "$14.00";
-  const annualPrice = annualPkg?.product.priceString ?? "$168.00";
-  const selectedPrice = selectedPlan === "annual" ? annualPrice : monthlyPrice;
-
-  // Monthly equivalent breakdown for annual plan
-  const annualPriceAmount = annualPkg?.product.price ?? 168;
-  const annualPerMonth = (annualPriceAmount / 12).toFixed(2);
-  const annualCurrencySymbol = annualPkg?.product.currencyCode === "USD" ? "$" : "";
+  // Pricing display
+  const annualTotal = annualPkg?.product.priceString ?? "$168.00";
+  const annualAmount = annualPkg?.product.price ?? 168;
+  const perMonth = Math.round(annualAmount / 12);
+  const currency = annualPkg?.product.currencyCode === "USD" ? "$" : "";
 
   const handleSubscribe = () => {
-    if (!selectedPkg) return;
+    if (!annualPkg) return;
     setError(null);
-    const label = selectedPlan === "annual" ? "Annual Plan" : "Monthly Plan";
     if (__DEV__) {
-      setConfirmState({ pkg: selectedPkg, label, price: selectedPrice });
+      setConfirm({ pkg: annualPkg, price: annualTotal });
     } else {
-      doPurchase(selectedPkg);
+      doPurchase(annualPkg);
     }
   };
 
   const doPurchase = async (pkg: any) => {
     try {
-      setConfirmState(null);
+      setConfirm(null);
       await purchase(pkg);
       onDismiss();
     } catch (e: any) {
@@ -88,127 +95,81 @@ export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps)
     }
   };
 
-  const s = styles(colors, insets);
+  const s = styles(insets);
 
   return (
     <>
       <Modal
         visible={visible}
         animationType="slide"
-        presentationStyle="pageSheet"
+        presentationStyle="fullScreen"
         onRequestClose={onDismiss}
       >
-        <View style={s.container}>
+        <View style={s.root}>
+          {/* Glow blobs */}
+          <View style={s.glowTop} pointerEvents="none" />
+          <View style={s.glowBottom} pointerEvents="none" />
+
+          {/* Close button */}
           <Pressable style={s.closeBtn} onPress={onDismiss}>
-            <Feather name="x" size={22} color={colors.mutedForeground} />
+            <Feather name="x" size={18} color={WHITE_45} />
           </Pressable>
 
           <ScrollView
             contentContainerStyle={s.scroll}
             showsVerticalScrollIndicator={false}
           >
-            {/* Header */}
+            {/* ── Brand header ── */}
             <View style={s.header}>
               <View style={s.iconWrap}>
-                <Feather name="zap" size={32} color="#fff" />
+                <Text style={s.iconEmoji}>💪</Text>
               </View>
-              <Text style={s.title}>PrepFit Pro</Text>
-              <Text style={s.subtitle}>
+              <Text style={s.brandName}>PrepFit</Text>
+              <Text style={s.brandSub}>Simple Meal Prep · Gym &amp; Fitness</Text>
+            </View>
+
+            {/* ── Badge + heading ── */}
+            <View style={s.headingBlock}>
+              <View style={s.badge}>
+                <Feather name="zap" size={11} color={AMBER} />
+                <Text style={s.badgeText}>
+                  {feature ? `Unlock ${feature}` : "Free Trial Ended"}
+                </Text>
+              </View>
+              <Text style={s.heading}>Continue with Pro</Text>
+              <Text style={s.subheading}>
                 {feature
-                  ? `Unlock ${feature} and all Pro features`
-                  : "Unlock AI meal planning, photo scanning, and smart grocery lists"}
+                  ? `Upgrade to access ${feature} and all premium features.`
+                  : "Your free trial has ended. Upgrade to keep using AI meal planning, calorie scanning, and all premium features."}
               </Text>
             </View>
 
-            {/* Features */}
-            <View style={s.features}>
-              {[
-                { icon: "calendar", text: "AI-powered weekly meal planner" },
-                { icon: "camera", text: "Photo calorie scanner (unlimited)" },
-                { icon: "shopping-cart", text: "Smart grocery lists by category" },
-                { icon: "trending-up", text: "Weight & progress tracking" },
-                { icon: "droplet", text: "Daily water intake tracking" },
-              ].map(({ icon, text }) => (
-                <View key={text} style={s.featureRow}>
-                  <View style={s.featureIcon}>
-                    <Feather name={icon as any} size={16} color={colors.primary} />
+            {/* ── Feature list ── */}
+            <View style={s.featureCard}>
+              {FEATURES.map(({ icon, label, desc }) => (
+                <View key={label} style={s.featureRow}>
+                  <View style={s.checkCircle}>
+                    <Feather name="check" size={12} color={EMERALD} strokeWidth={3} />
                   </View>
-                  <Text style={s.featureText}>{text}</Text>
+                  <View style={s.featureText}>
+                    <Text style={s.featureLabel}>{label}</Text>
+                    <Text style={s.featureDesc}>{desc}</Text>
+                  </View>
                 </View>
               ))}
             </View>
 
-            {/* Plan toggle */}
-            <View style={s.toggle}>
-              {/* Annual card */}
-              <Pressable
-                style={[s.toggleBtn, selectedPlan === "annual" && s.toggleBtnActive]}
-                onPress={() => setSelectedPlan("annual")}
-              >
-                <View style={s.toggleBtnInner}>
-                  <Text
-                    style={[
-                      s.toggleBtnTitle,
-                      selectedPlan === "annual" && s.toggleBtnTitleActive,
-                    ]}
-                  >
-                    Annual
-                  </Text>
-                  <View style={s.saveBadge}>
-                    <Text style={s.saveBadgeText}>BEST VALUE</Text>
-                  </View>
-                </View>
-                {/* Show per-month equivalent prominently */}
-                <Text
-                  style={[
-                    s.toggleBtnPrice,
-                    selectedPlan === "annual" && s.toggleBtnPriceActive,
-                  ]}
-                >
-                  {annualCurrencySymbol}{annualPerMonth}
-                  <Text style={s.toggleBtnPriceSub}>/mo</Text>
-                </Text>
-                <Text
-                  style={[
-                    s.toggleBtnNote,
-                    selectedPlan === "annual" && s.toggleBtnNoteActive,
-                  ]}
-                >
-                  billed {annualPrice}/year
-                </Text>
-              </Pressable>
-
-              {/* Monthly card */}
-              <Pressable
-                style={[s.toggleBtn, selectedPlan === "monthly" && s.toggleBtnActive]}
-                onPress={() => setSelectedPlan("monthly")}
-              >
-                <Text
-                  style={[
-                    s.toggleBtnTitle,
-                    selectedPlan === "monthly" && s.toggleBtnTitleActive,
-                  ]}
-                >
-                  Monthly
-                </Text>
-                <Text
-                  style={[
-                    s.toggleBtnPrice,
-                    selectedPlan === "monthly" && s.toggleBtnPriceActive,
-                  ]}
-                >
-                  {monthlyPrice}
-                  <Text style={s.toggleBtnPriceSub}>/mo</Text>
-                </Text>
-                <Text
-                  style={[
-                    s.toggleBtnNote,
-                    selectedPlan === "monthly" && s.toggleBtnNoteActive,
-                  ]}
-                >
-                  billed monthly
-                </Text>
-              </Pressable>
+            {/* ── Pricing card ── */}
+            <View style={s.priceCard}>
+              <View style={s.bestValueBadge}>
+                <Text style={s.bestValueText}>Best Value</Text>
+              </View>
+              <View style={s.priceRow}>
+                <Text style={s.priceBig}>{currency}{perMonth}</Text>
+                <Text style={s.priceUnit}>/month</Text>
+              </View>
+              <Text style={s.priceNote}>Billed annually — {annualTotal} / year</Text>
+              <Text style={s.priceSub}>Cancel anytime · No hidden fees</Text>
             </View>
 
             {error && (
@@ -217,71 +178,61 @@ export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps)
               </View>
             )}
 
-            {/* CTA */}
+            {/* ── CTA ── */}
             <Pressable
-              style={[s.cta, (!selectedPkg || isPurchasing) && s.ctaDisabled]}
+              style={[s.cta, (!annualPkg || isPurchasing) && s.ctaDisabled]}
               onPress={handleSubscribe}
-              disabled={!selectedPkg || isPurchasing}
+              disabled={!annualPkg || isPurchasing}
             >
               {isPurchasing ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={WHITE} />
               ) : (
-                <>
-                  <Feather name="zap" size={18} color="#fff" />
-                  <Text style={s.ctaText}>
-                    Start Free Trial — then {selectedPrice}
-                    {selectedPlan === "annual" ? "/yr" : "/mo"}
-                  </Text>
-                </>
+                <Text style={s.ctaText}>
+                  Start Pro Plan — {currency}{perMonth} / month
+                </Text>
               )}
             </Pressable>
 
-            {/* Restore */}
-            <Pressable
-              style={s.restoreBtn}
-              onPress={handleRestore}
-              disabled={isRestoring}
-            >
+            {/* ── Restore ── */}
+            <Pressable style={s.restoreBtn} onPress={handleRestore} disabled={isRestoring}>
               <Text style={s.restoreText}>
                 {isRestoring ? "Restoring…" : "Restore Purchases"}
               </Text>
             </Pressable>
 
             <Text style={s.legal}>
-              Payment charged to your Google Play account at confirmation.
-              Subscription auto-renews unless cancelled 24 hours before period
-              end. Cancel anytime.
+              Subscription auto-renews annually at {annualTotal} unless cancelled
+              at least 24 hours before the renewal date. Managed via Google Play.
             </Text>
           </ScrollView>
         </View>
       </Modal>
 
-      {/* Dev-mode purchase confirmation */}
+      {/* Dev-mode confirm dialog */}
       <Modal
-        visible={!!confirmState}
+        visible={!!confirm}
         transparent
         animationType="fade"
-        onRequestClose={() => setConfirmState(null)}
+        onRequestClose={() => setConfirm(null)}
       >
         <View style={s.confirmOverlay}>
           <View style={s.confirmCard}>
             <Text style={s.confirmTitle}>Confirm Test Purchase</Text>
             <Text style={s.confirmBody}>
-              You are in development mode.{"\n\n"}Purchase{" "}
-              <Text style={{ fontWeight: "700" }}>{confirmState?.label}</Text>{" "}
-              for{" "}
-              <Text style={{ fontWeight: "700" }}>{confirmState?.price}</Text>?
+              Development mode.{"\n\n"}
+              Purchase <Text style={{ fontWeight: "700", color: WHITE }}>Annual Plan</Text> for{" "}
+              <Text style={{ fontWeight: "700", color: WHITE }}>{confirm?.price}</Text>?
             </Text>
-            <View style={s.confirmButtons}>
+            <View style={s.confirmBtns}>
               <Pressable
                 style={[s.confirmBtn, s.confirmBtnCancel]}
-                onPress={() => setConfirmState(null)}
+                onPress={() => setConfirm(null)}
               >
                 <Text style={s.confirmBtnCancelText}>Cancel</Text>
               </Pressable>
               <Pressable
                 style={[s.confirmBtn, s.confirmBtnConfirm]}
-                onPress={() => confirmState && doPurchase(confirmState.pkg)}
+                onPress={() => confirm && doPurchase(confirm.pkg)}
               >
                 <Text style={s.confirmBtnConfirmText}>Confirm</Text>
               </Pressable>
@@ -293,203 +244,288 @@ export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps)
   );
 }
 
-const styles = (
-  colors: ReturnType<typeof useColors>,
-  insets: ReturnType<typeof useSafeAreaInsets>,
-) =>
+const styles = (insets: ReturnType<typeof useSafeAreaInsets>) =>
   StyleSheet.create({
-    container: {
+    root: {
       flex: 1,
-      backgroundColor: colors.background,
+      backgroundColor: BG,
+    },
+    glowTop: {
+      position: "absolute",
+      top: -100,
+      left: "50%",
+      marginLeft: -200,
+      width: 400,
+      height: 400,
+      borderRadius: 200,
+      backgroundColor: "rgba(34,197,94,0.06)",
+    },
+    glowBottom: {
+      position: "absolute",
+      bottom: -80,
+      right: -60,
+      width: 300,
+      height: 300,
+      borderRadius: 150,
+      backgroundColor: "rgba(34,197,94,0.04)",
     },
     closeBtn: {
       position: "absolute",
-      top: insets.top + 12,
-      right: 20,
+      top: insets.top + 14,
+      right: 18,
       zIndex: 10,
-      width: 36,
-      height: 36,
-      borderRadius: 18,
-      backgroundColor: colors.muted,
+      width: 34,
+      height: 34,
+      borderRadius: 17,
+      backgroundColor: "rgba(255,255,255,0.08)",
       alignItems: "center",
       justifyContent: "center",
     },
     scroll: {
-      paddingTop: insets.top + 24,
-      paddingBottom: insets.bottom + 32,
+      paddingTop: insets.top + 28,
+      paddingBottom: insets.bottom + 36,
       paddingHorizontal: 24,
+      alignItems: "center",
     },
+    // Brand header
     header: {
       alignItems: "center",
-      marginBottom: 28,
-      marginTop: 16,
+      marginBottom: 20,
     },
     iconWrap: {
-      width: 72,
-      height: 72,
-      borderRadius: 20,
-      backgroundColor: colors.primary,
+      width: 56,
+      height: 56,
+      borderRadius: 16,
+      backgroundColor: EMERALD,
       alignItems: "center",
       justifyContent: "center",
-      marginBottom: 16,
+      marginBottom: 10,
+      shadowColor: EMERALD,
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.45,
+      shadowRadius: 16,
+      elevation: 12,
     },
-    title: {
+    iconEmoji: {
       fontSize: 28,
+    },
+    brandName: {
+      fontSize: 20,
       fontFamily: "Inter_700Bold",
-      color: colors.text,
-      marginBottom: 8,
+      color: WHITE,
+      letterSpacing: 0.2,
     },
-    subtitle: {
-      fontSize: 15,
+    brandSub: {
+      fontSize: 11,
+      fontFamily: "Inter_700Bold",
+      color: EMERALD,
+      marginTop: 2,
+      letterSpacing: 0.3,
+    },
+    // Badge + heading
+    headingBlock: {
+      alignItems: "center",
+      marginBottom: 20,
+      gap: 6,
+    },
+    badge: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 5,
+      paddingHorizontal: 12,
+      paddingVertical: 5,
+      borderRadius: 20,
+      backgroundColor: AMBER_BG,
+      borderWidth: 1,
+      borderColor: AMBER_BORDER,
+    },
+    badgeText: {
+      color: AMBER,
+      fontSize: 11,
+      fontFamily: "Inter_700Bold",
+      textTransform: "uppercase",
+      letterSpacing: 0.6,
+    },
+    heading: {
+      fontSize: 30,
+      fontFamily: "Inter_700Bold",
+      color: WHITE,
+      marginTop: 4,
+    },
+    subheading: {
+      fontSize: 14,
       fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
+      color: WHITE_70,
       textAlign: "center",
-      lineHeight: 22,
+      lineHeight: 21,
+      maxWidth: 320,
     },
-    features: {
-      marginBottom: 24,
-      gap: 12,
+    // Feature list
+    featureCard: {
+      width: "100%",
+      borderRadius: 18,
+      borderWidth: 1,
+      borderColor: EMERALD_BORDER,
+      backgroundColor: EMERALD_DIM,
+      padding: 18,
+      gap: 14,
+      marginBottom: 14,
     },
     featureRow: {
       flexDirection: "row",
-      alignItems: "center",
+      alignItems: "flex-start",
       gap: 12,
     },
-    featureIcon: {
-      width: 32,
-      height: 32,
-      borderRadius: 8,
-      backgroundColor: colors.primary + "18",
+    checkCircle: {
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      backgroundColor: "rgba(34,197,94,0.20)",
       alignItems: "center",
       justifyContent: "center",
+      marginTop: 1,
+      flexShrink: 0,
     },
     featureText: {
       flex: 1,
+    },
+    featureLabel: {
+      fontSize: 14,
+      fontFamily: "Inter_500Medium",
+      color: WHITE,
+      marginBottom: 1,
+    },
+    featureDesc: {
+      fontSize: 12,
+      fontFamily: "Inter_400Regular",
+      color: WHITE_60,
+      lineHeight: 17,
+    },
+    // Pricing card
+    priceCard: {
+      width: "100%",
+      borderRadius: 18,
+      borderWidth: 1,
+      borderColor: CARD_BORDER,
+      backgroundColor: CARD_BG,
+      padding: 20,
+      alignItems: "center",
+      marginBottom: 18,
+    },
+    bestValueBadge: {
+      backgroundColor: AMBER,
+      borderRadius: 8,
+      paddingHorizontal: 10,
+      paddingVertical: 3,
+      marginBottom: 12,
+    },
+    bestValueText: {
+      color: WHITE,
+      fontSize: 10,
+      fontFamily: "Inter_700Bold",
+      textTransform: "uppercase",
+      letterSpacing: 0.8,
+    },
+    priceRow: {
+      flexDirection: "row",
+      alignItems: "flex-end",
+      gap: 4,
+    },
+    priceBig: {
+      fontSize: 52,
+      fontFamily: "Inter_700Bold",
+      color: WHITE,
+      lineHeight: 56,
+    },
+    priceUnit: {
       fontSize: 15,
       fontFamily: "Inter_400Regular",
-      color: colors.text,
+      color: WHITE_60,
+      paddingBottom: 8,
     },
-    toggle: {
-      flexDirection: "row",
-      gap: 10,
-      marginBottom: 20,
-    },
-    toggleBtn: {
-      flex: 1,
-      borderRadius: 14,
-      borderWidth: 1.5,
-      borderColor: colors.border,
-      padding: 14,
-      backgroundColor: colors.card,
-    },
-    toggleBtnActive: {
-      borderColor: colors.primary,
-      backgroundColor: colors.primary + "10",
-    },
-    toggleBtnInner: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 6,
-      marginBottom: 4,
-    },
-    toggleBtnTitle: {
-      fontSize: 15,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.mutedForeground,
-    },
-    toggleBtnTitleActive: {
-      color: colors.text,
-    },
-    saveBadge: {
-      backgroundColor: colors.primary,
-      borderRadius: 5,
-      paddingHorizontal: 5,
-      paddingVertical: 2,
-    },
-    saveBadgeText: {
-      color: "#fff",
-      fontSize: 9,
-      fontFamily: "Inter_700Bold",
-      letterSpacing: 0.5,
-    },
-    toggleBtnPrice: {
-      fontSize: 18,
-      fontFamily: "Inter_700Bold",
-      color: colors.mutedForeground,
-    },
-    toggleBtnPriceActive: {
-      color: colors.primary,
-    },
-    toggleBtnPriceSub: {
+    priceNote: {
       fontSize: 13,
       fontFamily: "Inter_400Regular",
+      color: WHITE_60,
+      marginTop: 4,
     },
-    toggleBtnNote: {
-      fontSize: 11,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-      marginTop: 2,
+    priceSub: {
+      fontSize: 12,
+      fontFamily: "Inter_500Medium",
+      color: EMERALD,
+      marginTop: 3,
     },
-    toggleBtnNoteActive: {
-      color: colors.primary,
-      opacity: 0.75,
-    },
+    // Error
     errorBox: {
-      backgroundColor: "#FF3B3018",
-      borderRadius: 10,
+      width: "100%",
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: RED_BORDER,
+      backgroundColor: RED_BG,
       padding: 12,
       marginBottom: 12,
     },
     errorText: {
-      color: "#FF3B30",
+      color: RED,
       fontSize: 13,
       fontFamily: "Inter_400Regular",
+      textAlign: "center",
     },
+    // CTA
     cta: {
-      flexDirection: "row",
+      width: "100%",
+      backgroundColor: EMERALD,
+      paddingVertical: 17,
+      borderRadius: 18,
       alignItems: "center",
       justifyContent: "center",
-      gap: 8,
-      backgroundColor: colors.primary,
-      paddingVertical: 16,
-      borderRadius: 16,
+      shadowColor: EMERALD,
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.40,
+      shadowRadius: 16,
+      elevation: 10,
       marginBottom: 12,
     },
     ctaDisabled: {
-      opacity: 0.5,
+      opacity: 0.55,
     },
     ctaText: {
-      color: "#fff",
+      color: WHITE,
       fontSize: 16,
-      fontFamily: "Inter_600SemiBold",
+      fontFamily: "Inter_700Bold",
+      letterSpacing: 0.3,
     },
+    // Restore
     restoreBtn: {
-      alignItems: "center",
       paddingVertical: 10,
       marginBottom: 8,
     },
     restoreText: {
       fontSize: 14,
       fontFamily: "Inter_500Medium",
-      color: colors.primary,
+      color: EMERALD,
     },
     legal: {
       fontSize: 11,
       fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
+      color: WHITE_45,
       textAlign: "center",
       lineHeight: 16,
+      maxWidth: 320,
     },
+    // Dev confirm
     confirmOverlay: {
       flex: 1,
-      backgroundColor: "rgba(0,0,0,0.5)",
+      backgroundColor: "rgba(0,0,0,0.65)",
       alignItems: "center",
       justifyContent: "center",
       padding: 24,
     },
     confirmCard: {
-      backgroundColor: colors.card,
+      backgroundColor: "#1a1f2e",
       borderRadius: 20,
+      borderWidth: 1,
+      borderColor: CARD_BORDER,
       padding: 24,
       width: "100%",
       maxWidth: 360,
@@ -497,17 +533,17 @@ const styles = (
     confirmTitle: {
       fontSize: 18,
       fontFamily: "Inter_700Bold",
-      color: colors.text,
+      color: WHITE,
       marginBottom: 12,
     },
     confirmBody: {
       fontSize: 15,
       fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
+      color: WHITE_60,
       lineHeight: 22,
       marginBottom: 24,
     },
-    confirmButtons: {
+    confirmBtns: {
       flexDirection: "row",
       gap: 12,
     },
@@ -518,18 +554,18 @@ const styles = (
       alignItems: "center",
     },
     confirmBtnCancel: {
-      backgroundColor: colors.muted,
+      backgroundColor: "rgba(255,255,255,0.08)",
     },
     confirmBtnCancelText: {
-      color: colors.text,
+      color: WHITE_70,
       fontFamily: "Inter_600SemiBold",
       fontSize: 15,
     },
     confirmBtnConfirm: {
-      backgroundColor: colors.primary,
+      backgroundColor: EMERALD,
     },
     confirmBtnConfirmText: {
-      color: "#fff",
+      color: WHITE,
       fontFamily: "Inter_600SemiBold",
       fontSize: 15,
     },
