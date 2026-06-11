@@ -1,8 +1,55 @@
 uploads = []
-outputs = []
 
 [[generated]]
 id = "wIXPeRjKGqO_Gqj_wTPWE"
 uri = "file://artifacts/prepfit-android/assets/images/icon.png"
 type = "image"
 title = "generated_image"
+
+[[outputs]]
+id = "TuPhOzcpebROgVbCx7qu4"
+uri = "file://screenshots/prepfit-01-home.jpg"
+type = "image"
+title = "01 — Home (auth gate in browser)"
+
+[[outputs]]
+id = "yRhbb9BQAIfPCiupmaStl"
+uri = "file://screenshots/prepfit-02-weight.jpg"
+type = "image"
+title = "02 — Weight Tracker (auth gate in browser)"
+
+[[outputs]]
+id = "j2EXX0gaIpD6FRkuin1Bw"
+uri = "file://screenshots/prepfit-03-water.jpg"
+type = "image"
+title = "03 — Water Tracker ✅"
+
+[[outputs]]
+id = "JiKuhKy5R0ReT833BSoAT"
+uri = "file://screenshots/prepfit-04-meals.jpg"
+type = "image"
+title = "04 — My Meals (auth gate in browser)"
+
+[[outputs]]
+id = "d7yoT5WwK28UdtoTQsYbT"
+uri = "file://screenshots/prepfit-05-plans.jpg"
+type = "image"
+title = "05 — Plans (loading)"
+
+[[outputs]]
+id = "EGs_wbIQNzdgROkKP6b_k"
+uri = "file://screenshots/prepfit-06-planner-paywall.jpg"
+type = "image"
+title = "06 — Planner (paywall loading)"
+
+[[outputs]]
+id = "lHB4BOceH7NixyR5PiBm5"
+uri = "file://screenshots/prepfit-07-scan-paywall.jpg"
+type = "image"
+title = "07 — Scan (paywall loading)"
+
+[[outputs]]
+id = "dKotzDKShL5LidNJTACu_"
+uri = "file://screenshots/prepfit-08-grocery-paywall.jpg"
+type = "image"
+title = "08 — Grocery (paywall loading)"
