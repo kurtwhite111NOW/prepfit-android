@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "PrepFit Android",
+    "slug": "prepfit-android",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "prepfit-android",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#12151A"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.prepfit.android"
+    },
+    "android": {
+      "package": "com.prepfit.android",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#12151A"
+      }
+    },
+    "web": {
+      "favicon": "./assets/images/icon.png"
+    },
+    "plugins": [
+      [
+        "expo-router",
+        {
+          "origin": "https://replit.com/"
+        }
+      ],
+      "expo-font",
+      "expo-web-browser",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "PrepFit needs photo access to analyze your meals.",
+          "cameraPermission": "PrepFit needs camera access to scan your meals."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}

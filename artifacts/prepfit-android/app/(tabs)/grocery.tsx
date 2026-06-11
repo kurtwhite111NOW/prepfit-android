@@ -1,0 +1,284 @@
+import { useQuery } from "@tanstack/react-query";
+import {
+  getListMealPlansQueryKey,
+  getGetShoppingListQueryKey,
+  listMealPlans,
+  getShoppingList,
+} from "@workspace/api-client-react";
+import type { ShoppingCategory } from "@workspace/api-client-react";
+import { Feather } from "@expo/vector-icons";
+import React, { useState } from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useColors } from "@/hooks/useColors";
+
+export default function GroceryScreen() {
+  const colors = useColors();
+  const insets = useSafeAreaInsets();
+  const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
+  const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
+
+  const { data: plans, isLoading: plansLoading } = useQuery({
+    queryKey: getListMealPlansQueryKey(),
+    queryFn: () => listMealPlans(),
+  });
+
+  React.useEffect(() => {
+    if (plans && plans.length > 0 && selectedPlanId === null) {
+      setSelectedPlanId(plans[0].id);
+    }
+  }, [plans, selectedPlanId]);
+
+  const activePlanId = selectedPlanId ?? plans?.[0]?.id;
+
+  const { data: shoppingList, isLoading: listLoading } = useQuery({
+    queryKey: getGetShoppingListQueryKey(activePlanId ?? 0),
+    queryFn: () => getShoppingList(activePlanId!),
+    enabled: !!activePlanId,
+  });
+
+  const toggleItem = (key: string) => {
+    setCheckedItems((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
+  const s = styles(colors);
+  const isLoading = plansLoading || listLoading;
+
+  return (
+    <ScrollView
+      style={[s.root, { backgroundColor: colors.background }]}
+      contentInsetAdjustmentBehavior="automatic"
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={[s.header, { paddingTop: insets.top + 16 }]}>
+        <Text style={s.headerTitle}>Grocery List</Text>
+        <Text style={s.headerSub}>Check off items as you shop</Text>
+      </View>
+
+      {plansLoading ? (
+        <View style={s.center}>
+          <ActivityIndicator color={colors.primary} />
+        </View>
+      ) : !plans || plans.length === 0 ? (
+        <View style={s.empty}>
+          <Feather name="shopping-cart" size={48} color={colors.mutedForeground} />
+          <Text style={s.emptyTitle}>No meal plans yet</Text>
+          <Text style={s.emptySub}>Create a meal plan to generate a grocery list</Text>
+        </View>
+      ) : (
+        <>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={s.planPicker}
+          >
+            {plans.map((plan) => (
+              <Pressable
+                key={plan.id}
+                style={[
+                  s.planChip,
+                  activePlanId === plan.id && { backgroundColor: colors.primary, borderColor: colors.primary },
+                ]}
+                onPress={() => setSelectedPlanId(plan.id)}
+              >
+                <Text
+                  style={[
+                    s.planChipText,
+                    activePlanId === plan.id && { color: "#FFF" },
+                  ]}
+                >
+                  {plan.name}
+                </Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+
+          {listLoading ? (
+            <View style={s.center}>
+              <ActivityIndicator color={colors.primary} />
+              <Text style={s.loadingText}>Generating list...</Text>
+            </View>
+          ) : shoppingList ? (
+            <View style={s.listContainer}>
+              {shoppingList.categories.map((cat) => (
+                <CategorySection
+                  key={cat.category}
+                  category={cat}
+                  checkedItems={checkedItems}
+                  onToggle={toggleItem}
+                  colors={colors}
+                />
+              ))}
+            </View>
+          ) : null}
+        </>
+      )}
+
+      <View style={{ height: 100 }} />
+    </ScrollView>
+  );
+}
+
+function CategorySection({
+  category,
+  checkedItems,
+  onToggle,
+  colors,
+}: {
+  category: ShoppingCategory;
+  checkedItems: Set<string>;
+  onToggle: (key: string) => void;
+  colors: ReturnType<typeof useColors>;
+}) {
+  const s = catStyles(colors);
+  return (
+    <View style={s.section}>
+      <Text style={s.catName}>{category.category}</Text>
+      {category.items.map((item, idx) => {
+        const key = `${category.category}-${item.name}-${idx}`;
+        const checked = checkedItems.has(key);
+        return (
+          <Pressable key={key} style={s.item} onPress={() => onToggle(key)}>
+            <View style={[s.checkbox, checked && { backgroundColor: colors.primary, borderColor: colors.primary }]}>
+              {checked && <Feather name="check" size={12} color="#FFF" />}
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={[s.itemName, checked && s.checkedText]}>{item.name}</Text>
+              <Text style={s.itemMeta}>{item.quantity}{item.brandSuggestion ? ` · ${item.brandSuggestion}` : ""}</Text>
+            </View>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+const styles = (colors: ReturnType<typeof useColors>) =>
+  StyleSheet.create({
+    root: { flex: 1 },
+    header: {
+      backgroundColor: colors.sidebar,
+      paddingHorizontal: 20,
+      paddingBottom: 20,
+    },
+    headerTitle: {
+      fontSize: 26,
+      fontFamily: "Inter_700Bold",
+      color: "#FFFFFF",
+    },
+    headerSub: {
+      fontSize: 13,
+      fontFamily: "Inter_400Regular",
+      color: "rgba(255,255,255,0.5)",
+      marginTop: 4,
+    },
+    center: {
+      paddingVertical: 60,
+      alignItems: "center",
+      gap: 12,
+    },
+    loadingText: {
+      fontSize: 14,
+      fontFamily: "Inter_400Regular",
+      color: colors.mutedForeground,
+    },
+    empty: {
+      paddingVertical: 80,
+      alignItems: "center",
+      paddingHorizontal: 40,
+      gap: 10,
+    },
+    emptyTitle: {
+      fontSize: 18,
+      fontFamily: "Inter_600SemiBold",
+      color: colors.foreground,
+      marginTop: 8,
+    },
+    emptySub: {
+      fontSize: 14,
+      fontFamily: "Inter_400Regular",
+      color: colors.mutedForeground,
+      textAlign: "center",
+    },
+    planPicker: {
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      gap: 8,
+    },
+    planChip: {
+      paddingHorizontal: 14,
+      paddingVertical: 7,
+      borderRadius: 20,
+      borderWidth: 1.5,
+      borderColor: colors.border,
+      backgroundColor: colors.card,
+    },
+    planChipText: {
+      fontSize: 13,
+      fontFamily: "Inter_500Medium",
+      color: colors.foreground,
+    },
+    listContainer: { paddingHorizontal: 16 },
+  });
+
+const catStyles = (colors: ReturnType<typeof useColors>) =>
+  StyleSheet.create({
+    section: {
+      marginBottom: 16,
+    },
+    catName: {
+      fontSize: 13,
+      fontFamily: "Inter_600SemiBold",
+      color: colors.primary,
+      textTransform: "uppercase",
+      letterSpacing: 0.8,
+      marginBottom: 8,
+    },
+    item: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.card,
+      borderRadius: 10,
+      padding: 12,
+      marginBottom: 6,
+      borderWidth: 1,
+      borderColor: colors.border,
+      gap: 12,
+    },
+    checkbox: {
+      width: 22,
+      height: 22,
+      borderRadius: 6,
+      borderWidth: 1.5,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    itemName: {
+      fontSize: 14,
+      fontFamily: "Inter_500Medium",
+      color: colors.foreground,
+    },
+    itemMeta: {
+      fontSize: 12,
+      fontFamily: "Inter_400Regular",
+      color: colors.mutedForeground,
+      marginTop: 2,
+    },
+    checkedText: {
+      textDecorationLine: "line-through",
+      color: colors.mutedForeground,
+    },
+  });
