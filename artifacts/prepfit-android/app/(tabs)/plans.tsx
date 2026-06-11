@@ -9,7 +9,7 @@ import {
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -21,6 +21,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { Swipeable } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 
@@ -30,6 +31,7 @@ export default function PlansScreen() {
   const qc = useQueryClient();
   const router = useRouter();
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
+  const swipeableRefs = useRef<Map<number, Swipeable | null>>(new Map());
 
   const { data: plans, isLoading, refetch } = useQuery({
     queryKey: getListMealPlansQueryKey(),
@@ -102,30 +104,46 @@ export default function PlansScreen() {
           )
         }
         renderItem={({ item }) => (
-          <Pressable
-            style={({ pressed }) => [s.card, { opacity: pressed ? 0.93 : 1 }]}
-            onPress={() => setSelectedPlanId(item.id)}
+          <Swipeable
+            ref={(ref) => { swipeableRefs.current.set(item.id, ref); }}
+            onSwipeableWillOpen={() => {
+              swipeableRefs.current.forEach((ref, id) => {
+                if (id !== item.id) ref?.close();
+              });
+            }}
+            renderRightActions={() => (
+              <Pressable
+                style={s.swipeDelete}
+                onPress={() => {
+                  swipeableRefs.current.get(item.id)?.close();
+                  handleDelete(item.id, item.name);
+                }}
+              >
+                <Feather name="trash-2" size={20} color="#FFF" />
+                <Text style={s.swipeDeleteText}>Delete</Text>
+              </Pressable>
+            )}
           >
-            <View style={s.cardLeft}>
-              <View style={s.planIcon}>
-                <Feather name="calendar" size={18} color={colors.primary} />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={s.planName} numberOfLines={1}>{item.name}</Text>
-                <View style={s.planMeta}>
-                  <Text style={s.planMetaText}>{item.mealsPerDay} meals/day</Text>
-                  <View style={s.dot} />
-                  <Text style={s.planMetaText}>{item.dailyCalories} kcal</Text>
+            <Pressable
+              style={({ pressed }) => [s.card, { opacity: pressed ? 0.93 : 1 }]}
+              onPress={() => setSelectedPlanId(item.id)}
+            >
+              <View style={s.cardLeft}>
+                <View style={s.planIcon}>
+                  <Feather name="calendar" size={18} color={colors.primary} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={s.planName} numberOfLines={1}>{item.name}</Text>
+                  <View style={s.planMeta}>
+                    <Text style={s.planMetaText}>{item.mealsPerDay} meals/day</Text>
+                    <View style={s.dot} />
+                    <Text style={s.planMetaText}>{item.dailyCalories} kcal</Text>
+                  </View>
                 </View>
               </View>
-            </View>
-            <Pressable
-              style={({ pressed }) => [s.deleteBtn, { opacity: pressed ? 0.7 : 1 }]}
-              onPress={() => handleDelete(item.id, item.name)}
-            >
-              <Feather name="trash-2" size={16} color={colors.destructive} />
+              <Feather name="chevron-right" size={16} color={colors.mutedForeground} />
             </Pressable>
-          </Pressable>
+          </Swipeable>
         )}
       />
 
@@ -301,11 +319,19 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       borderRadius: 1.5,
       backgroundColor: colors.mutedForeground,
     },
-    deleteBtn: {
-      width: 40,
-      height: 40,
-      alignItems: "center",
+    swipeDelete: {
+      backgroundColor: colors.destructive,
       justifyContent: "center",
+      alignItems: "center",
+      width: 80,
+      borderRadius: 12,
+      marginLeft: 8,
+      gap: 4,
+    },
+    swipeDeleteText: {
+      fontSize: 11,
+      fontFamily: "Inter_600SemiBold",
+      color: "#FFF",
     },
     modal: {
       flex: 1,

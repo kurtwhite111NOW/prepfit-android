@@ -16,20 +16,32 @@ function NativeTabLayout() {
         <Label>Home</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="planner">
-        <Icon sf={{ default: "calendar", selected: "calendar" } as any} />
+        <Icon sf={{ default: "calendar", selected: "calendar.fill" } as any} />
         <Label>Planner</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="grocery">
+        <Icon sf={{ default: "cart", selected: "cart.fill" }} />
+        <Label>Grocery</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="scan">
         <Icon sf={{ default: "camera", selected: "camera.fill" }} />
         <Label>Scan</Label>
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="meals">
+        <Icon sf={{ default: "book", selected: "book.fill" }} />
+        <Label>My Meals</Label>
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="weight">
-        <Icon sf={{ default: "chart.line.uptrend.xyaxis", selected: "chart.line.uptrend.xyaxis" }} />
+        <Icon sf={{ default: "chart.line.uptrend.xyaxis", selected: "chart.line.uptrend.xyaxis" } as any} />
         <Label>Weight</Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="more">
-        <Icon sf={{ default: "ellipsis", selected: "ellipsis.circle.fill" }} />
-        <Label>More</Label>
+      <NativeTabs.Trigger name="water">
+        <Icon sf={{ default: "drop", selected: "drop.fill" }} />
+        <Label>Water</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="plans">
+        <Icon sf={{ default: "list.clipboard", selected: "list.clipboard.fill" } as any} />
+        <Label>Plans</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

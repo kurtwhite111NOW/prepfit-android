@@ -11,7 +11,6 @@ import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
 import {
   Alert,
-  FlatList,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -19,7 +18,13 @@ import {
   TextInput,
   View,
 } from "react-native";
-import Svg, { Path, Circle, Line } from "react-native-svg";
+import {
+  VictoryAxis,
+  VictoryChart,
+  VictoryLine,
+  VictoryScatter,
+  VictoryTheme,
+} from "victory-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 
@@ -30,39 +35,52 @@ function WeightChart({
   entries: WeightEntry[];
   colors: ReturnType<typeof useColors>;
 }) {
-  const W = 320;
-  const H = 140;
-  const PAD = 20;
+  const sorted = [...entries]
+    .sort((a, b) => new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime())
+    .slice(-10);
 
-  const sorted = [...entries].sort(
-    (a, b) => new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime()
-  );
   if (sorted.length < 2) return null;
 
+  const data = sorted.map((e, i) => ({ x: i + 1, y: e.weight }));
   const weights = sorted.map((e) => e.weight);
-  const minW = Math.min(...weights) - 2;
-  const maxW = Math.max(...weights) + 2;
-  const range = maxW - minW || 1;
-
-  const points = sorted.map((e, i) => ({
-    x: PAD + (i / (sorted.length - 1)) * (W - 2 * PAD),
-    y: H - PAD - ((e.weight - minW) / range) * (H - 2 * PAD),
-  }));
-
-  const pathD = points.reduce((d, p, i) => {
-    if (i === 0) return `M${p.x},${p.y}`;
-    const prev = points[i - 1];
-    const cpx = (prev.x + p.x) / 2;
-    return `${d} C${cpx},${prev.y} ${cpx},${p.y} ${p.x},${p.y}`;
-  }, "");
+  const minY = Math.min(...weights) - 2;
+  const maxY = Math.max(...weights) + 2;
 
   return (
-    <Svg width={W} height={H}>
-      <Path d={pathD} stroke={colors.primary} strokeWidth={2.5} fill="none" />
-      {points.map((p, i) => (
-        <Circle key={i} cx={p.x} cy={p.y} r={4} fill={colors.primary} />
-      ))}
-    </Svg>
+    <VictoryChart
+      theme={VictoryTheme.material}
+      height={160}
+      padding={{ top: 16, bottom: 36, left: 44, right: 16 }}
+      domain={{ y: [minY, maxY] }}
+    >
+      <VictoryAxis
+        tickCount={Math.min(sorted.length, 5)}
+        style={{
+          axis: { stroke: colors.border },
+          ticks: { stroke: "transparent" },
+          tickLabels: { fill: colors.mutedForeground, fontSize: 10 },
+        }}
+      />
+      <VictoryAxis
+        dependentAxis
+        style={{
+          axis: { stroke: colors.border },
+          ticks: { stroke: "transparent" },
+          tickLabels: { fill: colors.mutedForeground, fontSize: 10 },
+          grid: { stroke: colors.border, strokeDasharray: "4,4" },
+        }}
+      />
+      <VictoryLine
+        data={data}
+        style={{ data: { stroke: colors.primary, strokeWidth: 2.5 } }}
+        interpolation="monotoneX"
+      />
+      <VictoryScatter
+        data={data}
+        size={4}
+        style={{ data: { fill: colors.primary } }}
+      />
+    </VictoryChart>
   );
 }
 
