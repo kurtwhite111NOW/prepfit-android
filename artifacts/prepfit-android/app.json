@@ -15,10 +15,10 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.prepfit.app"
+      "bundleIdentifier": "prepfit.com"
     },
     "android": {
-      "package": "com.prepfit.app",
+      "package": "prepfit.com",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#12151A"
