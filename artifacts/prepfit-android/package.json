@@ -59,6 +59,7 @@
     "@clerk/expo": "^3.4.1",
     "@clerk/shared": "^4.17.0",
     "expo-secure-store": "^15.0.8",
+    "react-native-purchases": "^8.12.0",
     "victory-native": "^36.9.2"
   }
 }
