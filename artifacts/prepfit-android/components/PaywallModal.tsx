@@ -37,17 +37,23 @@ export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps)
   const [error, setError] = useState<string | null>(null);
 
   const current = offerings?.current;
+  // Use identifier lookup — more reliable than packageType in test store
   const monthlyPkg = current?.availablePackages.find(
-    (p) => p.packageType === "MONTHLY",
+    (p) => p.identifier === "$rc_monthly",
   );
   const annualPkg = current?.availablePackages.find(
-    (p) => p.packageType === "ANNUAL",
+    (p) => p.identifier === "$rc_annual",
   );
 
   const selectedPkg = selectedPlan === "annual" ? annualPkg : monthlyPkg;
   const monthlyPrice = monthlyPkg?.product.priceString ?? "$14.00";
   const annualPrice = annualPkg?.product.priceString ?? "$168.00";
   const selectedPrice = selectedPlan === "annual" ? annualPrice : monthlyPrice;
+
+  // Monthly equivalent breakdown for annual plan
+  const annualPriceAmount = annualPkg?.product.price ?? 168;
+  const annualPerMonth = (annualPriceAmount / 12).toFixed(2);
+  const annualCurrencySymbol = annualPkg?.product.currencyCode === "USD" ? "$" : "";
 
   const handleSubscribe = () => {
     if (!selectedPkg) return;
@@ -134,6 +140,7 @@ export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps)
 
             {/* Plan toggle */}
             <View style={s.toggle}>
+              {/* Annual card */}
               <Pressable
                 style={[s.toggleBtn, selectedPlan === "annual" && s.toggleBtnActive]}
                 onPress={() => setSelectedPlan("annual")}
@@ -147,23 +154,31 @@ export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps)
                   >
                     Annual
                   </Text>
-                  {annualPkg && (
-                    <View style={s.saveBadge}>
-                      <Text style={s.saveBadgeText}>SAVE 50%</Text>
-                    </View>
-                  )}
+                  <View style={s.saveBadge}>
+                    <Text style={s.saveBadgeText}>BEST VALUE</Text>
+                  </View>
                 </View>
+                {/* Show per-month equivalent prominently */}
                 <Text
                   style={[
                     s.toggleBtnPrice,
                     selectedPlan === "annual" && s.toggleBtnPriceActive,
                   ]}
                 >
-                  {annualPrice}
-                  <Text style={s.toggleBtnPriceSub}>/yr</Text>
+                  {annualCurrencySymbol}{annualPerMonth}
+                  <Text style={s.toggleBtnPriceSub}>/mo</Text>
+                </Text>
+                <Text
+                  style={[
+                    s.toggleBtnNote,
+                    selectedPlan === "annual" && s.toggleBtnNoteActive,
+                  ]}
+                >
+                  billed {annualPrice}/year
                 </Text>
               </Pressable>
 
+              {/* Monthly card */}
               <Pressable
                 style={[s.toggleBtn, selectedPlan === "monthly" && s.toggleBtnActive]}
                 onPress={() => setSelectedPlan("monthly")}
@@ -184,6 +199,14 @@ export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps)
                 >
                   {monthlyPrice}
                   <Text style={s.toggleBtnPriceSub}>/mo</Text>
+                </Text>
+                <Text
+                  style={[
+                    s.toggleBtnNote,
+                    selectedPlan === "monthly" && s.toggleBtnNoteActive,
+                  ]}
+                >
+                  billed monthly
                 </Text>
               </Pressable>
             </View>
@@ -400,6 +423,16 @@ const styles = (
     toggleBtnPriceSub: {
       fontSize: 13,
       fontFamily: "Inter_400Regular",
+    },
+    toggleBtnNote: {
+      fontSize: 11,
+      fontFamily: "Inter_400Regular",
+      color: colors.mutedForeground,
+      marginTop: 2,
+    },
+    toggleBtnNoteActive: {
+      color: colors.primary,
+      opacity: 0.75,
     },
     errorBox: {
       backgroundColor: "#FF3B3018",
