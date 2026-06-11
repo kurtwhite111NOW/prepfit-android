@@ -16,20 +16,23 @@ import { useColors } from "@/hooks/useColors";
 interface PaywallModalProps {
   visible: boolean;
   onDismiss: () => void;
+  feature?: string;
 }
 
 type PurchaseConfirmState = {
-  visible: boolean;
   pkg: any;
   label: string;
   price: string;
 } | null;
 
-export function PaywallModal({ visible, onDismiss }: PaywallModalProps) {
+type Plan = "monthly" | "annual";
+
+export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps) {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const { offerings, purchase, restore, isPurchasing, isRestoring } =
     useSubscription();
+  const [selectedPlan, setSelectedPlan] = useState<Plan>("annual");
   const [confirmState, setConfirmState] = useState<PurchaseConfirmState>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,15 +44,19 @@ export function PaywallModal({ visible, onDismiss }: PaywallModalProps) {
     (p) => p.packageType === "ANNUAL",
   );
 
+  const selectedPkg = selectedPlan === "annual" ? annualPkg : monthlyPkg;
   const monthlyPrice = monthlyPkg?.product.priceString ?? "$14.00";
   const annualPrice = annualPkg?.product.priceString ?? "$168.00";
+  const selectedPrice = selectedPlan === "annual" ? annualPrice : monthlyPrice;
 
-  const handlePurchase = (pkg: any, label: string, price: string) => {
+  const handleSubscribe = () => {
+    if (!selectedPkg) return;
     setError(null);
+    const label = selectedPlan === "annual" ? "Annual Plan" : "Monthly Plan";
     if (__DEV__) {
-      setConfirmState({ visible: true, pkg, label, price });
+      setConfirmState({ pkg: selectedPkg, label, price: selectedPrice });
     } else {
-      doPurchase(pkg);
+      doPurchase(selectedPkg);
     }
   };
 
@@ -70,7 +77,7 @@ export function PaywallModal({ visible, onDismiss }: PaywallModalProps) {
       setError(null);
       await restore();
       onDismiss();
-    } catch (e: any) {
+    } catch {
       setError("Restore failed. Please try again.");
     }
   };
@@ -101,7 +108,9 @@ export function PaywallModal({ visible, onDismiss }: PaywallModalProps) {
               </View>
               <Text style={s.title}>PrepFit Pro</Text>
               <Text style={s.subtitle}>
-                Unlock AI meal planning, photo scanning, and smart grocery lists
+                {feature
+                  ? `Unlock ${feature} and all Pro features`
+                  : "Unlock AI meal planning, photo scanning, and smart grocery lists"}
               </Text>
             </View>
 
@@ -123,56 +132,86 @@ export function PaywallModal({ visible, onDismiss }: PaywallModalProps) {
               ))}
             </View>
 
+            {/* Plan toggle */}
+            <View style={s.toggle}>
+              <Pressable
+                style={[s.toggleBtn, selectedPlan === "annual" && s.toggleBtnActive]}
+                onPress={() => setSelectedPlan("annual")}
+              >
+                <View style={s.toggleBtnInner}>
+                  <Text
+                    style={[
+                      s.toggleBtnTitle,
+                      selectedPlan === "annual" && s.toggleBtnTitleActive,
+                    ]}
+                  >
+                    Annual
+                  </Text>
+                  {annualPkg && (
+                    <View style={s.saveBadge}>
+                      <Text style={s.saveBadgeText}>SAVE 50%</Text>
+                    </View>
+                  )}
+                </View>
+                <Text
+                  style={[
+                    s.toggleBtnPrice,
+                    selectedPlan === "annual" && s.toggleBtnPriceActive,
+                  ]}
+                >
+                  {annualPrice}
+                  <Text style={s.toggleBtnPriceSub}>/yr</Text>
+                </Text>
+              </Pressable>
+
+              <Pressable
+                style={[s.toggleBtn, selectedPlan === "monthly" && s.toggleBtnActive]}
+                onPress={() => setSelectedPlan("monthly")}
+              >
+                <Text
+                  style={[
+                    s.toggleBtnTitle,
+                    selectedPlan === "monthly" && s.toggleBtnTitleActive,
+                  ]}
+                >
+                  Monthly
+                </Text>
+                <Text
+                  style={[
+                    s.toggleBtnPrice,
+                    selectedPlan === "monthly" && s.toggleBtnPriceActive,
+                  ]}
+                >
+                  {monthlyPrice}
+                  <Text style={s.toggleBtnPriceSub}>/mo</Text>
+                </Text>
+              </Pressable>
+            </View>
+
             {error && (
               <View style={s.errorBox}>
                 <Text style={s.errorText}>{error}</Text>
               </View>
             )}
 
-            {/* Plans */}
-            <View style={s.plans}>
-              {/* Annual (highlighted) */}
-              {annualPkg && (
-                <Pressable
-                  style={[s.planCard, s.planCardHighlight]}
-                  onPress={() =>
-                    handlePurchase(annualPkg, "Annual Plan", annualPrice)
-                  }
-                  disabled={isPurchasing}
-                >
-                  <View style={s.badgeRow}>
-                    <View style={s.badge}>
-                      <Text style={s.badgeText}>BEST VALUE</Text>
-                    </View>
-                  </View>
-                  <Text style={s.planTitle}>Annual Plan</Text>
-                  <Text style={s.planPrice}>{annualPrice}</Text>
-                  <Text style={s.planNote}>per year · cancel anytime</Text>
-                </Pressable>
+            {/* CTA */}
+            <Pressable
+              style={[s.cta, (!selectedPkg || isPurchasing) && s.ctaDisabled]}
+              onPress={handleSubscribe}
+              disabled={!selectedPkg || isPurchasing}
+            >
+              {isPurchasing ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <>
+                  <Feather name="zap" size={18} color="#fff" />
+                  <Text style={s.ctaText}>
+                    Start Free Trial — then {selectedPrice}
+                    {selectedPlan === "annual" ? "/yr" : "/mo"}
+                  </Text>
+                </>
               )}
-
-              {/* Monthly */}
-              {monthlyPkg && (
-                <Pressable
-                  style={s.planCard}
-                  onPress={() =>
-                    handlePurchase(monthlyPkg, "Monthly Plan", monthlyPrice)
-                  }
-                  disabled={isPurchasing}
-                >
-                  <Text style={s.planTitle}>Monthly Plan</Text>
-                  <Text style={s.planPrice}>{monthlyPrice}</Text>
-                  <Text style={s.planNote}>per month · cancel anytime</Text>
-                </Pressable>
-              )}
-
-              {!monthlyPkg && !annualPkg && (
-                <View style={s.loadingBox}>
-                  <ActivityIndicator color={colors.primary} />
-                  <Text style={s.loadingText}>Loading plans…</Text>
-                </View>
-              )}
-            </View>
+            </Pressable>
 
             {/* Restore */}
             <Pressable
@@ -188,16 +227,9 @@ export function PaywallModal({ visible, onDismiss }: PaywallModalProps) {
             <Text style={s.legal}>
               Payment charged to your Google Play account at confirmation.
               Subscription auto-renews unless cancelled 24 hours before period
-              end.
+              end. Cancel anytime.
             </Text>
           </ScrollView>
-
-          {isPurchasing && (
-            <View style={s.processingOverlay}>
-              <ActivityIndicator size="large" color={colors.primary} />
-              <Text style={s.processingText}>Processing…</Text>
-            </View>
-          )}
         </View>
       </Modal>
 
@@ -238,7 +270,10 @@ export function PaywallModal({ visible, onDismiss }: PaywallModalProps) {
   );
 }
 
-const styles = (colors: ReturnType<typeof useColors>, insets: ReturnType<typeof useSafeAreaInsets>) =>
+const styles = (
+  colors: ReturnType<typeof useColors>,
+  insets: ReturnType<typeof useSafeAreaInsets>,
+) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -263,7 +298,7 @@ const styles = (colors: ReturnType<typeof useColors>, insets: ReturnType<typeof 
     },
     header: {
       alignItems: "center",
-      marginBottom: 32,
+      marginBottom: 28,
       marginTop: 16,
     },
     iconWrap: {
@@ -311,6 +346,61 @@ const styles = (colors: ReturnType<typeof useColors>, insets: ReturnType<typeof 
       fontFamily: "Inter_400Regular",
       color: colors.text,
     },
+    toggle: {
+      flexDirection: "row",
+      gap: 10,
+      marginBottom: 20,
+    },
+    toggleBtn: {
+      flex: 1,
+      borderRadius: 14,
+      borderWidth: 1.5,
+      borderColor: colors.border,
+      padding: 14,
+      backgroundColor: colors.card,
+    },
+    toggleBtnActive: {
+      borderColor: colors.primary,
+      backgroundColor: colors.primary + "10",
+    },
+    toggleBtnInner: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      marginBottom: 4,
+    },
+    toggleBtnTitle: {
+      fontSize: 15,
+      fontFamily: "Inter_600SemiBold",
+      color: colors.mutedForeground,
+    },
+    toggleBtnTitleActive: {
+      color: colors.text,
+    },
+    saveBadge: {
+      backgroundColor: colors.primary,
+      borderRadius: 5,
+      paddingHorizontal: 5,
+      paddingVertical: 2,
+    },
+    saveBadgeText: {
+      color: "#fff",
+      fontSize: 9,
+      fontFamily: "Inter_700Bold",
+      letterSpacing: 0.5,
+    },
+    toggleBtnPrice: {
+      fontSize: 18,
+      fontFamily: "Inter_700Bold",
+      color: colors.mutedForeground,
+    },
+    toggleBtnPriceActive: {
+      color: colors.primary,
+    },
+    toggleBtnPriceSub: {
+      fontSize: 13,
+      fontFamily: "Inter_400Regular",
+    },
     errorBox: {
       backgroundColor: "#FF3B3018",
       borderRadius: 10,
@@ -322,66 +412,27 @@ const styles = (colors: ReturnType<typeof useColors>, insets: ReturnType<typeof 
       fontSize: 13,
       fontFamily: "Inter_400Regular",
     },
-    plans: {
-      gap: 12,
-      marginBottom: 20,
-    },
-    planCard: {
-      borderRadius: 16,
-      borderWidth: 1.5,
-      borderColor: colors.border,
-      padding: 20,
-      backgroundColor: colors.card,
-    },
-    planCardHighlight: {
-      borderColor: colors.primary,
-      backgroundColor: colors.primary + "08",
-    },
-    badgeRow: {
-      marginBottom: 8,
-    },
-    badge: {
-      alignSelf: "flex-start",
-      backgroundColor: colors.primary,
-      borderRadius: 6,
-      paddingHorizontal: 8,
-      paddingVertical: 3,
-    },
-    badgeText: {
-      color: "#fff",
-      fontSize: 10,
-      fontFamily: "Inter_700Bold",
-      letterSpacing: 0.8,
-    },
-    planTitle: {
-      fontSize: 17,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.text,
-      marginBottom: 4,
-    },
-    planPrice: {
-      fontSize: 24,
-      fontFamily: "Inter_700Bold",
-      color: colors.primary,
-      marginBottom: 2,
-    },
-    planNote: {
-      fontSize: 13,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-    },
-    loadingBox: {
+    cta: {
+      flexDirection: "row",
       alignItems: "center",
-      padding: 32,
-      gap: 12,
+      justifyContent: "center",
+      gap: 8,
+      backgroundColor: colors.primary,
+      paddingVertical: 16,
+      borderRadius: 16,
+      marginBottom: 12,
     },
-    loadingText: {
-      color: colors.mutedForeground,
-      fontFamily: "Inter_400Regular",
+    ctaDisabled: {
+      opacity: 0.5,
+    },
+    ctaText: {
+      color: "#fff",
+      fontSize: 16,
+      fontFamily: "Inter_600SemiBold",
     },
     restoreBtn: {
       alignItems: "center",
-      paddingVertical: 12,
+      paddingVertical: 10,
       marginBottom: 8,
     },
     restoreText: {
@@ -395,18 +446,6 @@ const styles = (colors: ReturnType<typeof useColors>, insets: ReturnType<typeof 
       color: colors.mutedForeground,
       textAlign: "center",
       lineHeight: 16,
-    },
-    processingOverlay: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor: "rgba(0,0,0,0.45)",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 16,
-    },
-    processingText: {
-      color: "#fff",
-      fontSize: 16,
-      fontFamily: "Inter_500Medium",
     },
     confirmOverlay: {
       flex: 1,

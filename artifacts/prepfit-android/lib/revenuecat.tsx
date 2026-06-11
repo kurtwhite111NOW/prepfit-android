@@ -1,7 +1,8 @@
-import React, { createContext, useContext } from "react";
-import { Platform } from "react-native";
+import React, { createContext, useContext, useEffect, useRef } from "react";
+import { AppState, AppStateStatus, Platform } from "react-native";
 import Purchases from "react-native-purchases";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useAuth } from "@clerk/expo";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Constants from "expo-constants";
 
 const REVENUECAT_TEST_API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_TEST_API_KEY;
@@ -45,6 +46,45 @@ export function initializeRevenueCat() {
 }
 
 function useSubscriptionContext() {
+  const { userId, isSignedIn, isLoaded } = useAuth();
+  const queryClient = useQueryClient();
+  const appState = useRef(AppState.currentState);
+
+  // ── Bind RevenueCat identity to Clerk user ID ──────────────────────────
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (isSignedIn && userId) {
+      Purchases.logIn(userId).catch((err) =>
+        console.warn("RevenueCat logIn failed:", err),
+      );
+    } else {
+      Purchases.logOut().catch((err) =>
+        console.warn("RevenueCat logOut failed:", err),
+      );
+    }
+    // Invalidate customer info whenever auth state changes
+    queryClient.invalidateQueries({ queryKey: ["revenuecat", "customer-info"] });
+  }, [isSignedIn, userId, isLoaded]);
+
+  // ── Refresh on foreground resume ───────────────────────────────────────
+  useEffect(() => {
+    const subscription = AppState.addEventListener(
+      "change",
+      (nextState: AppStateStatus) => {
+        if (
+          appState.current.match(/inactive|background/) &&
+          nextState === "active"
+        ) {
+          queryClient.invalidateQueries({ queryKey: ["revenuecat", "customer-info"] });
+          queryClient.invalidateQueries({ queryKey: ["revenuecat", "offerings"] });
+        }
+        appState.current = nextState;
+      },
+    );
+    return () => subscription.remove();
+  }, [queryClient]);
+
+  // ── Queries ────────────────────────────────────────────────────────────
   const customerInfoQuery = useQuery({
     queryKey: ["revenuecat", "customer-info"],
     queryFn: async () => {
@@ -52,6 +92,7 @@ function useSubscriptionContext() {
       return info;
     },
     staleTime: 60 * 1000,
+    enabled: isLoaded,
   });
 
   const offeringsQuery = useQuery({
@@ -61,8 +102,10 @@ function useSubscriptionContext() {
       return offerings;
     },
     staleTime: 300 * 1000,
+    enabled: isLoaded,
   });
 
+  // ── Mutations ──────────────────────────────────────────────────────────
   const purchaseMutation = useMutation({
     mutationFn: async (packageToPurchase: any) => {
       const { customerInfo } = await Purchases.purchasePackage(packageToPurchase);
@@ -85,7 +128,7 @@ function useSubscriptionContext() {
     customerInfo: customerInfoQuery.data,
     offerings: offeringsQuery.data,
     isSubscribed,
-    isLoading: customerInfoQuery.isLoading || offeringsQuery.isLoading,
+    isLoading: !isLoaded || customerInfoQuery.isLoading || offeringsQuery.isLoading,
     purchase: purchaseMutation.mutateAsync,
     restore: restoreMutation.mutateAsync,
     isPurchasing: purchaseMutation.isPending,
