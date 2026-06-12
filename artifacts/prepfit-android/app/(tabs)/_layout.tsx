@@ -20,7 +20,7 @@ function AppBar() {
       <View style={s.appbarInner}>
         <View>
           <Text style={s.brand}>PrepFit</Text>
-          <Text style={s.brandSub}>Gym &amp; Fitness</Text>
+          <Text style={s.brandSub}>Simple Meal Prep</Text>
         </View>
         <Pressable onPress={toggleTheme} hitSlop={14} style={s.toggleBtn}>
           <Feather
