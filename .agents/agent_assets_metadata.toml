@@ -28,7 +28,7 @@ title = "03 — Water Tracker ✅"
 id = "JiKuhKy5R0ReT833BSoAT"
 uri = "file://screenshots/prepfit-04-meals.jpg"
 type = "image"
-title = "04 — My Meals (auth gate in browser)"
+title = "My Meals"
 
 [[outputs]]
 id = "d7yoT5WwK28UdtoTQsYbT"
@@ -106,10 +106,22 @@ title = "8 — My Plans"
 id = "MH3yS8cxwb_exahtlDuSA"
 uri = "file://screenshots/prepfit-08-guide.jpg"
 type = "image"
-title = "User Guide — full design (orange AppBar + moon toggle + scrollable tabs)"
+title = "User Guide"
 
 [[outputs]]
 id = "kmROoWx1h2AlWx_Isx2CL"
 uri = "file://screenshots/prepfit-05-scan.jpg"
 type = "image"
 title = "Scan Photo — orange AppBar loading state"
+
+[[outputs]]
+id = "S75mcXhziWeLCJM-9l260"
+uri = "file://screenshots/prepfit-06-weight.jpg"
+type = "image"
+title = "Weight Tracker"
+
+[[outputs]]
+id = "pfC4OinterQXedHlPhPpw"
+uri = "file://screenshots/prepfit-03-grocery.jpg"
+type = "image"
+title = "Grocery (loading state)"
