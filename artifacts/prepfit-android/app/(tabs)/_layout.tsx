@@ -2,7 +2,7 @@ import { Feather } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DemoBanner } from "@/components/DemoBanner";
 import { ScrollableTabBar } from "@/components/ScrollableTabBar";
@@ -19,7 +19,11 @@ function AppBar() {
     <View style={[s.appbar, { paddingTop: insets.top }]}>
       <View style={s.appbarInner}>
         <View style={s.brandRow}>
-          <Text style={s.brandEmoji}>🔥</Text>
+          <Image
+            source={require("@/assets/images/icon.png")}
+            style={s.brandLogo}
+            resizeMode="contain"
+          />
           <View>
             <Text style={s.brand}>PrepFit</Text>
             <Text style={s.brandSub}>Simple Meal Prep · Gym & Fitness</Text>
@@ -82,8 +86,10 @@ const s = StyleSheet.create({
     alignItems: "center",
     gap: 8,
   },
-  brandEmoji: {
-    fontSize: 22,
+  brandLogo: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
   },
   brand: {
     fontSize: 20,
