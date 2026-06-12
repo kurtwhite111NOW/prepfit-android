@@ -19,7 +19,6 @@ import {
   View,
 } from "react-native";
 import { useColors } from "@/hooks/useColors";
-import { AuthGate } from "@/components/AuthGate";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -62,7 +61,6 @@ export default function DashboardScreen() {
   const s = styles(colors);
 
   return (
-    <AuthGate>
     <ScrollView
       style={[s.root, { backgroundColor: colors.background }]}
       contentInsetAdjustmentBehavior="automatic"
@@ -186,7 +184,6 @@ export default function DashboardScreen() {
 
       <View style={{ height: 100 }} />
     </ScrollView>
-    </AuthGate>
   );
 }
 

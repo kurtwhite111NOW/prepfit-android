@@ -6,6 +6,7 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DemoBanner } from "@/components/DemoBanner";
 import { ScrollableTabBar } from "@/components/ScrollableTabBar";
+import { AuthGate } from "@/components/AuthGate";
 import { useColors } from "@/hooks/useColors";
 import { useTheme } from "@/lib/theme";
 
@@ -49,20 +50,22 @@ export default function TabLayout() {
       <StatusBar backgroundColor={ORANGE} style="light" translucent />
       <DemoBanner />
       <AppBar />
-      <Tabs
-        tabBar={(props: any) => <ScrollableTabBar {...props} />}
-        screenOptions={{ headerShown: false }}
-      >
-        <Tabs.Screen name="index"   options={{ title: "Home" }} />
-        <Tabs.Screen name="planner" options={{ title: "Meal Plan" }} />
-        <Tabs.Screen name="grocery" options={{ title: "Grocery" }} />
-        <Tabs.Screen name="meals"   options={{ title: "My Meals" }} />
-        <Tabs.Screen name="scan"    options={{ title: "Scan Photo" }} />
-        <Tabs.Screen name="weight"  options={{ title: "Weight" }} />
-        <Tabs.Screen name="water"   options={{ title: "Water" }} />
-        <Tabs.Screen name="plans"   options={{ title: "Saved Plans" }} />
-        <Tabs.Screen name="guide"   options={{ title: "User Guide" }} />
-      </Tabs>
+      <AuthGate>
+        <Tabs
+          tabBar={(props: any) => <ScrollableTabBar {...props} />}
+          screenOptions={{ headerShown: false }}
+        >
+          <Tabs.Screen name="index"   options={{ title: "Home" }} />
+          <Tabs.Screen name="planner" options={{ title: "Meal Plan" }} />
+          <Tabs.Screen name="grocery" options={{ title: "Grocery" }} />
+          <Tabs.Screen name="meals"   options={{ title: "My Meals" }} />
+          <Tabs.Screen name="scan"    options={{ title: "Scan Photo" }} />
+          <Tabs.Screen name="weight"  options={{ title: "Weight" }} />
+          <Tabs.Screen name="water"   options={{ title: "Water" }} />
+          <Tabs.Screen name="plans"   options={{ title: "Saved Plans" }} />
+          <Tabs.Screen name="guide"   options={{ title: "User Guide" }} />
+        </Tabs>
+      </AuthGate>
     </View>
   );
 }
