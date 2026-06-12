@@ -69,7 +69,7 @@ export default function PlansScreen() {
 
   return (
     <View style={[s.root, { backgroundColor: colors.background }]}>
-      <View style={[s.header, { paddingTop: insets.top + 16 }]}>
+      <View style={[s.header, { paddingTop: 16 }]}>
         <Text style={s.headerTitle}>Saved Plans</Text>
         <Text style={s.headerSub}>{plans?.length ?? 0} meal plans saved</Text>
       </View>

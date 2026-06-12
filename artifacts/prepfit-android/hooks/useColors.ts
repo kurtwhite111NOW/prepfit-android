@@ -1,13 +1,12 @@
-import { useColorScheme } from "react-native";
-
 import colors from "@/constants/colors";
+import { useTheme } from "@/lib/theme";
 
 type ColorPalette = typeof colors.light;
 
 export function useColors(): ColorPalette & { radius: number } {
-  const scheme = useColorScheme();
+  const { resolvedTheme } = useTheme();
   const palette: ColorPalette =
-    scheme === "dark" && "dark" in colors
+    resolvedTheme === "dark"
       ? (colors.dark as ColorPalette)
       : colors.light;
   return { ...palette, radius: colors.radius };

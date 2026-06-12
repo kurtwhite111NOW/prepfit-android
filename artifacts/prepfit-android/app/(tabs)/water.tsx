@@ -148,7 +148,7 @@ export default function WaterScreen() {
       contentInsetAdjustmentBehavior="automatic"
       showsVerticalScrollIndicator={false}
     >
-      <View style={[s.header, { paddingTop: insets.top + 16 }]}>
+      <View style={[s.header, { paddingTop: 16 }]}>
         <Text style={s.headerTitle}>Water Tracker</Text>
         <Text style={s.headerSub}>Stay hydrated · {DAILY_GOAL} glasses/day goal</Text>
       </View>

@@ -69,7 +69,7 @@ export default function DashboardScreen() {
       contentInsetAdjustmentBehavior="automatic"
       showsVerticalScrollIndicator={false}
     >
-      <View style={[s.hero, { paddingTop: insets.top + 20 }]}>
+      <View style={[s.hero, { paddingTop: 20 }]}>
         <View style={s.heroRow}>
           <View>
             <Text style={s.greeting}>{greeting},</Text>

@@ -142,7 +142,7 @@ export default function WeightScreen() {
       contentInsetAdjustmentBehavior="automatic"
       showsVerticalScrollIndicator={false}
     >
-      <View style={[s.header, { paddingTop: insets.top + 16 }]}>
+      <View style={[s.header, { paddingTop: 16 }]}>
         <Text style={s.headerTitle}>Weight Tracker</Text>
         <Text style={s.headerSub}>Monitor your progress over time</Text>
       </View>

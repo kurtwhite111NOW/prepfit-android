@@ -96,7 +96,7 @@ function PlannerScreenContent() {
       contentInsetAdjustmentBehavior="automatic"
       showsVerticalScrollIndicator={false}
     >
-      <View style={[s.header, { paddingTop: insets.top + 16 }]}>
+      <View style={[s.header, { paddingTop: 16 }]}>
         <Text style={s.headerTitle}>Meal Planner</Text>
         <Text style={s.headerSub}>AI-powered plans in seconds</Text>
       </View>

@@ -125,7 +125,7 @@ function ScanScreenContent() {
       contentInsetAdjustmentBehavior="automatic"
       showsVerticalScrollIndicator={false}
     >
-      <View style={[s.header, { paddingTop: insets.top + 16 }]}>
+      <View style={[s.header, { paddingTop: 16 }]}>
         <Text style={s.headerTitle}>Scan a Meal</Text>
         <Text style={s.headerSub}>AI identifies food and estimates calories</Text>
       </View>

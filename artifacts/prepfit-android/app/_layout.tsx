@@ -19,6 +19,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { initializeRevenueCat, SubscriptionProvider } from "@/lib/revenuecat";
 import { DemoProvider, useDemoMode } from "@/lib/demo";
+import { ThemeProvider } from "@/lib/theme";
 
 setBaseUrl(`https://${process.env.EXPO_PUBLIC_DOMAIN}`);
 
@@ -103,8 +104,9 @@ export default function RootLayout() {
 
   return (
     <ClerkProvider publishableKey={CLERK_KEY}>
-      <DemoProvider>
-        <SafeAreaProvider>
+      <ThemeProvider>
+        <DemoProvider>
+          <SafeAreaProvider>
           <ErrorBoundary>
             <QueryClientProvider client={queryClient}>
               <SubscriptionProvider>
@@ -119,7 +121,8 @@ export default function RootLayout() {
             </QueryClientProvider>
           </ErrorBoundary>
         </SafeAreaProvider>
-      </DemoProvider>
+        </DemoProvider>
+      </ThemeProvider>
     </ClerkProvider>
   );
 }

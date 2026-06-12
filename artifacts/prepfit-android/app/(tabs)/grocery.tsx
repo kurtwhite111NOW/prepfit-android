@@ -63,7 +63,7 @@ function GroceryScreenContent() {
       contentInsetAdjustmentBehavior="automatic"
       showsVerticalScrollIndicator={false}
     >
-      <View style={[s.header, { paddingTop: insets.top + 16 }]}>
+      <View style={[s.header, { paddingTop: 16 }]}>
         <Text style={s.headerTitle}>Grocery List</Text>
         <Text style={s.headerSub}>Check off items as you shop</Text>
       </View>

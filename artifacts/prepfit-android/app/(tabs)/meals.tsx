@@ -55,7 +55,7 @@ export default function MealsScreen() {
 
   return (
     <View style={[s.root, { backgroundColor: colors.background }]}>
-      <View style={[s.header, { paddingTop: insets.top + 16 }]}>
+      <View style={[s.header, { paddingTop: 16 }]}>
         <Text style={s.headerTitle}>My Meals</Text>
         <Text style={s.headerSub}>{meals?.length ?? 0} meals scanned</Text>
       </View>

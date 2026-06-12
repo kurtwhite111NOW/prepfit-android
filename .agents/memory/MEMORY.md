@@ -2,3 +2,4 @@
 - [Expo Clerk legacy hooks](expo-clerk-legacy.md) — @clerk/expo v3 useSignIn/useSignUp need @clerk/expo/legacy import; v3 default uses signals API.
 - [Orval mutation pattern](orval-mutation-pattern.md) — Orval-generated mutation hooks require { data: BodyType<T> } wrapper, not flat body args.
 - [RevenueCat proxy API paths](revenuecat-proxy-paths.md) — correct action paths for attach/create; proxy pattern vs v2 connection approach
+- [PrepFit Android nav & theme](prepfit-android-nav-theme.md) — scrollable tab bar, orange status bar, ThemeContext pattern; @react-navigation/bottom-tabs not a direct dep so tabBar prop needs (props: any)
