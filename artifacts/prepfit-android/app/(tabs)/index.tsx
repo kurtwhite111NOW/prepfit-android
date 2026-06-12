@@ -336,7 +336,7 @@ const styles = (colors: ReturnType<typeof useColors>) =>
 
     // Hero
     hero: {
-      backgroundColor: "#1C1208",
+      backgroundColor: "#12151A",
       paddingHorizontal: 20,
       paddingTop: 20,
       paddingBottom: 24,
