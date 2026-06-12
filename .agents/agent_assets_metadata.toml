@@ -101,3 +101,15 @@ id = "DzUMMxJKhd98WpQYISuyW"
 uri = "file://screenshots/08-plans.jpg"
 type = "image"
 title = "8 — My Plans"
+
+[[outputs]]
+id = "MH3yS8cxwb_exahtlDuSA"
+uri = "file://screenshots/prepfit-08-guide.jpg"
+type = "image"
+title = "User Guide — full design (orange AppBar + moon toggle + scrollable tabs)"
+
+[[outputs]]
+id = "kmROoWx1h2AlWx_Isx2CL"
+uri = "file://screenshots/prepfit-05-scan.jpg"
+type = "image"
+title = "Scan Photo — orange AppBar loading state"
