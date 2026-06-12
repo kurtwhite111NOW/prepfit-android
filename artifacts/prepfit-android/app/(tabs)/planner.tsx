@@ -206,6 +206,9 @@ function PlannerScreenContent() {
           {generatedPlan.meals.map((meal) => (
             <MealCard key={meal.mealNumber} meal={meal} colors={colors} />
           ))}
+
+          {/* Batch Prep Checklist */}
+          <BatchPrepChecklist meals={generatedPlan.meals} colors={colors} />
         </View>
       )}
 
@@ -369,6 +372,169 @@ const macroPillStyles = StyleSheet.create({
     color: "rgba(255,255,255,0.6)",
   },
 });
+
+// ─── Batch Prep Checklist ───────────────────────────────────────────────────
+
+function getNextSundayLabel(): string {
+  const now = new Date();
+  const daysUntil = now.getDay() === 0 ? 7 : 7 - now.getDay();
+  const sunday = new Date(now);
+  sunday.setDate(now.getDate() + daysUntil);
+  return sunday.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function extractMainIngredient(ingredients: string): string {
+  return (ingredients.split(",")[0] ?? "").trim();
+}
+
+function buildChecklistItems(meals: GeneratedMeal[]): string[] {
+  return [
+    "Gather all ingredients and containers before you start",
+    ...meals.map(
+      (m) => `Cook/prepare: ${extractMainIngredient(m.ingredients)} (for ${m.name})`
+    ),
+    "Portion each meal into separate airtight containers",
+    "Label containers with meal name and calories",
+    "Refrigerate — stays fresh for 4–5 days",
+  ];
+}
+
+function BatchPrepChecklist({
+  meals,
+  colors,
+}: {
+  meals: GeneratedMeal[];
+  colors: ReturnType<typeof useColors>;
+}) {
+  const items = buildChecklistItems(meals);
+  const [checked, setChecked] = useState<boolean[]>(() => items.map(() => false));
+  const doneCount = checked.filter(Boolean).length;
+  const sundayLabel = getNextSundayLabel();
+  const s = batchStyles(colors);
+
+  const toggle = (i: number) => {
+    setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
+  };
+
+  return (
+    <View style={s.card}>
+      {/* Header */}
+      <View style={s.header}>
+        <View style={s.titleRow}>
+          <Feather name="check-square" size={16} color={colors.primary} />
+          <Text style={s.title}>Batch Prep Checklist</Text>
+        </View>
+        <View style={s.sundayBadge}>
+          <Text style={s.sundayText}>Do this Sunday {sundayLabel}</Text>
+        </View>
+      </View>
+
+      {/* Items */}
+      {items.map((item, i) => (
+        <Pressable key={i} style={s.itemRow} onPress={() => toggle(i)}>
+          <View style={[s.circle, checked[i] && s.circleChecked]}>
+            {checked[i] && <Feather name="check" size={11} color="#fff" />}
+          </View>
+          <Text style={[s.itemText, checked[i] && s.itemTextDone]}>{item}</Text>
+        </Pressable>
+      ))}
+
+      {/* Progress */}
+      <View style={s.footer}>
+        <Text style={s.progress}>
+          {doneCount} of {items.length} steps done
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+const batchStyles = (colors: ReturnType<typeof useColors>) =>
+  StyleSheet.create({
+    card: {
+      backgroundColor: colors.card,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      marginTop: 4,
+      marginBottom: 8,
+      overflow: "hidden",
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    titleRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 7,
+    },
+    title: {
+      fontSize: 14,
+      fontFamily: "Inter_700Bold",
+      color: colors.foreground,
+    },
+    sundayBadge: {
+      backgroundColor: "rgba(242,107,29,0.12)",
+      borderRadius: 100,
+      paddingHorizontal: 9,
+      paddingVertical: 3,
+    },
+    sundayText: {
+      fontSize: 10,
+      fontFamily: "Inter_500Medium",
+      color: colors.primary,
+    },
+    itemRow: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      paddingHorizontal: 14,
+      paddingVertical: 13,
+      gap: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    circle: {
+      width: 22,
+      height: 22,
+      borderRadius: 11,
+      borderWidth: 1.5,
+      borderColor: colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+      marginTop: 1,
+      flexShrink: 0,
+    },
+    circleChecked: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    itemText: {
+      flex: 1,
+      fontSize: 14,
+      fontFamily: "Inter_400Regular",
+      color: colors.foreground,
+      lineHeight: 20,
+    },
+    itemTextDone: {
+      color: colors.mutedForeground,
+      textDecorationLine: "line-through",
+    },
+    footer: {
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+    },
+    progress: {
+      fontSize: 12,
+      fontFamily: "Inter_400Regular",
+      color: colors.mutedForeground,
+    },
+  });
 
 const styles = (colors: ReturnType<typeof useColors>) =>
   StyleSheet.create({
