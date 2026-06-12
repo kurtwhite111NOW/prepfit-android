@@ -67,21 +67,6 @@ const ACCORDION_SECTIONS: AccordionSection[] = [
   },
 ];
 
-const PLATFORM_CARDS = [
-  {
-    icon: "smartphone" as const,
-    title: "Android — Google Play Store",
-    subtitle: "Download the native PrepFit app",
-    steps: [
-      "Open the Google Play Store on your Android device",
-      'Search for "PrepFit - Meal Prep & Fitness"',
-      'Tap "Install" — the app is free to download',
-      "Open PrepFit, create your account, and start your plan",
-    ],
-    color: "#34A853",
-  },
-];
-
 function AccordionItem({ section }: { section: AccordionSection }) {
   const [open, setOpen] = useState(false);
   const colors = useColors();
@@ -130,28 +115,6 @@ export default function GuideScreen() {
         <Text style={s.heroDesc}>
           Everything you need to know to get the most out of PrepFit — your meal prep and health tracking companion.
         </Text>
-      </View>
-
-      {/* Download */}
-      <Text style={s.sectionLabel}>Download the App</Text>
-      <View style={s.platformRow}>
-        {PLATFORM_CARDS.map((card) => (
-          <View key={card.title} style={s.platformCard}>
-            <View style={[s.platformIconWrap, { backgroundColor: `${card.color}22` }]}>
-              <Feather name={card.icon} size={20} color={card.color} />
-            </View>
-            <Text style={s.platformTitle}>{card.title}</Text>
-            <Text style={s.platformSubtitle}>{card.subtitle}</Text>
-            {card.steps.map((step, i) => (
-              <View key={i} style={s.stepRow}>
-                <View style={[s.stepNum, { backgroundColor: card.color }]}>
-                  <Text style={s.stepNumText}>{i + 1}</Text>
-                </View>
-                <Text style={s.stepText}>{step}</Text>
-              </View>
-            ))}
-          </View>
-        ))}
       </View>
 
       {/* Feature Guide accordion */}
@@ -288,66 +251,6 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       marginTop: 24,
       marginBottom: 10,
       marginHorizontal: 16,
-    },
-
-    platformRow: {
-      gap: 10,
-      paddingHorizontal: 16,
-    },
-    platformCard: {
-      backgroundColor: colors.card,
-      borderRadius: colors.radius,
-      padding: 16,
-      borderWidth: 1,
-      borderColor: colors.border,
-      marginBottom: 2,
-    },
-    platformIconWrap: {
-      width: 40,
-      height: 40,
-      borderRadius: 12,
-      alignItems: "center",
-      justifyContent: "center",
-      marginBottom: 8,
-    },
-    platformTitle: {
-      fontSize: 16,
-      fontFamily: "Inter_700Bold",
-      color: colors.foreground,
-      marginBottom: 2,
-    },
-    platformSubtitle: {
-      fontSize: 13,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-      marginBottom: 12,
-    },
-    stepRow: {
-      flexDirection: "row",
-      alignItems: "flex-start",
-      gap: 10,
-      marginBottom: 8,
-    },
-    stepNum: {
-      width: 20,
-      height: 20,
-      borderRadius: 10,
-      alignItems: "center",
-      justifyContent: "center",
-      flexShrink: 0,
-      marginTop: 1,
-    },
-    stepNumText: {
-      fontSize: 11,
-      fontFamily: "Inter_700Bold",
-      color: "#FFF",
-    },
-    stepText: {
-      flex: 1,
-      fontSize: 13,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-      lineHeight: 19,
     },
 
     accordion: {

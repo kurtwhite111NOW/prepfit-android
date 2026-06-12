@@ -1,6 +1,13 @@
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import React from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useRef } from "react";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 
@@ -31,9 +38,27 @@ const TAB_CONFIG: Record<string, TabConfig> = {
   guide:   { label: "User Guide",  icon: "help-circle",   family: "feather"    },
 };
 
+const VISIBLE_TABS = 5;
+
 export function ScrollableTabBar({ state, navigation }: TabBarProps) {
   const colors = useColors();
   const insets = useSafeAreaInsets();
+  const { width: screenWidth } = useWindowDimensions();
+  const tabWidth = screenWidth / VISIBLE_TABS;
+  const scrollRef = useRef<ScrollView>(null);
+
+  const onPress = (route: TabRoute, index: number, focused: boolean) => {
+    const event = navigation.emit({
+      type: "tabPress",
+      target: route.key,
+      canPreventDefault: true,
+    });
+    if (!focused && !event.defaultPrevented) {
+      navigation.navigate(route.name);
+      const scrollTo = Math.max(0, (index - Math.floor(VISIBLE_TABS / 2)) * tabWidth);
+      scrollRef.current?.scrollTo({ x: scrollTo, animated: true });
+    }
+  };
 
   return (
     <View
@@ -47,32 +72,29 @@ export function ScrollableTabBar({ state, navigation }: TabBarProps) {
       ]}
     >
       <ScrollView
+        ref={scrollRef}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={s.scrollContent}
+        scrollEventThrottle={16}
         bounces={false}
+        decelerationRate="fast"
+        snapToInterval={tabWidth}
+        snapToAlignment="start"
       >
         {state.routes.map((route, index) => {
           const cfg = TAB_CONFIG[route.name];
           const focused = state.index === index;
           const color = focused ? colors.primary : colors.mutedForeground;
 
-          const onPress = () => {
-            const event = navigation.emit({
-              type: "tabPress",
-              target: route.key,
-              canPreventDefault: true,
-            });
-            if (!focused && !event.defaultPrevented) {
-              navigation.navigate(route.name);
-            }
-          };
-
           return (
             <Pressable
               key={route.key}
-              onPress={onPress}
-              style={[s.tab, focused && { borderTopColor: colors.primary }]}
+              onPress={() => onPress(route, index, focused)}
+              style={[
+                s.tab,
+                { width: tabWidth },
+                focused && { borderTopColor: colors.primary },
+              ]}
             >
               <View
                 style={[
@@ -119,18 +141,11 @@ const s = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 4,
   },
-  scrollContent: {
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    gap: 4,
-  },
   tab: {
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 12,
     paddingTop: 6,
     paddingBottom: 4,
-    minWidth: 68,
     borderTopWidth: 2,
     borderTopColor: "transparent",
   },
