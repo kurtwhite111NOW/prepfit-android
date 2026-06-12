@@ -9,6 +9,7 @@ import {
   View,
 } from "react-native";
 import { useColors } from "@/hooks/useColors";
+import { useTheme } from "@/lib/theme";
 
 type AccordionSection = {
   title: string;
@@ -92,6 +93,7 @@ function AccordionItem({ section }: { section: AccordionSection }) {
 
 export default function GuideScreen() {
   const colors = useColors();
+  const { resolvedTheme, toggleTheme } = useTheme();
   const s = styles(colors);
 
   return (
@@ -124,6 +126,29 @@ export default function GuideScreen() {
           <AccordionItem key={section.title} section={section} />
         ))}
       </View>
+
+      {/* Theme toggle */}
+      <Text style={s.sectionLabel}>Appearance</Text>
+      <Pressable style={s.themeToggleRow} onPress={toggleTheme}>
+        <View style={s.themeToggleLeft}>
+          <View style={s.themeIconWrap}>
+            <Feather
+              name={resolvedTheme === "dark" ? "sun" : "moon"}
+              size={18}
+              color={colors.primary}
+            />
+          </View>
+          <View>
+            <Text style={s.themeToggleTitle}>
+              {resolvedTheme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            </Text>
+            <Text style={s.themeToggleSub}>
+              Currently: {resolvedTheme === "dark" ? "Dark 🌙" : "Light ☀️"}
+            </Text>
+          </View>
+        </View>
+        <Feather name="chevron-right" size={18} color={colors.mutedForeground} />
+      </Pressable>
 
       <View style={{ height: 40 }} />
     </ScrollView>
@@ -238,6 +263,42 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       borderWidth: 1,
       borderColor: colors.border,
       overflow: "hidden",
+    },
+
+    themeToggleRow: {
+      marginHorizontal: 16,
+      backgroundColor: colors.card,
+      borderRadius: colors.radius,
+      borderWidth: 1,
+      borderColor: colors.border,
+      padding: 16,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    themeToggleLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 14,
+    },
+    themeIconWrap: {
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+      backgroundColor: colors.accent,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    themeToggleTitle: {
+      fontSize: 15,
+      fontFamily: "Inter_600SemiBold",
+      color: colors.foreground,
+    },
+    themeToggleSub: {
+      fontSize: 12,
+      fontFamily: "Inter_400Regular",
+      color: colors.mutedForeground,
+      marginTop: 2,
     },
 
     supportCard: {

@@ -1,20 +1,17 @@
-import { Feather } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DemoBanner } from "@/components/DemoBanner";
 import { TrialBanner } from "@/components/TrialBanner";
 import { ScrollableTabBar } from "@/components/ScrollableTabBar";
 import { AuthGate } from "@/components/AuthGate";
 import { useColors } from "@/hooks/useColors";
-import { useTheme } from "@/lib/theme";
 
 const ORANGE = "#F26B1D";
 
 function AppBar() {
-  const { resolvedTheme, toggleTheme } = useTheme();
   const insets = useSafeAreaInsets();
 
   return (
@@ -31,13 +28,6 @@ function AppBar() {
             <Text style={s.brandSub}>Simple Meal Prep · Gym & Fitness</Text>
           </View>
         </View>
-        <Pressable onPress={toggleTheme} hitSlop={14} style={s.toggleBtn}>
-          <Feather
-            name={resolvedTheme === "dark" ? "sun" : "moon"}
-            size={20}
-            color="#fff"
-          />
-        </Pressable>
       </View>
     </View>
   );
@@ -107,13 +97,5 @@ const s = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     color: "rgba(255,255,255,0.82)",
     marginTop: 1,
-  },
-  toggleBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: "rgba(255,255,255,0.22)",
-    alignItems: "center",
-    justifyContent: "center",
   },
 });
