@@ -217,6 +217,16 @@ export default function DashboardScreen() {
             </Text>
           </Pressable>
         )}
+
+        {todayCalories > 0 && (
+          <Pressable style={s.caloriePill} onPress={() => router.push("/(tabs)/meals" as never)}>
+            <Text style={s.calorieEmoji}>🔥</Text>
+            <Text style={s.calorieText}>
+              {todayCalories} kcal scanned today
+            </Text>
+            <Feather name="chevron-right" size={12} color={colors.primary} />
+          </Pressable>
+        )}
       </View>
 
       {/* ── What do you want to do ─────────────────────────────────────────── */}
@@ -240,6 +250,8 @@ export default function DashboardScreen() {
               <Text style={s.actionDesc} numberOfLines={1}>
                 {action.label === "Water Tracker"
                   ? `${waterCount}/${DAILY_GOAL} glasses today`
+                  : action.label === "Scan a Meal" && todayCalories > 0
+                  ? `${todayCalories} kcal scanned today`
                   : action.desc}
               </Text>
             </Pressable>
@@ -362,6 +374,25 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       fontSize: 13,
       fontFamily: "Inter_400Regular",
       color: "rgba(255,255,255,0.60)",
+    },
+    caloriePill: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 5,
+      marginTop: 8,
+      backgroundColor: "rgba(242,107,29,0.15)",
+      borderRadius: 100,
+      paddingHorizontal: 12,
+      paddingVertical: 5,
+      alignSelf: "flex-start",
+    },
+    calorieEmoji: {
+      fontSize: 13,
+    },
+    calorieText: {
+      fontSize: 12,
+      fontFamily: "Inter_600SemiBold",
+      color: colors.primary,
     },
 
     // Sections

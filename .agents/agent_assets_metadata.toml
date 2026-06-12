@@ -58,7 +58,7 @@ title = "08 — Grocery (paywall loading)"
 id = "VFBXkvYSyN4sHybke356e"
 uri = "file://screenshots/01-home.jpg"
 type = "image"
-title = "1 — Home (🏠 highlighted)"
+title = "Dashboard — Today’s calorie total from scanned meals"
 
 [[outputs]]
 id = "ZFnuHZwHlQYgBe2zjhqZQ"
