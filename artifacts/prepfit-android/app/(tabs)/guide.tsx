@@ -70,25 +70,13 @@ const ACCORDION_SECTIONS: AccordionSection[] = [
 const PLATFORM_CARDS = [
   {
     icon: "smartphone" as const,
-    title: "iPhone (iOS)",
-    subtitle: "Install from the App Store",
+    title: "Android — Google Play Store",
+    subtitle: "Download the native PrepFit app",
     steps: [
-      "Open Safari and visit prepfit.fit",
-      'Tap the Share icon (square with arrow)',
-      'Tap "Add to Home Screen"',
-      'Tap "Add" — PrepFit appears on your home screen',
-    ],
-    color: "#007AFF",
-  },
-  {
-    icon: "smartphone" as const,
-    title: "Android",
-    subtitle: "Install via Chrome / Play Store",
-    steps: [
-      "Open Chrome and visit prepfit.fit",
-      'Tap the ⋮ menu in the top-right',
-      'Tap "Add to Home Screen" or "Install App"',
-      "Tap Add — PrepFit is now installed",
+      "Open the Google Play Store on your Android device",
+      'Search for "PrepFit - Meal Prep & Fitness"',
+      'Tap "Install" — the app is free to download',
+      "Open PrepFit, create your account, and start your plan",
     ],
     color: "#34A853",
   },
@@ -144,8 +132,8 @@ export default function GuideScreen() {
         </Text>
       </View>
 
-      {/* Platform Support */}
-      <Text style={s.sectionLabel}>Platform Support</Text>
+      {/* Download */}
+      <Text style={s.sectionLabel}>Download the App</Text>
       <View style={s.platformRow}>
         {PLATFORM_CARDS.map((card) => (
           <View key={card.title} style={s.platformCard}>
