@@ -2,6 +2,7 @@ import { useAuth } from "@clerk/expo";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
+  ActivityIndicator,
   Pressable,
   StyleSheet,
   Text,
@@ -15,27 +16,46 @@ interface AuthGateProps {
 }
 
 /**
- * Wraps screen content that requires a signed-in account.
- * When the user is unauthenticated and not in demo mode, shows a
- * "Sign in to continue" wall with Sign In + Create Account CTAs.
- * Demo-mode users are treated as authenticated for viewing purposes.
+ * Central auth wall for the tab group (placed in (tabs)/_layout.tsx).
+ *
+ * States:
+ *  • Loading  — Clerk or demo-mode not yet hydrated → spinner (no content flash)
+ *  • Authed   — signed-in real user OR demo mode → render children
+ *  • Wall     — fully loaded, not authed → "Sign in to continue" UI with
+ *               orange Sign In + outlined Create Account CTAs matching prepfit.fit
+ *
+ * The global AuthGuard in app/_layout.tsx handles navigation-level redirects.
+ * AuthGate provides the defensive in-screen UI layer that prevents any content
+ * flash and delivers the correct wall UX if a user somehow reaches (tabs) while
+ * unauthenticated (e.g. race between AuthGuard's router.replace and render).
  */
 export function AuthGate({ children }: AuthGateProps) {
-  const { isSignedIn, isLoaded } = useAuth();
-  const { isDemoMode } = useDemoMode();
+  const { isSignedIn, isLoaded: clerkLoaded } = useAuth();
+  const { isDemoMode, isLoaded: demoLoaded } = useDemoMode();
   const colors = useColors();
   const router = useRouter();
 
-  // While Clerk initialises, let children render (AuthGuard handles global redirect)
-  if (!isLoaded) return <>{children}</>;
-
-  // Signed-in real users and demo-mode users can see the screen
-  if (isSignedIn || isDemoMode) return <>{children}</>;
+  const isFullyLoaded = clerkLoaded && demoLoaded;
+  const isAuthed = isSignedIn || isDemoMode;
 
   const s = styles(colors);
 
+  // While either Clerk or demo-mode context is still hydrating, show a neutral
+  // loading spinner rather than flashing children or the wall prematurely.
+  if (!isFullyLoaded) {
+    return (
+      <View style={[s.root, s.center, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+  // Signed-in users and demo-mode users get full access to tab content.
+  if (isAuthed) return <>{children}</>;
+
+  // Unauthenticated + fully loaded → show the "Sign in to continue" wall.
   return (
-    <View style={[s.root, { backgroundColor: colors.background }]}>
+    <View style={[s.root, s.center, { backgroundColor: colors.background }]}>
       <View style={s.card}>
         <View style={s.iconWrap}>
           <Text style={s.iconText}>👍</Text>
@@ -48,14 +68,14 @@ export function AuthGate({ children }: AuthGateProps) {
 
         <Pressable
           style={({ pressed }) => [s.signInBtn, { opacity: pressed ? 0.85 : 1 }]}
-          onPress={() => router.push("/(auth)/sign-in" as never)}
+          onPress={() => router.replace("/(auth)/sign-in" as never)}
         >
           <Text style={s.signInBtnText}>Sign In</Text>
         </Pressable>
 
         <Pressable
           style={({ pressed }) => [s.createBtn, { opacity: pressed ? 0.85 : 1 }]}
-          onPress={() => router.push("/(auth)/sign-up" as never)}
+          onPress={() => router.replace("/(auth)/sign-up" as never)}
         >
           <Text style={s.createBtnText}>Create Account</Text>
         </Pressable>
@@ -68,6 +88,8 @@ const styles = (colors: ReturnType<typeof useColors>) =>
   StyleSheet.create({
     root: {
       flex: 1,
+    },
+    center: {
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: 32,
