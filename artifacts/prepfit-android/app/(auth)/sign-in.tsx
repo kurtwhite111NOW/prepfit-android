@@ -77,7 +77,7 @@ export default function SignInScreen() {
             <Text style={s.iconText}>👍</Text>
           </View>
           <Text style={s.brand}>PrepFit</Text>
-          <Text style={s.tagline}>Your AI Fitness Meal Planner</Text>
+          <Text style={s.tagline}>Your Fitness Meal Planner</Text>
         </View>
 
         <View style={s.card}>

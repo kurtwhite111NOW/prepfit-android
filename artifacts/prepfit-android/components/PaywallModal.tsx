@@ -30,9 +30,9 @@ const RED_BORDER = "rgba(239,68,68,0.30)";
 const RED = "#f87171";
 
 const FEATURES = [
-  { icon: "cpu" as const,          label: "AI Meal Plan Generation",   desc: "Personalised weekly plans in seconds" },
+  { icon: "cpu" as const,          label: "Meal Plan Generation",      desc: "Personalised weekly plans in seconds" },
   { icon: "shopping-cart" as const, label: "Smart Grocery Lists",       desc: "Clean-brand picks, organised by aisle" },
-  { icon: "camera" as const,       label: "Photo Calorie Scanner",     desc: "AI identifies food and estimates calories" },
+  { icon: "camera" as const,       label: "Photo Calorie Scanner",     desc: "Identifies food and estimates calories" },
   { icon: "trending-up" as const,  label: "Weight Tracker",            desc: "Trend chart and progress insights" },
   { icon: "book-open" as const,    label: "My Meals Journal",          desc: "Save and review all analysed meals" },
   { icon: "droplet" as const,      label: "Daily Water Tracking",      desc: "Hit your hydration goals every day" },
@@ -140,7 +140,7 @@ export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps)
               <Text style={s.subheading}>
                 {feature
                   ? `Upgrade to access ${feature} and all premium features.`
-                  : "Your free trial has ended. Upgrade to keep using AI meal planning, calorie scanning, and all premium features."}
+                  : "Your free trial has ended. Upgrade to keep using meal planning, calorie scanning, and all premium features."}
               </Text>
             </View>
 

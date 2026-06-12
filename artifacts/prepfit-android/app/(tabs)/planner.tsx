@@ -98,7 +98,7 @@ function PlannerScreenContent() {
     >
       <View style={[s.header, { paddingTop: 16 }]}>
         <Text style={s.headerTitle}>Meal Planner</Text>
-        <Text style={s.headerSub}>AI-powered plans in seconds</Text>
+        <Text style={s.headerSub}>Smart plans in seconds</Text>
       </View>
 
       <View style={s.configCard}>
@@ -147,7 +147,7 @@ function PlannerScreenContent() {
           ) : (
             <>
               <Feather name="zap" size={18} color="#FFF" />
-              <Text style={s.generateBtnText}>Generate Plan</Text>
+              <Text style={s.generateBtnText}>Generate Meal Plan</Text>
             </>
           )}
         </Pressable>
@@ -449,7 +449,7 @@ const mealCardStyles = (colors: ReturnType<typeof useColors>) =>
 
 export default function PlannerScreen() {
   return (
-    <PremiumGate feature="AI Meal Planner">
+    <PremiumGate feature="Meal Planner">
       <PlannerScreenContent />
     </PremiumGate>
   );

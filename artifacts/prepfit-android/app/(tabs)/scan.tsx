@@ -127,7 +127,7 @@ function ScanScreenContent() {
     >
       <View style={[s.header, { paddingTop: 16 }]}>
         <Text style={s.headerTitle}>Scan a Meal</Text>
-        <Text style={s.headerSub}>AI identifies food and estimates calories</Text>
+        <Text style={s.headerSub}>Identifies food and estimates calories</Text>
       </View>
 
       <View style={s.content}>
@@ -137,7 +137,7 @@ function ScanScreenContent() {
               <Feather name="camera" size={40} color={colors.primary} />
             </View>
             <Text style={s.pickTitle}>Take or choose a photo</Text>
-            <Text style={s.pickSub}>AI will identify the food and estimate calories</Text>
+            <Text style={s.pickSub}>Identifies the food and estimates calories</Text>
 
             <View style={s.btnRow}>
               <Pressable

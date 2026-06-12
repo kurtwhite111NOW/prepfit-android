@@ -21,7 +21,7 @@ const ACCORDION_SECTIONS: AccordionSection[] = [
     title: "Getting Started",
     icon: "play-circle",
     content:
-      "Sign in or create a free account to get started. Once in, head to the Meal Planner tab to generate your first AI-powered meal plan. Everything else — the grocery list, saved plans, and dashboard — flows from there.",
+      "Sign in or create a free account to get started. Once in, head to the Meal Planner tab to generate your first meal plan. Everything else — the grocery list, saved plans, and dashboard — flows from there.",
   },
   {
     title: "Dashboard",
@@ -33,7 +33,7 @@ const ACCORDION_SECTIONS: AccordionSection[] = [
     title: "Meal Planner",
     icon: "calendar",
     content:
-      "Set your meals per day (2–5) and daily calorie goal, then tap Generate Plan. The AI builds a full balanced plan in seconds with macros and ingredients for each meal. Tap Save Plan to store it.",
+      "Set your meals per day (2–5) and daily calorie goal, then tap Generate Plan. It builds a full balanced plan in seconds with macros and ingredients for each meal. Tap Save Plan to store it.",
   },
   {
     title: "Grocery List",
@@ -45,7 +45,7 @@ const ACCORDION_SECTIONS: AccordionSection[] = [
     title: "Scan Photo",
     icon: "camera",
     content:
-      "Take a photo of any meal or upload from your gallery. AI identifies the food, estimates calories, and lists ingredients with a confidence score. Tap Save to Journal to add it to My Meals.",
+      "Take a photo of any meal or upload from your gallery. It identifies the food, estimates calories, and lists ingredients with a confidence score. Tap Save to Journal to add it to My Meals.",
   },
   {
     title: "Weight",
@@ -63,7 +63,7 @@ const ACCORDION_SECTIONS: AccordionSection[] = [
     title: "Saved Plans",
     icon: "clipboard",
     content:
-      "All your AI-generated meal plans in one library. Tap any plan to see its full meal list with macros and ingredients. Swipe left to delete plans you no longer need.",
+      "All your saved meal plans in one library. Tap any plan to see its full meal list with macros and ingredients. Swipe left to delete plans you no longer need.",
   },
 ];
 
@@ -140,7 +140,7 @@ export default function GuideScreen() {
           </View>
         </View>
         <Text style={s.heroDesc}>
-          Everything you need to know to get the most out of PrepFit — your AI-powered meal prep and health tracking companion.
+          Everything you need to know to get the most out of PrepFit — your meal prep and health tracking companion.
         </Text>
       </View>
 

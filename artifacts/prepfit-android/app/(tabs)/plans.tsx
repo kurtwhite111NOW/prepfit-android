@@ -93,7 +93,7 @@ export default function PlansScreen() {
             <View style={s.empty}>
               <Feather name="clipboard" size={52} color={colors.mutedForeground} />
               <Text style={s.emptyTitle}>No plans yet</Text>
-              <Text style={s.emptySub}>Generate your first AI meal plan in the Planner tab</Text>
+              <Text style={s.emptySub}>Generate your first meal plan in the Planner tab</Text>
               <Pressable
                 style={({ pressed }) => [s.goBtn, { opacity: pressed ? 0.8 : 1 }]}
                 onPress={() => router.push("/(tabs)/planner" as never)}

@@ -162,7 +162,7 @@ export default function DashboardScreen() {
           >
             <Feather name="plus-circle" size={28} color={colors.primary} />
             <Text style={s.emptyPlanText}>Build My First Plan</Text>
-            <Text style={s.emptyPlanSub}>AI-powered meal plans in seconds</Text>
+            <Text style={s.emptyPlanSub}>Smart meal plans in seconds</Text>
           </Pressable>
         )}
       </View>
