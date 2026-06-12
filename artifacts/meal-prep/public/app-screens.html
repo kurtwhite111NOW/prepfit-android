@@ -122,28 +122,16 @@
      SCREEN 1 — HOME DASHBOARD
   ═══════════════════════════════════════════════════════ */
   .hero {
-    background: var(--sidebar);
-    padding: 18px 20px 22px;
+    background: linear-gradient(135deg, #2C1A0A 0%, #1A0D05 100%);
+    padding: 20px 20px 24px;
+    color: #fff;
   }
-  .hero-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .hero-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
   .hero-date { font-size: 11px; font-weight: 700; color: var(--primary); letter-spacing: 0.9px; }
-  .avatar {
-    width: 40px; height: 40px; border-radius: 20px;
-    background: var(--primary);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 700;
-  }
-  .hero-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; line-height: 1.2; }
-  .hero-plan { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 5px; margin-bottom: 18px; }
-  .hero-plan span { color: var(--primary); }
-  .stats-row { display: flex; gap: 8px; }
-  .stat-pill {
-    flex: 1; border-radius: 10px; padding: 10px 8px;
-    background: rgba(255,255,255,0.08);
-    display: flex; flex-direction: column; align-items: center;
-  }
-  .stat-val { font-size: 15px; font-weight: 700; }
-  .stat-label { font-size: 9px; color: var(--muted); margin-top: 2px; text-align: center; }
+  .hero-version { font-size: 11px; font-weight: 600; color: var(--primary); }
+  .hero-title { font-size: 30px; font-weight: 800; margin-bottom: 10px; line-height: 1.15; color: #fff; }
+  .hero-plan { font-size: 13px; color: rgba(255,255,255,0.6); display: flex; align-items: center; gap: 5px; }
+  .hero-plan span { color: var(--primary); font-weight: 600; }
 
   .section { padding: 18px 16px 0; }
   .section-title { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 0.9px; margin-bottom: 12px; }
@@ -586,16 +574,10 @@
   <div class="hero">
     <div class="hero-top">
       <div class="hero-date">FRIDAY, JUNE 13</div>
-      <div class="avatar">A</div>
+      <div class="hero-version">version 2.0.0</div>
     </div>
-    <div class="hero-title">Let's crush today! 💪</div>
+    <div class="hero-title">💪 Let's crush today!</div>
     <div class="hero-plan">⚡ <span>Active: Summer Shred Plan</span></div>
-    <div class="stats-row">
-      <div class="stat-pill"><div class="stat-val">2,100</div><div class="stat-label">kcal goal</div></div>
-      <div class="stat-pill"><div class="stat-val">480</div><div class="stat-label">scanned today</div></div>
-      <div class="stat-pill"><div class="stat-val">183</div><div class="stat-label">lbs</div></div>
-      <div class="stat-pill"><div class="stat-val">3</div><div class="stat-label">plans saved</div></div>
-    </div>
   </div>
 
   <div class="scroll">

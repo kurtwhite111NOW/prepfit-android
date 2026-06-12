@@ -196,13 +196,11 @@ export default function DashboardScreen() {
               ])
             }
           >
-            <View style={s.avatar}>
-              <Text style={s.avatarText}>{displayName[0]?.toUpperCase()}</Text>
-            </View>
+            <Text style={s.heroVersion}>version 2.0.0</Text>
           </Pressable>
         </View>
 
-        <Text style={s.heroTitle}>{motivational}</Text>
+        <Text style={s.heroTitle}>💪 Let's crush today!</Text>
 
         {activePlan ? (
           <View style={s.heroPlanRow}>
@@ -219,26 +217,6 @@ export default function DashboardScreen() {
             </Text>
           </Pressable>
         )}
-
-        {/* Stats strip */}
-        <View style={s.statsRow}>
-          <View style={s.statPill}>
-            <Text style={s.statPillVal}>{activePlan?.dailyCalories ?? "—"}</Text>
-            <Text style={s.statPillLabel}>kcal goal</Text>
-          </View>
-          <View style={s.statPill}>
-            <Text style={s.statPillVal}>{todayCalories > 0 ? todayCalories : "—"}</Text>
-            <Text style={s.statPillLabel}>scanned today</Text>
-          </View>
-          <View style={s.statPill}>
-            <Text style={s.statPillVal}>{latestWeight ? `${latestWeight.weight}` : "—"}</Text>
-            <Text style={s.statPillLabel}>{latestWeight?.unit ?? "lbs"}</Text>
-          </View>
-          <View style={s.statPill}>
-            <Text style={s.statPillVal}>{plans?.length ?? 0}</Text>
-            <Text style={s.statPillLabel}>plans saved</Text>
-          </View>
-        </View>
       </View>
 
       {/* ── What do you want to do ─────────────────────────────────────────── */}
@@ -346,7 +324,7 @@ const styles = (colors: ReturnType<typeof useColors>) =>
 
     // Hero
     hero: {
-      backgroundColor: colors.sidebar,
+      backgroundColor: "#1C1208",
       paddingHorizontal: 20,
       paddingTop: 20,
       paddingBottom: 24,
@@ -355,7 +333,7 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      marginBottom: 12,
+      marginBottom: 14,
     },
     heroDate: {
       fontSize: 12,
@@ -363,59 +341,27 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       color: colors.primary,
       letterSpacing: 0.8,
     },
-    avatar: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      backgroundColor: colors.primary,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    avatarText: {
-      fontSize: 16,
-      fontFamily: "Inter_700Bold",
-      color: "#FFF",
+    heroVersion: {
+      fontSize: 12,
+      fontFamily: "Inter_600SemiBold",
+      color: colors.primary,
     },
     heroTitle: {
       fontSize: 30,
-      fontFamily: "Inter_700Bold",
+      fontFamily: "Inter_800ExtraBold" as any,
       color: "#FFFFFF",
-      marginBottom: 8,
+      marginBottom: 10,
       lineHeight: 36,
     },
     heroPlanRow: {
       flexDirection: "row",
       alignItems: "center",
       gap: 6,
-      marginBottom: 20,
     },
     heroPlanText: {
       fontSize: 13,
       fontFamily: "Inter_400Regular",
-      color: "rgba(255,255,255,0.65)",
-    },
-    statsRow: {
-      flexDirection: "row",
-      gap: 8,
-    },
-    statPill: {
-      flex: 1,
-      borderRadius: 10,
-      padding: 10,
-      alignItems: "center",
-      backgroundColor: "rgba(255,255,255,0.10)",
-    },
-    statPillVal: {
-      fontSize: 16,
-      fontFamily: "Inter_700Bold",
-      color: "#FFFFFF",
-    },
-    statPillLabel: {
-      fontSize: 9,
-      fontFamily: "Inter_400Regular",
-      color: "rgba(255,255,255,0.5)",
-      marginTop: 2,
-      textAlign: "center",
+      color: "rgba(255,255,255,0.60)",
     },
 
     // Sections
