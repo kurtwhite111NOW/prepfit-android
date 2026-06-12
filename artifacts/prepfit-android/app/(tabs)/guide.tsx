@@ -125,28 +125,6 @@ export default function GuideScreen() {
         ))}
       </View>
 
-      {/* Support */}
-      <Text style={s.sectionLabel}>Support</Text>
-      <View style={s.supportCard}>
-        <Text style={s.supportText}>
-          Have a question or ran into an issue? We're here to help.
-        </Text>
-        <Pressable
-          style={s.supportBtn}
-          onPress={() => Linking.openURL("mailto:support@prepfit.fit")}
-        >
-          <Feather name="mail" size={16} color="#fff" />
-          <Text style={s.supportBtnText}>Email Support</Text>
-        </Pressable>
-        <Pressable
-          style={[s.supportBtn, s.supportBtnOutline]}
-          onPress={() => Linking.openURL("https://prepfit.fit")}
-        >
-          <Feather name="globe" size={16} color={colors.primary} />
-          <Text style={[s.supportBtnText, { color: colors.primary }]}>Visit prepfit.fit</Text>
-        </Pressable>
-      </View>
-
       <View style={{ height: 40 }} />
     </ScrollView>
   );
