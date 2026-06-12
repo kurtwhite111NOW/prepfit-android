@@ -9,19 +9,20 @@
   body {
     width: 430px;
     min-height: 932px;
-    background: #12151A;
+    background: #F7F4F0;
     font-family: -apple-system, 'Inter', 'Segoe UI', sans-serif;
-    color: #FFFFFF;
+    color: #1A1A1A;
     overflow-x: hidden;
   }
-  /* ── Tokens ── */
+  /* ── Tokens (light mode — matches real prepfit.fit site) ── */
   :root {
-    --bg: #12151A;
-    --card: #1C2029;
-    --sidebar: #0D1117;
+    --bg: #F7F4F0;
+    --card: #FFFFFF;
+    --sidebar: #12151A;
     --primary: #F26B1D;
-    --border: rgba(255,255,255,0.08);
-    --muted: rgba(255,255,255,0.45);
+    --border: #E5E0D8;
+    --muted: #6B7280;
+    --foreground: #1A1A1A;
     --radius: 14px;
   }
 
@@ -29,7 +30,7 @@
   .screen { display: none; flex-direction: column; min-height: 932px; background: var(--bg); position: relative; }
   .screen.active { display: flex; }
 
-  /* ── AppBar ── */
+  /* ── AppBar (always dark, matches the site's dark header) ── */
   .appbar {
     background: var(--sidebar);
     padding: 14px 20px 12px;
@@ -42,28 +43,29 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 15px; font-weight: 900;
   }
-  .appbar-name { font-size: 17px; font-weight: 700; }
-  .appbar-sub { font-size: 11px; color: var(--muted); }
+  .appbar-name { font-size: 17px; font-weight: 700; color: #fff; }
+  .appbar-sub { font-size: 11px; color: rgba(255,255,255,0.55); }
   .appbar-btn {
     width: 36px; height: 36px; border-radius: 10px;
-    background: rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.12);
     display: flex; align-items: center; justify-content: center;
     font-size: 16px; border: none; cursor: pointer; color: #fff;
   }
 
-  /* ── Page header ── */
+  /* ── Page header (dark, matching site) ── */
   .page-header {
     background: var(--sidebar);
     padding: 16px 20px 20px;
+    color: #fff;
   }
-  .page-title { font-size: 26px; font-weight: 700; }
-  .page-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .page-title { font-size: 26px; font-weight: 700; color: #fff; }
+  .page-sub { font-size: 13px; color: rgba(255,255,255,0.55); margin-top: 4px; }
 
-  /* ── Bottom nav ── */
+  /* ── Bottom nav (always dark sidebar style) ── */
   .bottom-nav {
     position: fixed; bottom: 0; left: 0; width: 430px;
-    background: var(--sidebar);
-    border-top: 1px solid var(--border);
+    background: #12151A;
+    border-top: 1px solid #2A3040;
     display: flex; align-items: stretch;
     height: 70px; z-index: 100;
     overflow-x: auto; overflow-y: hidden;
@@ -73,25 +75,33 @@
   .nav-item {
     flex: 0 0 86px; display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 3px;
-    cursor: pointer; padding: 8px 4px;
+    cursor: pointer; padding: 8px 4px; position: relative;
+  }
+  .nav-item.active::before {
+    content: ''; position: absolute; top: 0;
+    left: 20%; right: 20%; height: 2px;
+    background: var(--primary); border-radius: 2px;
   }
   .nav-item.active .nav-label { color: var(--primary); }
   .nav-item.active .nav-icon { color: var(--primary); }
-  .nav-icon { font-size: 20px; color: var(--muted); }
-  .nav-label { font-size: 9px; font-weight: 600; color: var(--muted); letter-spacing: 0.3px; text-transform: uppercase; }
-  .nav-dot { width: 4px; height: 4px; border-radius: 2px; background: var(--primary); }
+  .nav-icon { font-size: 20px; color: rgba(232,234,240,0.45); }
+  .nav-label { font-size: 9px; font-weight: 600; color: rgba(232,234,240,0.45); letter-spacing: 0.3px; text-transform: uppercase; }
 
-  /* ── Cards ── */
+  /* ── Cards (white on cream bg) ── */
   .card {
     background: var(--card);
     border-radius: var(--radius);
     border: 1px solid var(--border);
   }
 
+  /* ── Body text colors ── */
+  .text-muted { color: var(--muted); }
+  .text-main { color: var(--foreground); }
+
   /* ── Pill / Badge ── */
   .pill {
     display: inline-flex; align-items: center; gap: 5px;
-    background: rgba(242,107,29,0.15);
+    background: rgba(242,107,29,0.12);
     border-radius: 20px; padding: 4px 10px;
     font-size: 12px; font-weight: 600; color: var(--primary);
   }

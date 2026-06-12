@@ -39,9 +39,11 @@ const TAB_CONFIG: Record<string, TabConfig> = {
 };
 
 const VISIBLE_TABS = 5;
+const ORANGE = "#F26B1D";
+const SIDEBAR = "#12151A";
+const SIDEBAR_BORDER = "#2A3040";
 
 export function ScrollableTabBar({ state, navigation }: TabBarProps) {
-  const colors = useColors();
   const insets = useSafeAreaInsets();
   const { width: screenWidth } = useWindowDimensions();
   const tabWidth = screenWidth / VISIBLE_TABS;
@@ -64,11 +66,7 @@ export function ScrollableTabBar({ state, navigation }: TabBarProps) {
     <View
       style={[
         s.container,
-        {
-          backgroundColor: colors.card,
-          borderTopColor: colors.border,
-          paddingBottom: insets.bottom,
-        },
+        { paddingBottom: insets.bottom },
       ]}
     >
       <ScrollView
@@ -84,30 +82,23 @@ export function ScrollableTabBar({ state, navigation }: TabBarProps) {
         {state.routes.map((route, index) => {
           const cfg = TAB_CONFIG[route.name];
           const focused = state.index === index;
-          const color = focused ? colors.primary : colors.mutedForeground;
+          const color = focused ? ORANGE : "rgba(232,234,240,0.55)";
 
           return (
             <Pressable
               key={route.key}
               onPress={() => onPress(route, index, focused)}
-              style={[
-                s.tab,
-                { width: tabWidth },
-                focused && { borderTopColor: colors.primary },
-              ]}
+              style={[s.tab, { width: tabWidth }]}
             >
+              {focused && <View style={s.activeBar} />}
               <View
                 style={[
                   s.iconWrap,
-                  { backgroundColor: focused ? colors.accent : "transparent" },
+                  { backgroundColor: focused ? "rgba(242,107,29,0.15)" : "transparent" },
                 ]}
               >
                 {cfg.family === "community" ? (
-                  <MaterialCommunityIcons
-                    name={cfg.icon as any}
-                    size={20}
-                    color={color}
-                  />
+                  <MaterialCommunityIcons name={cfg.icon as any} size={20} color={color} />
                 ) : (
                   <Feather name={cfg.icon as any} size={20} color={color} />
                 )}
@@ -134,31 +125,42 @@ export function ScrollableTabBar({ state, navigation }: TabBarProps) {
 
 const s = StyleSheet.create({
   container: {
+    backgroundColor: SIDEBAR,
     borderTopWidth: 1,
-    elevation: 8,
+    borderTopColor: SIDEBAR_BORDER,
+    elevation: 12,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
   },
   tab: {
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 6,
-    paddingBottom: 4,
-    borderTopWidth: 2,
-    borderTopColor: "transparent",
+    paddingTop: 8,
+    paddingBottom: 6,
+    position: "relative",
+  },
+  activeBar: {
+    position: "absolute",
+    top: 0,
+    left: "20%",
+    right: "20%",
+    height: 2,
+    borderRadius: 2,
+    backgroundColor: ORANGE,
   },
   iconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
+    width: 38,
+    height: 38,
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 2,
   },
   label: {
-    fontSize: 10,
+    fontSize: 9,
     textAlign: "center",
+    letterSpacing: 0.2,
   },
 });

@@ -10,15 +10,15 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  resolvedTheme: "dark",
+  resolvedTheme: "light",
   toggleTheme: () => {},
 });
 
 const STORAGE_KEY = "prepfit_theme";
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const system = useColorScheme() ?? "dark";
-  const [mode, setMode] = useState<ThemeMode>("system");
+  const system = useColorScheme() ?? "light";
+  const [mode, setMode] = useState<ThemeMode>("light");
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY).then((val) => {
