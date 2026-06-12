@@ -22,6 +22,7 @@ import {
   View,
 } from "react-native";
 import { useColors } from "@/hooks/useColors";
+import { useTheme } from "@/lib/theme";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -136,6 +137,7 @@ export default function DashboardScreen() {
   const { user } = useUser();
   const { signOut } = useClerk();
   const colors = useColors();
+  const { resolvedTheme } = useTheme();
   const router = useRouter();
   const waterCount = useWaterCount();
 
@@ -185,7 +187,7 @@ export default function DashboardScreen() {
       showsVerticalScrollIndicator={false}
     >
       {/* ── Hero card ─────────────────────────────────────────────────────── */}
-      <View style={s.hero}>
+      <View style={[s.hero, { backgroundColor: resolvedTheme === "dark" ? colors.card : "#12151A" }]}>
         <View style={s.heroTopRow}>
           <Text style={s.heroDate}>{dateStr}</Text>
           <Pressable
