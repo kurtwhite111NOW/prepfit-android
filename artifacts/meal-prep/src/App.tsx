@@ -23,6 +23,7 @@ const AndroidPage = lazy(() => import("@/pages/android"));
 const IosPage = lazy(() => import("@/pages/ios"));
 const GuidePage = lazy(() => import("@/pages/guide"));
 const PrivacyPage = lazy(() => import("@/pages/privacy"));
+const AccountPage = lazy(() => import("@/pages/account"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
 // REQUIRED — copy verbatim
@@ -256,6 +257,9 @@ function Router() {
           <Route path="/ios" component={IosPage} />
           <Route path="/guide" component={GuidePage} />
           <Route path="/privacy" component={PrivacyPage} />
+          <Route path="/account">
+            <ProtectedPage><AccountPage /></ProtectedPage>
+          </Route>
           <Route component={NotFound} />
         </Switch>
       </Suspense>
