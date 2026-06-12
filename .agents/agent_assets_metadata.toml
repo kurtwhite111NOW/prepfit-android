@@ -130,43 +130,43 @@ title = "Grocery (loading state)"
 id = "PtNpd0scFWbz9LCR6byFV"
 uri = "file://screenshots/prepfit-screen-1.jpg"
 type = "image"
-title = "1 — Dashboard (Today's Overview)"
+title = "1 — Home (Today's Overview)"
 
 [[outputs]]
 id = "S9Tovo23Z4vM7TOCfA5WB"
 uri = "file://screenshots/prepfit-screen-2.jpg"
 type = "image"
-title = "2 — Workout Planner"
+title = "2 — AI Meal Planner"
 
 [[outputs]]
 id = "5wo9witxVXoM2OJ0fyf1e"
 uri = "file://screenshots/prepfit-screen-3.jpg"
 type = "image"
-title = "3 — Meal Prep (Daily Log)"
+title = "3 — Grocery List"
 
 [[outputs]]
 id = "VHMsMDKx4Z4m1hwRv_zac"
 uri = "file://screenshots/prepfit-screen-4.jpg"
 type = "image"
-title = "4 — Exercise Library"
+title = "4 — My Meals"
 
 [[outputs]]
 id = "L8XCuyc2CzdCx11F9LPFa"
 uri = "file://screenshots/prepfit-screen-5.jpg"
 type = "image"
-title = "5 — Progress & Weight Trend"
+title = "5 — Scan Photo"
 
 [[outputs]]
 id = "9Y91l3xDTxGAPUf5dNrAy"
 uri = "file://screenshots/prepfit-screen-6.jpg"
 type = "image"
-title = "6 — Nutrition Log"
+title = "6 — Weight Tracker"
 
 [[outputs]]
 id = "MgtLEjiMPjet3cD5oe30s"
 uri = "file://screenshots/prepfit-screen-7.jpg"
 type = "image"
-title = "7 — AI Food Scanner"
+title = "7 — Water Tracker"
 
 [[outputs]]
 id = "fAozfwNqDbU7WIH-Pl6_w"
