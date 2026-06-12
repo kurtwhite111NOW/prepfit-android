@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
+import { useTheme } from "@/lib/theme";
 
 type TabRoute = { key: string; name: string };
 type TabBarProps = {
@@ -45,6 +46,7 @@ const SIDEBAR_BORDER = "#2A3040";
 
 export function ScrollableTabBar({ state, navigation }: TabBarProps) {
   const insets = useSafeAreaInsets();
+  const { resolvedTheme, toggleTheme } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
   const tabWidth = screenWidth / VISIBLE_TABS;
   const scrollRef = useRef<ScrollView>(null);
@@ -63,12 +65,7 @@ export function ScrollableTabBar({ state, navigation }: TabBarProps) {
   };
 
   return (
-    <View
-      style={[
-        s.container,
-        { paddingBottom: insets.bottom },
-      ]}
-    >
+    <View style={[s.container, { paddingBottom: insets.bottom }]}>
       <ScrollView
         ref={scrollRef}
         horizontal
@@ -91,33 +88,33 @@ export function ScrollableTabBar({ state, navigation }: TabBarProps) {
               style={[s.tab, { width: tabWidth }]}
             >
               {focused && <View style={s.activeBar} />}
-              <View
-                style={[
-                  s.iconWrap,
-                  { backgroundColor: focused ? "rgba(242,107,29,0.15)" : "transparent" },
-                ]}
-              >
+              <View style={[s.iconWrap, { backgroundColor: focused ? "rgba(242,107,29,0.15)" : "transparent" }]}>
                 {cfg.family === "community" ? (
                   <MaterialCommunityIcons name={cfg.icon as any} size={20} color={color} />
                 ) : (
                   <Feather name={cfg.icon as any} size={20} color={color} />
                 )}
               </View>
-              <Text
-                style={[
-                  s.label,
-                  {
-                    color,
-                    fontFamily: focused ? "Inter_600SemiBold" : "Inter_400Regular",
-                  },
-                ]}
-                numberOfLines={1}
-              >
+              <Text style={[s.label, { color, fontFamily: focused ? "Inter_600SemiBold" : "Inter_400Regular" }]} numberOfLines={1}>
                 {cfg.label}
               </Text>
             </Pressable>
           );
         })}
+
+        {/* Theme toggle — always visible at the end of the tab strip */}
+        <Pressable onPress={toggleTheme} style={[s.tab, { width: tabWidth }]}>
+          <View style={s.iconWrap}>
+            <Feather
+              name={resolvedTheme === "dark" ? "sun" : "moon"}
+              size={20}
+              color={ORANGE}
+            />
+          </View>
+          <Text style={[s.label, { color: ORANGE, fontFamily: "Inter_400Regular" }]} numberOfLines={1}>
+            {resolvedTheme === "dark" ? "Light" : "Dark"}
+          </Text>
+        </Pressable>
       </ScrollView>
     </View>
   );
