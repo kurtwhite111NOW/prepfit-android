@@ -2,13 +2,16 @@ import { useUser, useClerk } from "@clerk/expo";
 import { useQuery } from "@tanstack/react-query";
 import {
   getListMealPlansQueryKey,
+  getListSavedMealsQueryKey,
   getListWeightEntriesQueryKey,
   listMealPlans,
+  listSavedMeals,
   listWeightEntries,
 } from "@workspace/api-client-react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -20,23 +23,121 @@ import {
 } from "react-native";
 import { useColors } from "@/hooks/useColors";
 
+// ─── Constants ───────────────────────────────────────────────────────────────
+
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const WATER_KEY = "prepfit_water_data";
+const DAILY_GOAL = 8;
+
+const GYM_TIPS = [
+  "Aim for 0.7–1g of protein per pound of bodyweight daily. That's about 140–200g for a 200 lb athlete.",
+  "Stay hydrated — aim for 8+ glasses of water daily. Dehydration tanks gym performance more than most people realize.",
+  "Meal prep on Sundays cuts decision fatigue all week. Fewer decisions = more consistent eating.",
+  "Eating protein within 30–60 min after a workout helps muscle repair and growth.",
+  "Compound lifts (squat, deadlift, bench, row) build more muscle than isolation exercises — prioritise them.",
+  "Sleep 7–9 hours. Growth hormone is released during deep sleep — it's when you actually get stronger.",
+  "Track your calories for just 2 weeks. Most people are shocked at how much they under- or over-eat.",
+  "Progressive overload is the #1 driver of strength gains. Add weight, reps, or sets each week.",
+  "Frozen veggies are just as nutritious as fresh and way cheaper. Use them freely.",
+  "If you miss a meal, don't compensate by over-eating the next one. Just continue as normal.",
+  "Creatine monohydrate is the most studied, most effective legal supplement for strength and muscle.",
+  "Your metabolism doesn't slow until you're in a very deep calorie deficit. Most 'slow metabolism' is under-tracked eating.",
+  "Canned tuna, eggs, and Greek yoghurt are the three cheapest high-protein foods. Keep them stocked.",
+  "Rest between sets matters: 2–3 min for strength lifts, 60–90 sec for hypertrophy work.",
+  "Consistency over 6 months beats intensity over 2 weeks every single time.",
+];
 
 const QUICK_ACTIONS = [
-  { icon: "calendar",       label: "Build a Meal Plan",  route: "/(tabs)/planner", family: "feather",    emoji: "🍽" },
-  { icon: "camera",         label: "Scan a Meal",        route: "/(tabs)/scan",    family: "feather",    emoji: "📷" },
-  { icon: "shopping-cart",  label: "Grocery List",       route: "/(tabs)/grocery", family: "feather",    emoji: "🛒" },
-  { icon: "water",          label: "Water Tracker",      route: "/(tabs)/water",   family: "community",  emoji: "💧" },
-  { icon: "trending-up",    label: "Track Weight",       route: "/(tabs)/weight",  family: "feather",    emoji: "📈" },
-  { icon: "clipboard",      label: "Saved Plans",        route: "/(tabs)/plans",   family: "feather",    emoji: "🔖" },
+  {
+    label: "Build a Meal Plan",
+    desc: "Smart plans in seconds",
+    route: "/(tabs)/planner",
+    icon: "calendar" as const,
+    family: "feather" as const,
+    color: "#F26B1D",
+    bg: "rgba(242,107,29,0.15)",
+  },
+  {
+    label: "Scan a Meal",
+    desc: "Snap a photo — get instant calories",
+    route: "/(tabs)/scan",
+    icon: "camera" as const,
+    family: "feather" as const,
+    color: "#F59E0B",
+    bg: "rgba(245,158,11,0.15)",
+  },
+  {
+    label: "Grocery List",
+    desc: "What to buy for your plan",
+    route: "/(tabs)/grocery",
+    icon: "shopping-cart" as const,
+    family: "feather" as const,
+    color: "#3B82F6",
+    bg: "rgba(59,130,246,0.15)",
+  },
+  {
+    label: "Water Tracker",
+    desc: null, // filled dynamically with glass count
+    route: "/(tabs)/water",
+    icon: "water" as const,
+    family: "community" as const,
+    color: "#38BDF8",
+    bg: "rgba(56,189,248,0.15)",
+  },
+  {
+    label: "Track Weight",
+    desc: "Log your progress",
+    route: "/(tabs)/weight",
+    icon: "trending-up" as const,
+    family: "feather" as const,
+    color: "#22C55E",
+    bg: "rgba(34,197,94,0.15)",
+  },
+  {
+    label: "Saved Plans",
+    desc: "All your meal plan history",
+    route: "/(tabs)/plans",
+    icon: "bookmark" as const,
+    family: "feather" as const,
+    color: "#A855F7",
+    bg: "rgba(168,85,247,0.15)",
+  },
 ];
+
+// ─── Hooks ────────────────────────────────────────────────────────────────────
+
+function useWaterCount() {
+  const [count, setCount] = useState(0);
+  const todayKey = new Date().toISOString().split("T")[0];
+
+  useEffect(() => {
+    AsyncStorage.getItem(WATER_KEY).then((raw) => {
+      if (raw) {
+        const data = JSON.parse(raw);
+        if (data.date === todayKey) setCount(data.count);
+      }
+    }).catch(() => {});
+  }, [todayKey]);
+
+  return count;
+}
+
+function getDailyTip(): string {
+  const dayOfYear = Math.floor(
+    (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000
+  );
+  return GYM_TIPS[dayOfYear % GYM_TIPS.length];
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function DashboardScreen() {
   const { user } = useUser();
   const { signOut } = useClerk();
   const colors = useColors();
   const router = useRouter();
+  const waterCount = useWaterCount();
 
   const { data: plans, isLoading: plansLoading } = useQuery({
     queryKey: getListMealPlansQueryKey(),
@@ -48,16 +149,33 @@ export default function DashboardScreen() {
     queryFn: () => listWeightEntries(),
   });
 
+  const { data: savedMeals } = useQuery({
+    queryKey: getListSavedMealsQueryKey(),
+    queryFn: () => listSavedMeals(),
+  });
+
   const now = new Date();
   const dayName = DAYS[now.getDay()];
-  const dateStr = `${MONTHS[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
-  const greeting =
-    now.getHours() < 12 ? "Good morning" : now.getHours() < 17 ? "Good afternoon" : "Good evening";
+  const dateStr = `${dayName.toUpperCase()}, ${MONTHS[now.getMonth()]} ${now.getDate()}`;
+  const hour = now.getHours();
+  const motivational =
+    hour < 5 ? "Time to rest up 💤" :
+    hour < 10 ? "Let's crush today! 💪" :
+    hour < 14 ? "Keep the momentum! 🔥" :
+    hour < 18 ? "Grind time! 💪" :
+    "Strong finish! 💪";
 
   const displayName = user?.firstName || user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] || "Athlete";
   const activePlan = plans?.[0] ?? null;
   const latestWeight = weightEntries?.[0];
 
+  // Today's scanned calories
+  const todayStr = now.toISOString().split("T")[0];
+  const todayCalories = savedMeals
+    ?.filter((m) => m.createdAt.startsWith(todayStr))
+    .reduce((sum, m) => sum + (m.estimatedCalories ?? 0), 0) ?? 0;
+
+  const tip = getDailyTip();
   const s = styles(colors);
 
   return (
@@ -66,14 +184,10 @@ export default function DashboardScreen() {
       contentInsetAdjustmentBehavior="automatic"
       showsVerticalScrollIndicator={false}
     >
-      {/* Hero */}
+      {/* ── Hero card ─────────────────────────────────────────────────────── */}
       <View style={s.hero}>
-        <View style={s.heroRow}>
-          <View style={{ flex: 1 }}>
-            <Text style={s.greeting}>{greeting},</Text>
-            <Text style={s.name}>{displayName} 💪</Text>
-            <Text style={s.date}>{dayName}, {dateStr}</Text>
-          </View>
+        <View style={s.heroTopRow}>
+          <Text style={s.heroDate}>{dateStr}</Text>
           <Pressable
             onPress={() =>
               Alert.alert("Account", `Signed in as ${user?.emailAddresses?.[0]?.emailAddress}`, [
@@ -88,26 +202,48 @@ export default function DashboardScreen() {
           </Pressable>
         </View>
 
-        {/* Quick stats strip */}
-        <View style={s.statsRow}>
-          <View style={s.statPill}>
-            <Text style={s.statPillVal}>{plans?.length ?? 0}</Text>
-            <Text style={s.statPillLabel}>Plans</Text>
+        <Text style={s.heroTitle}>{motivational}</Text>
+
+        {activePlan ? (
+          <View style={s.heroPlanRow}>
+            <Feather name="zap" size={13} color={colors.primary} />
+            <Text style={s.heroPlanText}>
+              Active: <Text style={{ color: colors.primary }}>{activePlan.name}</Text>
+            </Text>
           </View>
+        ) : (
+          <Pressable style={s.heroPlanRow} onPress={() => router.push("/(tabs)/planner" as never)}>
+            <Feather name="zap" size={13} color={colors.primary} />
+            <Text style={s.heroPlanText}>
+              No plan yet — <Text style={{ color: colors.primary }}>Build your first plan</Text>
+            </Text>
+          </Pressable>
+        )}
+
+        {/* Stats strip */}
+        <View style={s.statsRow}>
           <View style={s.statPill}>
             <Text style={s.statPillVal}>{activePlan?.dailyCalories ?? "—"}</Text>
             <Text style={s.statPillLabel}>kcal goal</Text>
           </View>
           <View style={s.statPill}>
+            <Text style={s.statPillVal}>{todayCalories > 0 ? todayCalories : "—"}</Text>
+            <Text style={s.statPillLabel}>scanned today</Text>
+          </View>
+          <View style={s.statPill}>
             <Text style={s.statPillVal}>{latestWeight ? `${latestWeight.weight}` : "—"}</Text>
             <Text style={s.statPillLabel}>{latestWeight?.unit ?? "lbs"}</Text>
+          </View>
+          <View style={s.statPill}>
+            <Text style={s.statPillVal}>{plans?.length ?? 0}</Text>
+            <Text style={s.statPillLabel}>plans saved</Text>
           </View>
         </View>
       </View>
 
-      {/* What do you want to do */}
+      {/* ── What do you want to do ─────────────────────────────────────────── */}
       <View style={s.section}>
-        <Text style={s.sectionTitle}>What do you want to do?</Text>
+        <Text style={s.sectionTitle}>WHAT DO YOU WANT TO DO?</Text>
         <View style={s.grid}>
           {QUICK_ACTIONS.map((action) => (
             <Pressable
@@ -115,24 +251,37 @@ export default function DashboardScreen() {
               style={({ pressed }) => [s.actionCard, { opacity: pressed ? 0.85 : 1 }]}
               onPress={() => router.push(action.route as never)}
             >
-              <View style={s.actionIcon}>
+              <View style={[s.actionIcon, { backgroundColor: action.bg }]}>
                 {action.family === "community" ? (
-                  <MaterialCommunityIcons name={action.icon as any} size={22} color={colors.primary} />
+                  <MaterialCommunityIcons name={action.icon as any} size={24} color={action.color} />
                 ) : (
-                  <Feather name={action.icon as any} size={22} color={colors.primary} />
+                  <Feather name={action.icon as any} size={24} color={action.color} />
                 )}
               </View>
               <Text style={s.actionLabel}>{action.label}</Text>
+              <Text style={s.actionDesc} numberOfLines={1}>
+                {action.label === "Water Tracker"
+                  ? `${waterCount}/${DAILY_GOAL} glasses today`
+                  : action.desc}
+              </Text>
             </Pressable>
           ))}
         </View>
       </View>
 
-      {/* Your Current Plan */}
+      {/* ── Your Current Plan ──────────────────────────────────────────────── */}
       <View style={s.section}>
-        <Text style={s.sectionTitle}>Your Current Plan</Text>
+        <View style={s.sectionRow}>
+          <Text style={s.sectionTitle}>YOUR CURRENT PLAN</Text>
+          {plans && plans.length > 0 && (
+            <Pressable onPress={() => router.push("/(tabs)/plans" as never)}>
+              <Text style={s.sectionLink}>All plans →</Text>
+            </Pressable>
+          )}
+        </View>
+
         {plansLoading ? (
-          <View style={[s.planCard, { justifyContent: "center", alignItems: "center", height: 100 }]}>
+          <View style={[s.planCard, { justifyContent: "center", alignItems: "center", minHeight: 100 }]}>
             <ActivityIndicator color={colors.primary} />
           </View>
         ) : activePlan ? (
@@ -160,24 +309,28 @@ export default function DashboardScreen() {
             style={({ pressed }) => [s.emptyPlan, { opacity: pressed ? 0.85 : 1 }]}
             onPress={() => router.push("/(tabs)/planner" as never)}
           >
-            <Feather name="plus-circle" size={28} color={colors.primary} />
-            <Text style={s.emptyPlanText}>Build My First Plan</Text>
-            <Text style={s.emptyPlanSub}>Smart meal plans in seconds</Text>
+            <View style={s.emptyPlanIcon}>
+              <Feather name="plus" size={28} color={colors.mutedForeground} />
+            </View>
+            <Text style={s.emptyPlanTitle}>No plan yet</Text>
+            <Text style={s.emptyPlanSub}>
+              Build your first meal plan in seconds — set your calorie goal and we'll handle the rest.
+            </Text>
+            <View style={s.emptyPlanBtn}>
+              <Feather name="plus" size={14} color="#FFF" />
+              <Text style={s.emptyPlanBtnText}>Build My First Plan</Text>
+            </View>
           </Pressable>
         )}
       </View>
 
-      {/* Daily tip */}
+      {/* ── Daily tip ──────────────────────────────────────────────────────── */}
       <View style={s.section}>
         <View style={s.tipCard}>
-          <View style={s.tipIconWrap}>
-            <Text style={{ fontSize: 18 }}>💡</Text>
-          </View>
+          <Text style={s.tipEmoji}>💡</Text>
           <View style={{ flex: 1 }}>
-            <Text style={s.tipTitle}>Daily Tip</Text>
-            <Text style={s.tipText}>
-              Start with the Meal Planner to generate your first plan — your Grocery List fills in automatically.
-            </Text>
+            <Text style={s.tipLabel}>GYM &amp; MEAL PREP TIP</Text>
+            <Text style={s.tipText}>{tip}</Text>
           </View>
         </View>
       </View>
@@ -190,80 +343,107 @@ export default function DashboardScreen() {
 const styles = (colors: ReturnType<typeof useColors>) =>
   StyleSheet.create({
     root: { flex: 1 },
+
+    // Hero
     hero: {
       backgroundColor: colors.sidebar,
       paddingHorizontal: 20,
       paddingTop: 20,
       paddingBottom: 24,
     },
-    heroRow: {
+    heroTopRow: {
       flexDirection: "row",
       justifyContent: "space-between",
-      alignItems: "flex-start",
-      marginBottom: 20,
+      alignItems: "center",
+      marginBottom: 12,
     },
-    greeting: {
-      fontSize: 14,
-      fontFamily: "Inter_400Regular",
-      color: "rgba(255,255,255,0.6)",
-    },
-    name: {
-      fontSize: 24,
-      fontFamily: "Inter_700Bold",
-      color: "#FFFFFF",
-      marginTop: 2,
-    },
-    date: {
-      fontSize: 13,
-      fontFamily: "Inter_400Regular",
-      color: "rgba(255,255,255,0.5)",
-      marginTop: 4,
+    heroDate: {
+      fontSize: 12,
+      fontFamily: "Inter_600SemiBold",
+      color: colors.primary,
+      letterSpacing: 0.8,
     },
     avatar: {
-      width: 44,
-      height: 44,
-      borderRadius: 22,
+      width: 40,
+      height: 40,
+      borderRadius: 20,
       backgroundColor: colors.primary,
       alignItems: "center",
       justifyContent: "center",
     },
     avatarText: {
-      fontSize: 18,
+      fontSize: 16,
       fontFamily: "Inter_700Bold",
       color: "#FFF",
     },
+    heroTitle: {
+      fontSize: 30,
+      fontFamily: "Inter_700Bold",
+      color: "#FFFFFF",
+      marginBottom: 8,
+      lineHeight: 36,
+    },
+    heroPlanRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      marginBottom: 20,
+    },
+    heroPlanText: {
+      fontSize: 13,
+      fontFamily: "Inter_400Regular",
+      color: "rgba(255,255,255,0.65)",
+    },
     statsRow: {
       flexDirection: "row",
-      gap: 10,
+      gap: 8,
     },
     statPill: {
       flex: 1,
-      borderRadius: 12,
-      padding: 12,
+      borderRadius: 10,
+      padding: 10,
       alignItems: "center",
-      backgroundColor: "rgba(255,255,255,0.12)",
+      backgroundColor: "rgba(255,255,255,0.10)",
     },
     statPillVal: {
-      fontSize: 20,
+      fontSize: 16,
       fontFamily: "Inter_700Bold",
       color: "#FFFFFF",
     },
     statPillLabel: {
-      fontSize: 11,
+      fontSize: 9,
       fontFamily: "Inter_400Regular",
-      color: "rgba(255,255,255,0.6)",
+      color: "rgba(255,255,255,0.5)",
       marginTop: 2,
+      textAlign: "center",
     },
+
+    // Sections
     section: {
       paddingHorizontal: 16,
       marginTop: 20,
     },
-    sectionTitle: {
-      fontSize: 16,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.foreground,
+    sectionRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
       marginBottom: 12,
     },
+    sectionTitle: {
+      fontSize: 11,
+      fontFamily: "Inter_700Bold",
+      color: colors.mutedForeground,
+      letterSpacing: 0.9,
+      marginBottom: 12,
+    },
+    sectionLink: {
+      fontSize: 13,
+      fontFamily: "Inter_600SemiBold",
+      color: colors.primary,
+      marginBottom: 12,
+    },
+
+    // Action grid
     grid: {
       flexDirection: "row",
       flexWrap: "wrap",
@@ -273,26 +453,32 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       width: "30.5%",
       backgroundColor: colors.card,
       borderRadius: colors.radius,
-      padding: 14,
-      alignItems: "center",
+      padding: 12,
       borderWidth: 1,
       borderColor: colors.border,
     },
     actionIcon: {
-      width: 44,
-      height: 44,
-      borderRadius: 12,
-      backgroundColor: colors.accent,
+      width: 46,
+      height: 46,
+      borderRadius: 14,
       alignItems: "center",
       justifyContent: "center",
       marginBottom: 8,
     },
     actionLabel: {
-      fontSize: 11,
-      fontFamily: "Inter_500Medium",
+      fontSize: 12,
+      fontFamily: "Inter_600SemiBold",
       color: colors.foreground,
-      textAlign: "center",
+      marginBottom: 2,
     },
+    actionDesc: {
+      fontSize: 10,
+      fontFamily: "Inter_400Regular",
+      color: colors.mutedForeground,
+      lineHeight: 13,
+    },
+
+    // Current plan
     planCard: {
       backgroundColor: colors.card,
       borderRadius: colors.radius,
@@ -303,13 +489,13 @@ const styles = (colors: ReturnType<typeof useColors>) =>
     planCardHeader: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 10,
+      gap: 12,
     },
     planIconWrap: {
-      width: 36,
-      height: 36,
-      borderRadius: 10,
-      backgroundColor: colors.accent,
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+      backgroundColor: "rgba(242,107,29,0.15)",
       alignItems: "center",
       justifyContent: "center",
     },
@@ -335,28 +521,56 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       borderRadius: 1.5,
       backgroundColor: colors.mutedForeground,
     },
+
+    // Empty plan
     emptyPlan: {
       backgroundColor: colors.card,
       borderRadius: colors.radius,
-      padding: 28,
+      padding: 24,
       alignItems: "center",
-      borderWidth: 1.5,
-      borderStyle: "dashed",
-      borderColor: colors.primary,
+      borderWidth: 1,
+      borderColor: colors.border,
+      gap: 8,
     },
-    emptyPlanText: {
-      fontSize: 16,
-      fontFamily: "Inter_600SemiBold",
+    emptyPlanIcon: {
+      width: 64,
+      height: 64,
+      borderRadius: 32,
+      backgroundColor: colors.muted,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 4,
+    },
+    emptyPlanTitle: {
+      fontSize: 18,
+      fontFamily: "Inter_700Bold",
       color: colors.foreground,
-      marginTop: 10,
     },
     emptyPlanSub: {
       fontSize: 13,
       fontFamily: "Inter_400Regular",
       color: colors.mutedForeground,
-      marginTop: 4,
       textAlign: "center",
+      lineHeight: 19,
+      paddingHorizontal: 10,
     },
+    emptyPlanBtn: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      backgroundColor: colors.primary,
+      paddingHorizontal: 20,
+      paddingVertical: 11,
+      borderRadius: 12,
+      marginTop: 4,
+    },
+    emptyPlanBtnText: {
+      fontSize: 14,
+      fontFamily: "Inter_600SemiBold",
+      color: "#FFF",
+    },
+
+    // Tip
     tipCard: {
       backgroundColor: colors.card,
       borderRadius: colors.radius,
@@ -367,21 +581,16 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       gap: 12,
       alignItems: "flex-start",
     },
-    tipIconWrap: {
-      width: 36,
-      height: 36,
-      borderRadius: 10,
-      backgroundColor: colors.accent,
-      alignItems: "center",
-      justifyContent: "center",
+    tipEmoji: {
+      fontSize: 22,
+      marginTop: 2,
     },
-    tipTitle: {
-      fontSize: 13,
-      fontFamily: "Inter_600SemiBold",
+    tipLabel: {
+      fontSize: 10,
+      fontFamily: "Inter_700Bold",
       color: colors.primary,
-      marginBottom: 4,
-      textTransform: "uppercase",
-      letterSpacing: 0.6,
+      letterSpacing: 0.8,
+      marginBottom: 5,
     },
     tipText: {
       fontSize: 13,
