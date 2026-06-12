@@ -46,6 +46,18 @@
           "photosPermission": "PrepFit needs photo access to analyze your meals.",
           "cameraPermission": "PrepFit needs camera access to scan your meals."
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "packagingOptions": {
+              "exclude": [
+                "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+              ]
+            }
+          }
+        }
       ]
     ],
     "experiments": {
