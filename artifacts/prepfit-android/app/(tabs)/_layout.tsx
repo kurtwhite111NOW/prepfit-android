@@ -84,7 +84,9 @@ const s = StyleSheet.create({
   brandLogo: {
     width: 36,
     height: 36,
-    borderRadius: 8,
+    borderRadius: 9,
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.5)",
   },
   brand: {
     fontSize: 20,
