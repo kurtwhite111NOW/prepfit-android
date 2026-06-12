@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=1080"/>
+<title>PrepFit Screenshots</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#0e1d15;color:#f0f7f2;width:1080px;min-height:1920px}
+.screen{width:1080px;height:1920px;background:#0e1d15;padding:0;overflow:hidden;display:none;flex-direction:column}
+.screen.active{display:flex}
+/* Status bar */
+.statusbar{display:flex;justify-content:space-between;align-items:center;padding:28px 40px 0;font-size:26px;font-weight:600;color:#f0f7f2}
+.statusbar .icons{display:flex;gap:16px;align-items:center}
+/* Header */
+.header{padding:40px 40px 20px;display:flex;align-items:center;justify-content:space-between}
+.header h1{font-size:52px;font-weight:800;color:#f0f7f2;letter-spacing:-1px}
+.header-sub{font-size:28px;color:#7da890;font-weight:500;margin-top:6px}
+/* Cards */
+.card{background:#172a1f;border:1.5px solid #2a4434;border-radius:24px;padding:36px}
+/* Pill */
+.pill{display:inline-flex;align-items:center;gap:10px;background:#1e3828;border:1px solid #2a4434;border-radius:50px;padding:12px 24px;font-size:24px;font-weight:600;color:#7da890}
+/* Primary button */
+.btn-primary{background:#3ab26a;color:#fff;border:none;border-radius:18px;padding:32px 48px;font-size:32px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:14px;justify-content:center}
+.btn-outline{background:transparent;color:#3ab26a;border:2px solid #3ab26a;border-radius:18px;padding:28px 40px;font-size:28px;font-weight:600}
+/* Bottom nav */
+.bottomnav{background:#0b1810;border-top:1.5px solid #1e3828;padding:28px 0 40px;display:flex;justify-content:space-around;margin-top:auto}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:10px;font-size:22px;font-weight:600;color:#4a7a5c}
+.nav-item.active{color:#3ab26a}
+.nav-icon{font-size:42px}
+/* Stat card */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:0 40px}
+.stat-card{background:#172a1f;border:1.5px solid #2a4434;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:12px}
+.stat-label{font-size:24px;color:#7da890;font-weight:500}
+.stat-value{font-size:52px;font-weight:800;color:#f0f7f2}
+.stat-unit{font-size:24px;color:#7da890}
+.stat-change{font-size:22px;color:#3ab26a;font-weight:600}
+/* Meal item */
+.meal-item{background:#172a1f;border:1.5px solid #2a4434;border-radius:20px;padding:30px 36px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.meal-left{display:flex;align-items:center;gap:24px}
+.meal-emoji{font-size:52px;width:80px;text-align:center}
+.meal-name{font-size:30px;font-weight:700;color:#f0f7f2}
+.meal-type{font-size:24px;color:#7da890;margin-top:4px}
+.cal-pill{background:#1a3525;border:1px solid #3ab26a;border-radius:50px;padding:10px 24px;font-size:24px;font-weight:700;color:#3ab26a}
+/* Grocery */
+.grocery-cat{font-size:26px;font-weight:700;color:#7da890;padding:24px 40px 12px;text-transform:uppercase;letter-spacing:2px}
+.grocery-item{display:flex;align-items:center;gap:24px;padding:24px 40px;border-bottom:1px solid #1e3828}
+.checkbox{width:36px;height:36px;border-radius:10px;border:2px solid #3ab26a;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.checkbox.checked{background:#3ab26a}
+.check-mark{color:#fff;font-size:22px;font-weight:900}
+.grocery-name{font-size:28px;font-weight:600;color:#f0f7f2}
+.grocery-brand{font-size:22px;color:#7da890;margin-top:4px}
+/* Weight chart */
+.chart-area{padding:20px 40px;flex:1}
+svg text{font-family:'Inter',sans-serif}
+/* Progress ring */
+.ring-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 0}
+/* Journal grid */
+.journal-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:0 40px}
+.journal-card{background:#172a1f;border:1.5px solid #2a4434;border-radius:20px;overflow:hidden}
+.journal-img{height:240px;display:flex;align-items:center;justify-content:center;font-size:80px}
+.journal-info{padding:20px 24px}
+.journal-name{font-size:28px;font-weight:700;color:#f0f7f2}
+.journal-cal{font-size:24px;color:#3ab26a;font-weight:600;margin-top:6px}
+.journal-date{font-size:20px;color:#7da890;margin-top:4px}
+/* Plans */
+.plan-card{background:#172a1f;border:1.5px solid #2a4434;border-radius:24px;padding:36px 40px;margin:0 40px 20px;display:flex;justify-content:space-between;align-items:center}
+.plan-name{font-size:34px;font-weight:700;color:#f0f7f2}
+.plan-meta{font-size:24px;color:#7da890;margin-top:8px}
+.plan-arrow{font-size:36px;color:#3ab26a}
+.section-title{font-size:36px;font-weight:800;color:#f0f7f2;padding:20px 40px}
+/* Badge */
+.badge{background:#1e3828;border:1px solid #2a4434;border-radius:12px;padding:8px 20px;font-size:20px;font-weight:600;color:#3ab26a}
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1: HOME -->
+<div class="screen" id="s1">
+  <div class="statusbar"><span>9:41</span><div class="icons"><span>●●●●</span><span>WiFi</span><span>🔋</span></div></div>
+  <div style="padding:40px 40px 16px;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:30px;color:#7da890;font-weight:500">Good morning 👋</div>
+      <div style="font-size:52px;font-weight:800;letter-spacing:-1px;margin-top:8px">Sarah</div>
+      <div style="margin-top:12px"><span class="pill">🔥 Day 4 of your plan</span></div>
+    </div>
+    <div style="width:88px;height:88px;border-radius:50%;background:#3ab26a;display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:800;color:#fff">S</div>
+  </div>
+  <div class="stat-grid" style="margin-top:20px">
+    <div class="stat-card">
+      <div class="stat-label">Calories Today</div>
+      <div><span class="stat-value">1,420</span></div>
+      <div class="stat-change">↑ 280 remaining</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Meals Logged</div>
+      <div><span class="stat-value">3</span><span class="stat-unit"> / 5</span></div>
+      <div class="stat-change">2 meals left today</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Water Intake</div>
+      <div><span class="stat-value">6</span><span class="stat-unit"> glasses</span></div>
+      <div class="stat-change">✓ Goal nearly met</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Current Weight</div>
+      <div><span class="stat-value">168</span><span class="stat-unit"> lbs</span></div>
+      <div class="stat-change">↓ -2 lbs this week</div>
+    </div>
+  </div>
+  <div style="padding:36px 40px 0">
+    <div style="font-size:32px;font-weight:700;margin-bottom:20px">Quick Actions</div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <button class="btn-primary" style="width:100%">📷 Scan a Meal Photo</button>
+      <div style="display:flex;gap:16px">
+        <button class="btn-outline" style="flex:1">🥗 Meal Planner</button>
+        <button class="btn-outline" style="flex:1">⚖️ Log Weight</button>
+      </div>
+    </div>
+  </div>
+  <div style="padding:36px 40px 0">
+    <div style="font-size:32px;font-weight:700;margin-bottom:20px">Today's Meals</div>
+    <div class="meal-item">
+      <div class="meal-left"><div class="meal-emoji">🥣</div><div><div class="meal-name">Greek Yogurt Parfait</div><div class="meal-type">Breakfast</div></div></div>
+      <div class="cal-pill">320 cal</div>
+    </div>
+    <div class="meal-item">
+      <div class="meal-left"><div class="meal-emoji">🥗</div><div><div class="meal-name">Quinoa Power Bowl</div><div class="meal-type">Lunch</div></div></div>
+      <div class="cal-pill">480 cal</div>
+    </div>
+    <div class="meal-item">
+      <div class="meal-left"><div class="meal-emoji">🍎</div><div><div class="meal-name">Apple & Almond Butter</div><div class="meal-type">Snack</div></div></div>
+      <div class="cal-pill">210 cal</div>
+    </div>
+  </div>
+  <div class="bottomnav">
+    <div class="nav-item active"><div class="nav-icon">🏠</div><span>Home</span></div>
+    <div class="nav-item"><div class="nav-icon">📋</div><span>Planner</span></div>
+    <div class="nav-item"><div class="nav-icon">📷</div><span>Scan</span></div>
+    <div class="nav-item"><div class="nav-icon">⚖️</div><span>Weight</span></div>
+    <div class="nav-item"><div class="nav-icon">💧</div><span>Water</span></div>
+  </div>
+</div>
+
+<!-- SCREEN 2: MEAL PLANNER -->
+<div class="screen" id="s2">
+  <div class="statusbar"><span>9:41</span><div class="icons"><span>●●●●</span><span>WiFi</span><span>🔋</span></div></div>
+  <div class="header"><div><h1>Meal Planner</h1><div class="header-sub">AI-powered weekly plan</div></div><span style="font-size:44px">🥗</span></div>
+  <div style="padding:0 40px 24px">
+    <button class="btn-primary" style="width:100%">✨ Generate New Plan</button>
+  </div>
+  <div style="padding:0 40px 16px;display:flex;align-items:center;justify-content:space-between">
+    <div style="font-size:30px;font-weight:700">This Week's Plan</div>
+    <div style="font-size:24px;color:#7da890">1,700 cal/day</div>
+  </div>
+  <div style="padding:0 40px;flex:1;overflow:hidden">
+    <div class="meal-item">
+      <div class="meal-left"><div class="meal-emoji">🥣</div><div><div class="meal-name">Overnight Oats with Berries</div><div class="meal-type">Breakfast · Mon</div></div></div>
+      <div class="cal-pill">340 cal</div>
+    </div>
+    <div class="meal-item">
+      <div class="meal-left"><div class="meal-emoji">🥜</div><div><div class="meal-name">Almond Butter Rice Cakes</div><div class="meal-type">Morning Snack</div></div></div>
+      <div class="cal-pill">180 cal</div>
+    </div>
+    <div class="meal-item">
+      <div class="meal-left"><div class="meal-emoji">🫙</div><div><div class="meal-name">Lemon Herb Chicken Bowl</div><div class="meal-type">Lunch</div></div></div>
+      <div class="cal-pill">520 cal</div>
+    </div>
+    <div class="meal-item">
+      <div class="meal-left"><div class="meal-emoji">🍇</div><div><div class="meal-name">Greek Yogurt & Walnuts</div><div class="meal-type">Afternoon Snack</div></div></div>
+      <div class="cal-pill">210 cal</div>
+    </div>
+    <div class="meal-item" style="border-color:#3ab26a">
+      <div class="meal-left"><div class="meal-emoji">🐟</div><div><div class="meal-name">Baked Salmon & Veggies</div><div class="meal-type">Dinner</div></div></div>
+      <div class="cal-pill">450 cal</div>
+    </div>
+    <div style="text-align:center;padding:24px 0;font-size:24px;color:#3ab26a;font-weight:700;border-top:1px solid #2a4434;margin-top:8px">Total: 1,700 cal · 5 meals · Balanced macros ✓</div>
+  </div>
+  <div style="padding:0 40px 20px"><button class="btn-primary" style="width:100%">🛒 Generate Grocery List</button></div>
+  <div class="bottomnav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><span>Home</span></div>
+    <div class="nav-item active"><div class="nav-icon">📋</div><span>Planner</span></div>
+    <div class="nav-item"><div class="nav-icon">📷</div><span>Scan</span></div>
+    <div class="nav-item"><div class="nav-icon">⚖️</div><span>Weight</span></div>
+    <div class="nav-item"><div class="nav-icon">💧</div><span>Water</span></div>
+  </div>
+</div>
+
+<!-- SCREEN 3: GROCERY LIST -->
+<div class="screen" id="s3">
+  <div class="statusbar"><span>9:41</span><div class="icons"><span>●●●●</span><span>WiFi</span><span>🔋</span></div></div>
+  <div class="header"><div><h1>Grocery List</h1><div class="header-sub">Generated from your meal plan</div></div><span style="font-size:44px">🛒</span></div>
+  <div style="flex:1;overflow:hidden">
+    <div class="grocery-cat">🥦 Produce</div>
+    <div class="grocery-item"><div class="checkbox checked"><span class="check-mark">✓</span></div><div><div class="grocery-name">Baby Spinach</div><div class="grocery-brand">Simple Truth Organic · 5 oz bag</div></div></div>
+    <div class="grocery-item"><div class="checkbox checked"><span class="check-mark">✓</span></div><div><div class="grocery-name">Blueberries</div><div class="grocery-brand">Fresh · 1 pint</div></div></div>
+    <div class="grocery-item"><div class="checkbox"></div><div><div class="grocery-name">Broccoli Florets</div><div class="grocery-brand">Simple Truth Organic · 12 oz</div></div></div>
+    <div class="grocery-item"><div class="checkbox"></div><div><div class="grocery-name">Cherry Tomatoes</div><div class="grocery-brand">Fresh · 1 pint</div></div></div>
+
+    <div class="grocery-cat">🍗 Proteins</div>
+    <div class="grocery-item"><div class="checkbox checked"><span class="check-mark">✓</span></div><div><div class="grocery-name">Chicken Breast</div><div class="grocery-brand">Simple Truth Organic · 2 lbs</div></div></div>
+    <div class="grocery-item"><div class="checkbox"></div><div><div class="grocery-name">Salmon Fillets</div><div class="grocery-brand">Wild Caught · 4 fillets</div></div></div>
+    <div class="grocery-item"><div class="checkbox"></div><div><div class="grocery-name">Large Eggs</div><div class="grocery-brand">Vital Farms · 12 ct</div></div></div>
+
+    <div class="grocery-cat">🥛 Dairy & Alternatives</div>
+    <div class="grocery-item"><div class="checkbox checked"><span class="check-mark">✓</span></div><div><div class="grocery-name">Greek Yogurt Plain</div><div class="grocery-brand">Siggi's 0% · 4 pack</div></div></div>
+    <div class="grocery-item"><div class="checkbox"></div><div><div class="grocery-name">Almond Milk Unsweetened</div><div class="grocery-brand">Califia Farms · 32 oz</div></div></div>
+
+    <div class="grocery-cat">🌾 Grains</div>
+    <div class="grocery-item"><div class="checkbox"></div><div><div class="grocery-name">Rolled Oats</div><div class="grocery-brand">Bob's Red Mill · 32 oz</div></div></div>
+    <div class="grocery-item"><div class="checkbox"></div><div><div class="grocery-name">Quinoa</div><div class="grocery-brand">Bob's Red Mill · 16 oz</div></div></div>
+  </div>
+  <div style="padding:20px 40px;border-top:1px solid #1e3828;display:flex;justify-content:space-between;align-items:center">
+    <div style="font-size:26px;color:#7da890">4 of 11 items checked</div>
+    <button class="btn-primary" style="padding:24px 36px;font-size:26px">Share List</button>
+  </div>
+  <div class="bottomnav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><span>Home</span></div>
+    <div class="nav-item active"><div class="nav-icon">📋</div><span>Planner</span></div>
+    <div class="nav-item"><div class="nav-icon">📷</div><span>Scan</span></div>
+    <div class="nav-item"><div class="nav-icon">⚖️</div><span>Weight</span></div>
+    <div class="nav-item"><div class="nav-icon">💧</div><span>Water</span></div>
+  </div>
+</div>
+
+<!-- SCREEN 4: PHOTO SCANNER -->
+<div class="screen" id="s4">
+  <div class="statusbar"><span>9:41</span><div class="icons"><span>●●●●</span><span>WiFi</span><span>🔋</span></div></div>
+  <div class="header"><div><h1>Scan Meal</h1><div class="header-sub">AI calorie analysis</div></div><span style="font-size:44px">📷</span></div>
+  <!-- Mock photo area -->
+  <div style="margin:0 40px;background:linear-gradient(135deg,#1a4a2e,#0e2d1a,#2d5a3d);border-radius:28px;height:520px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid #2a4434">
+    <div style="font-size:100px">🥗</div>
+    <div style="font-size:28px;color:#7da890;margin-top:16px">Grilled Chicken Power Bowl</div>
+  </div>
+  <!-- Result card -->
+  <div style="margin:24px 40px 0;background:#172a1f;border:2px solid #3ab26a;border-radius:28px;padding:36px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
+      <div>
+        <div style="font-size:36px;font-weight:800;color:#f0f7f2">Grilled Chicken Bowl</div>
+        <div style="font-size:24px;color:#7da890;margin-top:6px">AI-identified · High confidence</div>
+      </div>
+      <div style="background:#3ab26a;border-radius:16px;padding:16px 24px;text-align:center">
+        <div style="font-size:44px;font-weight:800;color:#fff">485</div>
+        <div style="font-size:20px;color:#fff;opacity:0.85">calories</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px">
+      <div style="background:#0e1d15;border-radius:16px;padding:20px;text-align:center"><div style="font-size:34px;font-weight:800;color:#3ab26a">42g</div><div style="font-size:22px;color:#7da890;margin-top:4px">Protein</div></div>
+      <div style="background:#0e1d15;border-radius:16px;padding:20px;text-align:center"><div style="font-size:34px;font-weight:800;color:#3ab26a">38g</div><div style="font-size:22px;color:#7da890;margin-top:4px">Carbs</div></div>
+      <div style="background:#0e1d15;border-radius:16px;padding:20px;text-align:center"><div style="font-size:34px;font-weight:800;color:#3ab26a">14g</div><div style="font-size:22px;color:#7da890;margin-top:4px">Fat</div></div>
+    </div>
+    <div style="font-size:24px;color:#7da890;margin-bottom:12px;font-weight:600">Ingredients identified:</div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px">
+      <span class="badge">Grilled Chicken</span><span class="badge">Brown Rice</span><span class="badge">Avocado</span><span class="badge">Roasted Broccoli</span><span class="badge">Cherry Tomatoes</span><span class="badge">Olive Oil</span>
+    </div>
+  </div>
+  <div style="padding:24px 40px"><button class="btn-primary" style="width:100%">💾 Save to Meal Journal</button></div>
+  <div class="bottomnav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><span>Home</span></div>
+    <div class="nav-item"><div class="nav-icon">📋</div><span>Planner</span></div>
+    <div class="nav-item active"><div class="nav-icon">📷</div><span>Scan</span></div>
+    <div class="nav-item"><div class="nav-icon">⚖️</div><span>Weight</span></div>
+    <div class="nav-item"><div class="nav-icon">💧</div><span>Water</span></div>
+  </div>
+</div>
+
+<!-- SCREEN 5: MY MEALS JOURNAL -->
+<div class="screen" id="s5">
+  <div class="statusbar"><span>9:41</span><div class="icons"><span>●●●●</span><span>WiFi</span><span>🔋</span></div></div>
+  <div class="header"><div><h1>My Meals</h1><div class="header-sub">Photo journal · 12 meals logged</div></div><span style="font-size:44px">📓</span></div>
+  <div class="journal-grid" style="flex:1">
+    <div class="journal-card"><div class="journal-img" style="background:linear-gradient(135deg,#1a3a2a,#2d5a3d)">🥗</div><div class="journal-info"><div class="journal-name">Quinoa Power Bowl</div><div class="journal-cal">485 cal</div><div class="journal-date">Today, 12:30 PM</div></div></div>
+    <div class="journal-card"><div class="journal-img" style="background:linear-gradient(135deg,#2a1a0e,#5a3d1a)">🍳</div><div class="journal-info"><div class="journal-name">Veggie Omelette</div><div class="journal-cal">310 cal</div><div class="journal-date">Today, 8:00 AM</div></div></div>
+    <div class="journal-card"><div class="journal-img" style="background:linear-gradient(135deg,#0e1a2a,#1a3d5a)">🐟</div><div class="journal-info"><div class="journal-name">Baked Salmon Bowl</div><div class="journal-cal">520 cal</div><div class="journal-date">Yesterday, 7:00 PM</div></div></div>
+    <div class="journal-card"><div class="journal-img" style="background:linear-gradient(135deg,#1a2a0e,#3d5a1a)">🥙</div><div class="journal-info"><div class="journal-name">Turkey Lettuce Wraps</div><div class="journal-cal">380 cal</div><div class="journal-date">Yesterday, 12:00 PM</div></div></div>
+    <div class="journal-card"><div class="journal-img" style="background:linear-gradient(135deg,#2a0e1a,#5a1a3d)">🫙</div><div class="journal-info"><div class="journal-name">Overnight Oats</div><div class="journal-cal">340 cal</div><div class="journal-date">Jun 10, 8:15 AM</div></div></div>
+    <div class="journal-card"><div class="journal-img" style="background:linear-gradient(135deg,#1a1a0e,#4a4a1a)">🥜</div><div class="journal-info"><div class="journal-name">Protein Smoothie</div><div class="journal-cal">290 cal</div><div class="journal-date">Jun 10, 3:00 PM</div></div></div>
+  </div>
+  <div class="bottomnav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><span>Home</span></div>
+    <div class="nav-item active"><div class="nav-icon">📋</div><span>Meals</span></div>
+    <div class="nav-item"><div class="nav-icon">📷</div><span>Scan</span></div>
+    <div class="nav-item"><div class="nav-icon">⚖️</div><span>Weight</span></div>
+    <div class="nav-item"><div class="nav-icon">💧</div><span>Water</span></div>
+  </div>
+</div>
+
+<!-- SCREEN 6: WEIGHT TRACKER -->
+<div class="screen" id="s6">
+  <div class="statusbar"><span>9:41</span><div class="icons"><span>●●●●</span><span>WiFi</span><span>🔋</span></div></div>
+  <div class="header"><div><h1>Weight Tracker</h1><div class="header-sub">Your progress journey</div></div><span style="font-size:44px">⚖️</span></div>
+  <div class="stat-grid" style="margin-bottom:24px">
+    <div class="stat-card"><div class="stat-label">Current</div><div><span class="stat-value">168</span><span class="stat-unit"> lbs</span></div><div class="stat-change">↓ -2 lbs this week</div></div>
+    <div class="stat-card"><div class="stat-label">Goal</div><div><span class="stat-value">155</span><span class="stat-unit"> lbs</span></div><div style="font-size:22px;color:#7da890">13 lbs to go</div></div>
+    <div class="stat-card"><div class="stat-label">Total Lost</div><div><span class="stat-value" style="color:#3ab26a">-7</span><span class="stat-unit"> lbs</span></div><div class="stat-change">Since June 1</div></div>
+    <div class="stat-card"><div class="stat-label">Last Entry</div><div><span class="stat-value" style="font-size:36px">Today</span></div><div style="font-size:22px;color:#7da890">168 lbs logged</div></div>
+  </div>
+  <!-- SVG Chart -->
+  <div style="margin:0 40px;background:#172a1f;border:1.5px solid #2a4434;border-radius:24px;padding:30px">
+    <div style="font-size:28px;font-weight:700;margin-bottom:20px">Weight Over Time</div>
+    <svg width="940" height="300" viewBox="0 0 940 300">
+      <!-- Grid lines -->
+      <line x1="40" y1="40" x2="940" y2="40" stroke="#2a4434" stroke-width="1"/>
+      <line x1="40" y1="120" x2="940" y2="120" stroke="#2a4434" stroke-width="1"/>
+      <line x1="40" y1="200" x2="940" y2="200" stroke="#2a4434" stroke-width="1"/>
+      <line x1="40" y1="280" x2="940" y2="280" stroke="#2a4434" stroke-width="1"/>
+      <!-- Labels -->
+      <text x="0" y="44" fill="#4a7a5c" font-size="20">175</text>
+      <text x="0" y="124" fill="#4a7a5c" font-size="20">172</text>
+      <text x="0" y="204" fill="#4a7a5c" font-size="20">170</text>
+      <text x="0" y="284" fill="#4a7a5c" font-size="20">168</text>
+      <!-- Area fill -->
+      <path d="M50,140 L190,120 L330,140 L470,160 L610,200 L750,240 L890,280" fill="none" stroke="#3ab26a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M50,140 L190,120 L330,140 L470,160 L610,200 L750,240 L890,280 L890,300 L50,300 Z" fill="rgba(58,178,106,0.12)"/>
+      <!-- Data points -->
+      <circle cx="50" cy="140" r="8" fill="#3ab26a"/>
+      <circle cx="190" cy="120" r="8" fill="#3ab26a"/>
+      <circle cx="330" cy="140" r="8" fill="#3ab26a"/>
+      <circle cx="470" cy="160" r="8" fill="#3ab26a"/>
+      <circle cx="610" cy="200" r="8" fill="#3ab26a"/>
+      <circle cx="750" cy="240" r="8" fill="#3ab26a"/>
+      <circle cx="890" cy="280" r="10" fill="#3ab26a" stroke="#fff" stroke-width="3"/>
+      <!-- X labels -->
+      <text x="30" y="300" fill="#4a7a5c" font-size="20">Jun 5</text>
+      <text x="160" y="300" fill="#4a7a5c" font-size="20">Jun 7</text>
+      <text x="300" y="300" fill="#4a7a5c" font-size="20">Jun 9</text>
+      <text x="440" y="300" fill="#4a7a5c" font-size="20">Jun 11</text>
+    </svg>
+  </div>
+  <div style="padding:24px 40px"><button class="btn-primary" style="width:100%">+ Log Today's Weight</button></div>
+  <div class="bottomnav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><span>Home</span></div>
+    <div class="nav-item"><div class="nav-icon">📋</div><span>Planner</span></div>
+    <div class="nav-item"><div class="nav-icon">📷</div><span>Scan</span></div>
+    <div class="nav-item active"><div class="nav-icon">⚖️</div><span>Weight</span></div>
+    <div class="nav-item"><div class="nav-icon">💧</div><span>Water</span></div>
+  </div>
+</div>
+
+<!-- SCREEN 7: WATER TRACKER -->
+<div class="screen" id="s7">
+  <div class="statusbar"><span>9:41</span><div class="icons"><span>●●●●</span><span>WiFi</span><span>🔋</span></div></div>
+  <div class="header"><div><h1>Water Tracker</h1><div class="header-sub">Daily hydration goal</div></div><span style="font-size:44px">💧</span></div>
+  <!-- Big ring -->
+  <div class="ring-wrap">
+    <svg width="500" height="500" viewBox="0 0 500 500">
+      <circle cx="250" cy="250" r="200" fill="none" stroke="#1e3828" stroke-width="32"/>
+      <circle cx="250" cy="250" r="200" fill="none" stroke="#3ab26a" stroke-width="32" stroke-dasharray="1005" stroke-dashoffset="251" stroke-linecap="round" transform="rotate(-90 250 250)"/>
+      <text x="250" y="230" text-anchor="middle" font-size="110" font-weight="800" fill="#f0f7f2">6</text>
+      <text x="250" y="295" text-anchor="middle" font-size="40" fill="#7da890">of 8 glasses</text>
+      <text x="250" y="345" text-anchor="middle" font-size="32" fill="#3ab26a" font-weight="700">75% Complete</text>
+    </svg>
+  </div>
+  <!-- Glass buttons -->
+  <div style="padding:0 40px;display:flex;flex-wrap:wrap;gap:16px;justify-content:center">
+    <div style="display:flex;gap:20px;justify-content:center;width:100%">
+      <div style="width:100px;height:100px;background:#3ab26a;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:52px">💧</div>
+      <div style="width:100px;height:100px;background:#3ab26a;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:52px">💧</div>
+      <div style="width:100px;height:100px;background:#3ab26a;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:52px">💧</div>
+      <div style="width:100px;height:100px;background:#3ab26a;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:52px">💧</div>
+      <div style="width:100px;height:100px;background:#3ab26a;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:52px">💧</div>
+      <div style="width:100px;height:100px;background:#3ab26a;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:52px">💧</div>
+      <div style="width:100px;height:100px;background:#1e3828;border:2px dashed #3ab26a;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:52px;opacity:0.5">💧</div>
+      <div style="width:100px;height:100px;background:#1e3828;border:2px dashed #3ab26a;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:52px;opacity:0.5">💧</div>
+    </div>
+  </div>
+  <div style="padding:36px 40px">
+    <button class="btn-primary" style="width:100%;font-size:34px">+ Add Glass of Water</button>
+  </div>
+  <div style="padding:0 40px;background:#172a1f;border:1.5px solid #2a4434;border-radius:24px;margin:0 40px;padding:28px">
+    <div style="display:flex;justify-content:space-between;font-size:26px"><span style="color:#7da890">Daily goal</span><span style="font-weight:700">8 glasses (2L)</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:26px;margin-top:16px"><span style="color:#7da890">Remaining</span><span style="color:#3ab26a;font-weight:700">2 glasses to go</span></div>
+  </div>
+  <div class="bottomnav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><span>Home</span></div>
+    <div class="nav-item"><div class="nav-icon">📋</div><span>Planner</span></div>
+    <div class="nav-item"><div class="nav-icon">📷</div><span>Scan</span></div>
+    <div class="nav-item"><div class="nav-icon">⚖️</div><span>Weight</span></div>
+    <div class="nav-item active"><div class="nav-icon">💧</div><span>Water</span></div>
+  </div>
+</div>
+
+<!-- SCREEN 8: PLANS -->
+<div class="screen" id="s8">
+  <div class="statusbar"><span>9:41</span><div class="icons"><span>●●●●</span><span>WiFi</span><span>🔋</span></div></div>
+  <div class="header"><div><h1>My Plans</h1><div class="header-sub">3 saved meal plans</div></div><span style="font-size:44px">📌</span></div>
+  <div style="padding:0 40px 24px">
+    <button class="btn-primary" style="width:100%">✨ Create New Plan</button>
+  </div>
+  <div style="flex:1">
+    <div class="plan-card" style="border-color:#3ab26a">
+      <div>
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px"><div class="plan-name">Clean Eating Week</div><span class="badge">Active</span></div>
+        <div class="plan-meta">5 meals/day · 1,700 cal · Created Jun 10</div>
+        <div style="display:flex;gap:16px;margin-top:16px">
+          <span class="badge">🥗 5 meals</span>
+          <span class="badge">💪 High protein</span>
+          <span class="badge">🌱 Clean brands</span>
+        </div>
+      </div>
+      <div class="plan-arrow">›</div>
+    </div>
+    <div class="plan-card">
+      <div>
+        <div class="plan-name">Weight Loss Boost</div>
+        <div class="plan-meta">4 meals/day · 1,400 cal · Created Jun 5</div>
+        <div style="display:flex;gap:16px;margin-top:16px">
+          <span class="badge">🔥 Low calorie</span>
+          <span class="badge">🥦 Veggies-first</span>
+        </div>
+      </div>
+      <div class="plan-arrow">›</div>
+    </div>
+    <div class="plan-card">
+      <div>
+        <div class="plan-name">Weekend Meal Prep</div>
+        <div class="plan-meta">3 meals/day · 1,900 cal · Created Jun 1</div>
+        <div style="display:flex;gap:16px;margin-top:16px">
+          <span class="badge">🍱 Batch cooking</span>
+          <span class="badge">⏱ Quick prep</span>
+        </div>
+      </div>
+      <div class="plan-arrow">›</div>
+    </div>
+  </div>
+  <div style="padding:20px 40px;text-align:center;font-size:24px;color:#7da890">Tap any plan to view meals and generate grocery list</div>
+  <div class="bottomnav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><span>Home</span></div>
+    <div class="nav-item active"><div class="nav-icon">📋</div><span>Plans</span></div>
+    <div class="nav-item"><div class="nav-icon">📷</div><span>Scan</span></div>
+    <div class="nav-item"><div class="nav-icon">⚖️</div><span>Weight</span></div>
+    <div class="nav-item"><div class="nav-icon">💧</div><span>Water</span></div>
+  </div>
+</div>
+
+<script>
+const s = new URLSearchParams(location.search).get('s') || '1';
+const el = document.getElementById('s' + s);
+if (el) el.classList.add('active');
+else document.getElementById('s1').classList.add('active');
+</script>
+</body>
+</html>

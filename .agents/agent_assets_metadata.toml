@@ -53,3 +53,51 @@ id = "dKotzDKShL5LidNJTACu_"
 uri = "file://screenshots/prepfit-08-grocery-paywall.jpg"
 type = "image"
 title = "08 — Grocery (paywall loading)"
+
+[[outputs]]
+id = "VFBXkvYSyN4sHybke356e"
+uri = "file://screenshots/01-home.jpg"
+type = "image"
+title = "1 — Home Dashboard"
+
+[[outputs]]
+id = "ZFnuHZwHlQYgBe2zjhqZQ"
+uri = "file://screenshots/02-planner.jpg"
+type = "image"
+title = "2 — Meal Planner"
+
+[[outputs]]
+id = "GWy98yWPw-CJDJd9a2jWN"
+uri = "file://screenshots/03-grocery.jpg"
+type = "image"
+title = "3 — Grocery List"
+
+[[outputs]]
+id = "rnVMmsKelyyhs7HCvTucb"
+uri = "file://screenshots/04-scanner.jpg"
+type = "image"
+title = "4 — Photo Scanner"
+
+[[outputs]]
+id = "i3BqhW_eCRSN7kaUv7FxP"
+uri = "file://screenshots/05-journal.jpg"
+type = "image"
+title = "5 — My Meals Journal"
+
+[[outputs]]
+id = "seH0gwUCQhTEQ3bv3KLzQ"
+uri = "file://screenshots/06-weight.jpg"
+type = "image"
+title = "6 — Weight Tracker"
+
+[[outputs]]
+id = "D9iIFwh6NBcX5Pmu6jRgk"
+uri = "file://screenshots/07-water.jpg"
+type = "image"
+title = "7 — Water Tracker"
+
+[[outputs]]
+id = "DzUMMxJKhd98WpQYISuyW"
+uri = "file://screenshots/08-plans.jpg"
+type = "image"
+title = "8 — My Plans"
