@@ -123,14 +123,26 @@ function useSubscriptionContext() {
     onSuccess: () => customerInfoQuery.refetch(),
   });
 
-  const isSubscribed =
-    isDemoMode ||
-    customerInfoQuery.data?.entitlements.active?.[REVENUECAT_ENTITLEMENT_IDENTIFIER] !== undefined;
+  const entitlement =
+    customerInfoQuery.data?.entitlements.active?.[REVENUECAT_ENTITLEMENT_IDENTIFIER];
+
+  const isSubscribed = isDemoMode || entitlement !== undefined;
+
+  // Detect free-trial period: RevenueCat sets periodType to "TRIAL" during a trial
+  const isInTrial = !isDemoMode && entitlement?.periodType === "TRIAL";
+
+  const trialDaysLeft = (() => {
+    if (!isInTrial || !entitlement?.expirationDate) return null;
+    const msLeft = new Date(entitlement.expirationDate).getTime() - Date.now();
+    return Math.max(0, Math.ceil(msLeft / (1000 * 60 * 60 * 24)));
+  })();
 
   return {
     customerInfo: customerInfoQuery.data,
     offerings: offeringsQuery.data,
     isSubscribed,
+    isInTrial,
+    trialDaysLeft,
     isLoading: !isLoaded || customerInfoQuery.isLoading || offeringsQuery.isLoading,
     purchase: purchaseMutation.mutateAsync,
     restore: restoreMutation.mutateAsync,

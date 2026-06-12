@@ -5,6 +5,7 @@ import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DemoBanner } from "@/components/DemoBanner";
+import { TrialBanner } from "@/components/TrialBanner";
 import { ScrollableTabBar } from "@/components/ScrollableTabBar";
 import { AuthGate } from "@/components/AuthGate";
 import { useColors } from "@/hooks/useColors";
@@ -49,6 +50,7 @@ export default function TabLayout() {
     <View style={[s.root, { backgroundColor: colors.background }]}>
       <StatusBar backgroundColor={ORANGE} style="light" translucent />
       <DemoBanner />
+      <TrialBanner />
       <AppBar />
       <AuthGate>
         <Tabs
