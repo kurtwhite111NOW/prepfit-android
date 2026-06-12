@@ -67,6 +67,8 @@ MANDATORY RULES:
 8. Keep ingredient lists SHORT — 4 to 6 ingredients max per meal
 9. For each meal, estimate macros in grams: protein, carbs, and fat based on the ingredients
 10. Be CREATIVE with the plan name — reflect the theme (e.g. "Mexican Muscle Day", "Asian Gains Plate", "Mediterranean Cut Plan")
+11. For each meal, include a "mealType" field: "breakfast", "lunch", "dinner", or "snack"
+12. For each meal, include a "youtubeUrl" field: a YouTube search URL like "https://www.youtube.com/results?search_query=cottage+cheese+toast+recipe+easy" — use the actual meal name + "recipe easy" as search terms, URL-encoded with + for spaces
 
 INSPIRATION (pick from these or create something similar in the same style — do NOT copy names exactly):
 ${inspirations}
@@ -77,13 +79,15 @@ Return ONLY valid JSON, no markdown:
   "meals": [
     {
       "mealNumber": 1,
+      "mealType": "breakfast",
       "name": "Plain familiar meal name",
       "description": "What it is and one simple tip for making it quickly",
       "calories": ${caloriesPerMeal},
       "protein": 35,
       "carbs": 45,
       "fat": 12,
-      "ingredients": "2 eggs, 1 slice toast, 1 tbsp butter, salt and pepper"
+      "ingredients": "2 eggs, 1 slice toast, 1 tbsp butter, salt and pepper",
+      "youtubeUrl": "https://www.youtube.com/results?search_query=scrambled+eggs+toast+recipe+easy"
     }
   ],
   "shoppingItems": [

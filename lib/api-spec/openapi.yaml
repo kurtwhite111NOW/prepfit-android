@@ -555,6 +555,12 @@ components:
           type: integer
         fat:
           type: integer
+        youtubeUrl:
+          type: string
+          description: YouTube search URL for recipe guidance
+        mealType:
+          type: string
+          description: Type of meal (breakfast, lunch, dinner, snack)
       required:
         - mealNumber
         - name

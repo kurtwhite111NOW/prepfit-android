@@ -1,13 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getListMealPlansQueryKey,
-  listMealPlans,
   useGenerateMealPlan,
   useCreateMealPlan,
 } from "@workspace/api-client-react";
 import type { GeneratedMealPlan, GeneratedMeal } from "@workspace/api-client-react";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import * as Linking from "expo-linking";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -22,6 +22,13 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { PremiumGate } from "@/components/PremiumGate";
+
+const MEAL_EMOJI: Record<string, string> = {
+  breakfast: "🍳",
+  lunch: "🥗",
+  dinner: "🍗",
+  snack: "🥜",
+};
 
 function PlannerScreenContent() {
   const colors = useColors();
@@ -88,6 +95,18 @@ function PlannerScreenContent() {
     });
   };
 
+  // Compute plan-level totals
+  const totals = generatedPlan
+    ? generatedPlan.meals.reduce(
+        (acc, m) => ({
+          protein: acc.protein + (m.protein ?? 0),
+          carbs: acc.carbs + (m.carbs ?? 0),
+          fat: acc.fat + (m.fat ?? 0),
+        }),
+        { protein: 0, carbs: 0, fat: 0 }
+      )
+    : null;
+
   const s = styles(colors);
 
   return (
@@ -153,12 +172,15 @@ function PlannerScreenContent() {
         </Pressable>
       </View>
 
-      {generatedPlan && (
+      {generatedPlan && totals && (
         <View style={s.resultSection}>
-          <View style={s.resultHeader}>
-            <View>
-              <Text style={s.resultTitle}>{generatedPlan.name}</Text>
-              <Text style={s.resultSub}>{generatedPlan.meals.length} meals generated</Text>
+          {/* Plan header */}
+          <View style={s.planHeader}>
+            <View style={{ flex: 1 }}>
+              <Text style={s.planName}>{generatedPlan.name}</Text>
+              <Text style={s.planSub}>
+                High-protein · Gym-focused · {generatedPlan.meals.length} meals
+              </Text>
             </View>
             <Pressable
               style={({ pressed }) => [s.saveBtn, { opacity: pressed || saveMutation.isPending ? 0.8 : 1 }]}
@@ -173,6 +195,14 @@ function PlannerScreenContent() {
             </Pressable>
           </View>
 
+          {/* Macro totals */}
+          <View style={s.macroTotalsRow}>
+            <MacroTotal label="PROTEIN" value={totals.protein} color="#60a5fa" bg="rgba(96,165,250,0.12)" border="rgba(96,165,250,0.25)" />
+            <MacroTotal label="CARBS" value={totals.carbs} color="#f59e0b" bg="rgba(245,158,11,0.12)" border="rgba(245,158,11,0.25)" />
+            <MacroTotal label="FAT" value={totals.fat} color="#34d399" bg="rgba(52,211,153,0.12)" border="rgba(52,211,153,0.25)" />
+          </View>
+
+          {/* Meal cards */}
           {generatedPlan.meals.map((meal) => (
             <MealCard key={meal.mealNumber} meal={meal} colors={colors} />
           ))}
@@ -184,65 +214,161 @@ function PlannerScreenContent() {
   );
 }
 
+function MacroTotal({
+  label,
+  value,
+  color,
+  bg,
+  border,
+}: {
+  label: string;
+  value: number;
+  color: string;
+  bg: string;
+  border: string;
+}) {
+  return (
+    <View style={[macroTotalStyles.box, { backgroundColor: bg, borderColor: border }]}>
+      <Text style={[macroTotalStyles.value, { color }]}>{value}g</Text>
+      <Text style={macroTotalStyles.label}>{label}</Text>
+    </View>
+  );
+}
+
+const macroTotalStyles = StyleSheet.create({
+  box: {
+    flex: 1,
+    alignItems: "center",
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginHorizontal: 3,
+  },
+  value: {
+    fontSize: 20,
+    fontFamily: "Inter_700Bold",
+  },
+  label: {
+    fontSize: 10,
+    fontFamily: "Inter_600SemiBold",
+    color: "rgba(255,255,255,0.5)",
+    marginTop: 2,
+    letterSpacing: 0.8,
+  },
+});
+
 function MealCard({ meal, colors }: { meal: GeneratedMeal; colors: ReturnType<typeof useColors> }) {
   const [expanded, setExpanded] = useState(false);
   const s = mealCardStyles(colors);
 
+  const emoji = MEAL_EMOJI[(meal.mealType ?? "").toLowerCase()] ?? "🍽️";
+  const mealTypeLabel = (meal.mealType ?? "meal").toUpperCase();
+
+  const handleYouTube = () => {
+    if (meal.youtubeUrl) {
+      Linking.openURL(meal.youtubeUrl);
+    }
+  };
+
   return (
-    <Pressable style={s.card} onPress={() => setExpanded(!expanded)}>
-      <View style={s.cardHeader}>
-        <View style={s.mealNumBadge}>
-          <Text style={s.mealNum}>{meal.mealNumber}</Text>
+    <View style={s.card}>
+      {/* Card header */}
+      <Pressable style={s.cardHeader} onPress={() => setExpanded(!expanded)}>
+        {/* Emoji ring */}
+        <View style={s.emojiRing}>
+          <Text style={s.emoji}>{emoji}</Text>
         </View>
+
+        {/* Meal info */}
         <View style={{ flex: 1 }}>
+          <Text style={s.mealTypeLabel}>{mealTypeLabel}</Text>
           <Text style={s.mealName}>{meal.name}</Text>
-          <Text style={s.mealDesc} numberOfLines={expanded ? undefined : 1}>
+          <Text style={s.mealDesc} numberOfLines={expanded ? undefined : 2}>
             {meal.description}
           </Text>
         </View>
+
+        {/* Calorie badge */}
         <View style={s.calsBadge}>
+          <Feather name="zap" size={12} color={colors.primary} />
           <Text style={s.cals}>{meal.calories}</Text>
-          <Text style={s.calsLabel}>kcal</Text>
+          <Text style={s.calsLabel}>cal</Text>
         </View>
+      </Pressable>
+
+      {/* Macro pills — always visible */}
+      <View style={s.macroPillsRow}>
+        <MacroPill value={meal.protein} label="protein" color="#60a5fa" bg="rgba(96,165,250,0.15)" />
+        <MacroPill value={meal.carbs} label="carbs" color="#f59e0b" bg="rgba(245,158,11,0.15)" />
+        <MacroPill value={meal.fat} label="fat" color="#34d399" bg="rgba(52,211,153,0.15)" />
       </View>
 
+      {/* Expanded: ingredients + YouTube */}
       {expanded && (
-        <View style={s.macros}>
-          <MacroBadge label="Protein" value={meal.protein} unit="g" colors={colors} />
-          <MacroBadge label="Carbs" value={meal.carbs} unit="g" colors={colors} />
-          <MacroBadge label="Fat" value={meal.fat} unit="g" colors={colors} />
-          <View style={s.ingredients}>
-            <Text style={s.ingredientsLabel}>Ingredients</Text>
+        <View style={s.expandedSection}>
+          <View style={s.ingredientsBox}>
+            <Text style={s.ingredientsLabel}>INGREDIENTS</Text>
             <Text style={s.ingredientsText}>{meal.ingredients}</Text>
           </View>
+
+          {meal.youtubeUrl && (
+            <Pressable style={s.youtubeBtn} onPress={handleYouTube}>
+              <Feather name="youtube" size={14} color={colors.primary} />
+              <Text style={s.youtubeTxt}>Watch recipe guidance</Text>
+              <Feather name="external-link" size={12} color={colors.primary} />
+            </Pressable>
+          )}
         </View>
       )}
-    </Pressable>
-  );
-}
 
-function MacroBadge({
-  label,
-  value,
-  unit,
-  colors,
-}: {
-  label: string;
-  value?: number;
-  unit: string;
-  colors: ReturnType<typeof useColors>;
-}) {
-  return (
-    <View style={{ alignItems: "center", flex: 1 }}>
-      <Text style={{ fontSize: 16, fontFamily: "Inter_700Bold", color: colors.primary }}>
-        {value ?? "—"}{unit}
-      </Text>
-      <Text style={{ fontSize: 11, fontFamily: "Inter_400Regular", color: colors.mutedForeground }}>
-        {label}
-      </Text>
+      {/* Expand toggle */}
+      <Pressable style={s.expandRow} onPress={() => setExpanded(!expanded)}>
+        <Text style={s.expandTxt}>{expanded ? "Show less" : "Show ingredients & recipe"}</Text>
+        <Feather name={expanded ? "chevron-up" : "chevron-down"} size={14} color={colors.mutedForeground} />
+      </Pressable>
     </View>
   );
 }
+
+function MacroPill({
+  value,
+  label,
+  color,
+  bg,
+}: {
+  value?: number;
+  label: string;
+  color: string;
+  bg: string;
+}) {
+  return (
+    <View style={[macroPillStyles.pill, { backgroundColor: bg }]}>
+      <Text style={[macroPillStyles.value, { color }]}>{value ?? "—"}g</Text>
+      <Text style={macroPillStyles.label}>{label}</Text>
+    </View>
+  );
+}
+
+const macroPillStyles = StyleSheet.create({
+  pill: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 100,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    gap: 4,
+    marginRight: 6,
+  },
+  value: {
+    fontSize: 12,
+    fontFamily: "Inter_700Bold",
+  },
+  label: {
+    fontSize: 12,
+    fontFamily: "Inter_400Regular",
+    color: "rgba(255,255,255,0.6)",
+  },
+});
 
 const styles = (colors: ReturnType<typeof useColors>) =>
   StyleSheet.create({
@@ -337,21 +463,22 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       color: "#FFFFFF",
     },
     resultSection: { paddingHorizontal: 16 },
-    resultHeader: {
+    planHeader: {
       flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: 12,
+      alignItems: "flex-start",
+      marginBottom: 14,
+      gap: 12,
     },
-    resultTitle: {
-      fontSize: 18,
+    planName: {
+      fontSize: 20,
       fontFamily: "Inter_700Bold",
       color: colors.foreground,
     },
-    resultSub: {
-      fontSize: 13,
+    planSub: {
+      fontSize: 12,
       fontFamily: "Inter_400Regular",
       color: colors.mutedForeground,
+      marginTop: 3,
     },
     saveBtn: {
       paddingHorizontal: 16,
@@ -359,11 +486,17 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       borderRadius: 8,
       borderWidth: 1.5,
       borderColor: colors.primary,
+      marginTop: 2,
     },
     saveBtnText: {
       fontSize: 14,
       fontFamily: "Inter_600SemiBold",
       color: colors.primary,
+    },
+    macroTotalsRow: {
+      flexDirection: "row",
+      marginBottom: 16,
+      marginHorizontal: -3,
     },
   });
 
@@ -371,46 +504,57 @@ const mealCardStyles = (colors: ReturnType<typeof useColors>) =>
   StyleSheet.create({
     card: {
       backgroundColor: colors.card,
-      borderRadius: 12,
-      padding: 14,
-      marginBottom: 10,
+      borderRadius: 14,
+      marginBottom: 12,
       borderWidth: 1,
       borderColor: colors.border,
+      overflow: "hidden",
     },
     cardHeader: {
       flexDirection: "row",
       alignItems: "flex-start",
-      gap: 10,
+      gap: 12,
+      padding: 14,
+      paddingBottom: 10,
     },
-    mealNumBadge: {
-      width: 28,
-      height: 28,
-      borderRadius: 8,
-      backgroundColor: colors.primary,
+    emojiRing: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      borderWidth: 2.5,
+      borderColor: colors.primary,
       alignItems: "center",
       justifyContent: "center",
+      backgroundColor: "rgba(242,107,29,0.10)",
     },
-    mealNum: {
-      fontSize: 13,
-      fontFamily: "Inter_700Bold",
-      color: "#FFF",
+    emoji: {
+      fontSize: 22,
+    },
+    mealTypeLabel: {
+      fontSize: 10,
+      fontFamily: "Inter_600SemiBold",
+      color: colors.primary,
+      letterSpacing: 1,
+      marginBottom: 2,
     },
     mealName: {
       fontSize: 15,
-      fontFamily: "Inter_600SemiBold",
+      fontFamily: "Inter_700Bold",
       color: colors.foreground,
     },
     mealDesc: {
-      fontSize: 13,
+      fontSize: 12,
       fontFamily: "Inter_400Regular",
       color: colors.mutedForeground,
       marginTop: 2,
+      lineHeight: 17,
     },
     calsBadge: {
       alignItems: "center",
+      paddingTop: 2,
     },
     cals: {
-      fontSize: 16,
+      fontSize: 17,
       fontFamily: "Inter_700Bold",
       color: colors.primary,
     },
@@ -419,31 +563,62 @@ const mealCardStyles = (colors: ReturnType<typeof useColors>) =>
       fontFamily: "Inter_400Regular",
       color: colors.mutedForeground,
     },
-    macros: {
-      marginTop: 12,
-    },
-    macrosRow: {
+    macroPillsRow: {
       flexDirection: "row",
-      justifyContent: "space-around",
-      marginBottom: 12,
+      paddingHorizontal: 14,
+      paddingBottom: 10,
     },
-    ingredients: {
-      marginTop: 8,
-      paddingTop: 10,
+    expandedSection: {
       borderTopWidth: 1,
       borderTopColor: colors.border,
+      paddingHorizontal: 14,
+      paddingTop: 12,
+      paddingBottom: 4,
+      gap: 10,
+    },
+    ingredientsBox: {
+      backgroundColor: colors.muted,
+      borderRadius: 10,
+      padding: 12,
     },
     ingredientsLabel: {
-      fontSize: 12,
+      fontSize: 10,
       fontFamily: "Inter_600SemiBold",
       color: colors.mutedForeground,
-      marginBottom: 4,
+      letterSpacing: 0.8,
+      marginBottom: 6,
     },
     ingredientsText: {
       fontSize: 13,
       fontFamily: "Inter_400Regular",
       color: colors.foreground,
       lineHeight: 20,
+    },
+    youtubeBtn: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      paddingVertical: 4,
+    },
+    youtubeTxt: {
+      flex: 1,
+      fontSize: 13,
+      fontFamily: "Inter_600SemiBold",
+      color: colors.primary,
+    },
+    expandRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 10,
+      gap: 4,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+    },
+    expandTxt: {
+      fontSize: 12,
+      fontFamily: "Inter_500Medium",
+      color: colors.mutedForeground,
     },
   });
 

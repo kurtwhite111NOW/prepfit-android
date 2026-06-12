@@ -198,6 +198,14 @@ export const GenerateMealPlanResponse = zod.object({
       protein: zod.number().optional(),
       carbs: zod.number().optional(),
       fat: zod.number().optional(),
+      youtubeUrl: zod
+        .string()
+        .optional()
+        .describe("YouTube search URL for recipe guidance"),
+      mealType: zod
+        .string()
+        .optional()
+        .describe("Type of meal (breakfast, lunch, dinner, snack)"),
     }),
   ),
   shoppingItems: zod.array(

@@ -111,6 +111,10 @@ export interface GeneratedMeal {
   protein?: number;
   carbs?: number;
   fat?: number;
+  /** YouTube search URL for recipe guidance */
+  youtubeUrl?: string;
+  /** Type of meal (breakfast, lunch, dinner, snack) */
+  mealType?: string;
 }
 
 export interface GeneratedShoppingItem {
