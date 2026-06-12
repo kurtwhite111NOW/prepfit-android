@@ -304,23 +304,21 @@ function MealCard({ meal, colors }: { meal: GeneratedMeal; colors: ReturnType<ty
         <MacroPill value={meal.protein} label="protein" color="#60a5fa" bg="rgba(96,165,250,0.15)" />
         <MacroPill value={meal.carbs} label="carbs" color="#f59e0b" bg="rgba(245,158,11,0.15)" />
         <MacroPill value={meal.fat} label="fat" color="#34d399" bg="rgba(52,211,153,0.15)" />
+        {meal.youtubeUrl && (
+          <Pressable style={s.ytPill} onPress={handleYouTube}>
+            <Feather name="youtube" size={13} color="#FF0000" />
+            <Text style={s.ytPillTxt}>Watch</Text>
+          </Pressable>
+        )}
       </View>
 
-      {/* Expanded: ingredients + YouTube */}
+      {/* Expanded: ingredients */}
       {expanded && (
         <View style={s.expandedSection}>
           <View style={s.ingredientsBox}>
             <Text style={s.ingredientsLabel}>INGREDIENTS</Text>
             <Text style={s.ingredientsText}>{meal.ingredients}</Text>
           </View>
-
-          {meal.youtubeUrl && (
-            <Pressable style={s.youtubeBtn} onPress={handleYouTube}>
-              <Feather name="youtube" size={14} color={colors.primary} />
-              <Text style={s.youtubeTxt}>Watch recipe guidance</Text>
-              <Feather name="external-link" size={12} color={colors.primary} />
-            </Pressable>
-          )}
         </View>
       )}
 
@@ -759,6 +757,21 @@ const mealCardStyles = (colors: ReturnType<typeof useColors>) =>
       fontFamily: "Inter_400Regular",
       color: colors.foreground,
       lineHeight: 20,
+    },
+    ytPill: {
+      flexDirection: "row",
+      alignItems: "center",
+      borderRadius: 100,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      gap: 4,
+      backgroundColor: "rgba(255,0,0,0.12)",
+      marginRight: 6,
+    },
+    ytPillTxt: {
+      fontSize: 12,
+      fontFamily: "Inter_600SemiBold",
+      color: "#FF0000",
     },
     youtubeBtn: {
       flexDirection: "row",
