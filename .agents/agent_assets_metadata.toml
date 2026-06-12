@@ -58,7 +58,7 @@ title = "08 — Grocery (paywall loading)"
 id = "VFBXkvYSyN4sHybke356e"
 uri = "file://screenshots/01-home.jpg"
 type = "image"
-title = "1 — Home"
+title = "1 — Home (🏠 highlighted)"
 
 [[outputs]]
 id = "ZFnuHZwHlQYgBe2zjhqZQ"
@@ -70,7 +70,7 @@ title = "2 — Meal Planner"
 id = "GWy98yWPw-CJDJd9a2jWN"
 uri = "file://screenshots/03-grocery.jpg"
 type = "image"
-title = "3 — Grocery List"
+title = "3 — Grocery (🛒 highlighted)"
 
 [[outputs]]
 id = "rnVMmsKelyyhs7HCvTucb"
@@ -88,13 +88,13 @@ title = "5 — My Meals Journal"
 id = "seH0gwUCQhTEQ3bv3KLzQ"
 uri = "file://screenshots/06-weight.jpg"
 type = "image"
-title = "6 — Weight Tracker"
+title = "6 — Weight Tracker (⚖️ highlighted)"
 
 [[outputs]]
 id = "D9iIFwh6NBcX5Pmu6jRgk"
 uri = "file://screenshots/07-water.jpg"
 type = "image"
-title = "7 — Water Tracker"
+title = "7 — Water Tracker (💧 highlighted)"
 
 [[outputs]]
 id = "DzUMMxJKhd98WpQYISuyW"
@@ -184,7 +184,7 @@ title = "2 — Meal Planner"
 id = "IjclEkysMWuYUf9r5yKJi"
 uri = "file://screenshots/04-my-meals.jpg"
 type = "image"
-title = "4 — My Meals"
+title = "4 — My Meals (🍽️ highlighted)"
 
 [[outputs]]
 id = "z-WSS4YpnhA8oihCDmKJw"
@@ -196,10 +196,22 @@ title = "5 — Scan a Meal"
 id = "PX50KAhCK1YUvYmjwl90U"
 uri = "file://screenshots/08-saved-plans.jpg"
 type = "image"
-title = "8 — Saved Plans"
+title = "8 — Saved Plans (🔖 highlighted)"
 
 [[outputs]]
 id = "e0HrC4fQ-dzShBrE-J9vq"
 uri = "file://screenshots/09-user-guide.jpg"
 type = "image"
-title = "9 — User Guide (with Dark Mode toggle)"
+title = "9 — User Guide (📖 highlighted) + 🌙 Dark toggle"
+
+[[outputs]]
+id = "YfhB6gMgaxKi53GhN5oQN"
+uri = "file://screenshots/02-meal-planner.jpg"
+type = "image"
+title = "2 — Meal Plan (📅 highlighted)"
+
+[[outputs]]
+id = "iT1evL26EOlS_NDZkKqXl"
+uri = "file://screenshots/05-scan.jpg"
+type = "image"
+title = "5 — Scan Photo (📷 highlighted)"
