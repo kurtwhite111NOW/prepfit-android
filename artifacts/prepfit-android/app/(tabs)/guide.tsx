@@ -1,5 +1,5 @@
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import React from "react";
+import { Feather } from "@expo/vector-icons";
+import React, { useState } from "react";
 import {
   Linking,
   Pressable,
@@ -10,74 +10,112 @@ import {
 } from "react-native";
 import { useColors } from "@/hooks/useColors";
 
-type FeatherName = React.ComponentProps<typeof Feather>["name"];
-type MCIName = React.ComponentProps<typeof MaterialCommunityIcons>["name"];
-
-type Feature = {
-  icon: FeatherName | MCIName;
-  family: "feather" | "community";
+type AccordionSection = {
   title: string;
-  desc: string;
+  icon: React.ComponentProps<typeof Feather>["name"];
+  content: string;
 };
 
-const FEATURES: Feature[] = [
+const ACCORDION_SECTIONS: AccordionSection[] = [
   {
-    icon: "home",
-    family: "feather",
+    title: "Getting Started",
+    icon: "play-circle",
+    content:
+      "Sign in or create a free account to get started. Once in, head to the Meal Planner tab to generate your first AI-powered meal plan. Everything else — the grocery list, saved plans, and dashboard — flows from there.",
+  },
+  {
     title: "Dashboard",
-    desc: "Your daily overview — active meal plan stats, quick-action buttons, and a snapshot of your progress.",
+    icon: "home",
+    content:
+      "Your daily overview. See your active plan's calorie goal, latest weight, and quick-action shortcuts to every feature. The 'Your Current Plan' card shows your most recently saved plan.",
   },
   {
-    icon: "calendar",
-    family: "feather",
     title: "Meal Planner",
-    desc: "Set meals per day and a daily calorie goal, then let AI generate a full balanced weekly plan in seconds.",
+    icon: "calendar",
+    content:
+      "Set your meals per day (2–5) and daily calorie goal, then tap Generate Plan. The AI builds a full balanced plan in seconds with macros and ingredients for each meal. Tap Save Plan to store it.",
   },
   {
-    icon: "shopping-cart",
-    family: "feather",
     title: "Grocery List",
-    desc: "AI builds a categorised shopping list from your active meal plan with clean-brand suggestions (Bob's Red Mill, Siggi's, etc.). Tap items to check them off in store.",
+    icon: "shopping-cart",
+    content:
+      "Automatically generated from your active meal plan. Organised by category (Produce, Protein, Pantry, etc.) with clean-brand suggestions like Bob's Red Mill, Siggi's, and Simple Truth. Tap items to check them off in-store.",
   },
   {
-    icon: "camera",
-    family: "feather",
     title: "Scan Photo",
-    desc: "Take or upload a photo of any meal. AI identifies the food, estimates calories, and lists ingredients. Save it to your journal.",
+    icon: "camera",
+    content:
+      "Take a photo of any meal or upload from your gallery. AI identifies the food, estimates calories, and lists ingredients with a confidence score. Tap Save to Journal to add it to My Meals.",
   },
   {
-    icon: "book",
-    family: "feather",
-    title: "My Meals",
-    desc: "Every photo-scanned meal saved in one place — image, calorie count, ingredients, date, and your personal notes.",
-  },
-  {
+    title: "Weight",
     icon: "trending-up",
-    family: "feather",
-    title: "Weight Tracker",
-    desc: "Log your body weight in lbs or kg. See a line-chart trend over time, plus stats for current weight, total change, and last change.",
+    content:
+      "Log your body weight in lbs or kg. View a line chart of your last 10 entries, plus stats for current weight, last change, and total change. Add optional notes to each entry.",
   },
   {
-    icon: "water" as MCIName,
-    family: "community",
-    title: "Water Tracker",
-    desc: "Set a daily hydration goal and tap to log each glass. The ring fills as you hit your target — staying hydrated is half the battle.",
+    title: "Water",
+    icon: "droplet",
+    content:
+      "Track your daily hydration against an 8-glass goal. The circular ring fills as you log glasses. Tap the glass icons or the Add Glass button. Progress resets automatically at midnight.",
   },
   {
-    icon: "clipboard",
-    family: "feather",
     title: "Saved Plans",
-    desc: "All your generated meal plans in one library. Tap any plan to view its meals, or swipe to delete plans you no longer need.",
+    icon: "clipboard",
+    content:
+      "All your AI-generated meal plans in one library. Tap any plan to see its full meal list with macros and ingredients. Swipe left to delete plans you no longer need.",
   },
 ];
 
-const TIPS = [
-  "Start with the Meal Planner to generate your first plan — the Grocery List and Dashboard fill in automatically.",
-  "Scan a meal photo before eating for a quick calorie check. Tap Save to keep it in My Meals.",
-  "Log your weight at the same time every day (e.g. morning) for the most accurate trend.",
-  "Use the Water Tracker goal to match your body weight ÷ 2 in ounces as a starting point.",
-  "Tap the ☀/🌙 button in the top bar to switch between Light and Dark mode anytime.",
+const PLATFORM_CARDS = [
+  {
+    icon: "smartphone" as const,
+    title: "iPhone (iOS)",
+    subtitle: "Install from the App Store",
+    steps: [
+      "Open Safari and visit prepfit.fit",
+      'Tap the Share icon (square with arrow)',
+      'Tap "Add to Home Screen"',
+      'Tap "Add" — PrepFit appears on your home screen',
+    ],
+    color: "#007AFF",
+  },
+  {
+    icon: "smartphone" as const,
+    title: "Android",
+    subtitle: "Install via Chrome / Play Store",
+    steps: [
+      "Open Chrome and visit prepfit.fit",
+      'Tap the ⋮ menu in the top-right',
+      'Tap "Add to Home Screen" or "Install App"',
+      "Tap Add — PrepFit is now installed",
+    ],
+    color: "#34A853",
+  },
 ];
+
+function AccordionItem({ section }: { section: AccordionSection }) {
+  const [open, setOpen] = useState(false);
+  const colors = useColors();
+  const s = accordionStyles(colors);
+
+  return (
+    <View style={s.item}>
+      <Pressable style={s.header} onPress={() => setOpen((v) => !v)}>
+        <View style={s.iconWrap}>
+          <Feather name={section.icon} size={17} color={colors.primary} />
+        </View>
+        <Text style={s.title}>{section.title}</Text>
+        <Feather
+          name={open ? "chevron-up" : "chevron-down"}
+          size={16}
+          color={colors.mutedForeground}
+        />
+      </Pressable>
+      {open && <Text style={s.content}>{section.content}</Text>}
+    </View>
+  );
+}
 
 export default function GuideScreen() {
   const colors = useColors();
@@ -89,59 +127,55 @@ export default function GuideScreen() {
       showsVerticalScrollIndicator={false}
       contentContainerStyle={s.content}
     >
-      {/* Header */}
-      <View style={s.header}>
-        <Text style={s.headerTitle}>User Guide</Text>
-        <Text style={s.headerSub}>Read Me First — everything you need to know</Text>
-      </View>
-
-      {/* Welcome card */}
-      <View style={s.welcomeCard}>
-        <Text style={s.welcomeTitle}>👋 Welcome to PrepFit!</Text>
-        <Text style={s.welcomeText}>
-          PrepFit is your all-in-one gym and nutrition companion. Use the
-          scrollable tab bar at the bottom to jump between features. Here's
-          what each one does:
+      {/* Hero card */}
+      <View style={s.heroCard}>
+        <View style={s.heroTop}>
+          <View style={s.heroIconWrap}>
+            <Text style={{ fontSize: 32 }}>🥗</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={s.heroEyebrow}>Complete Guide</Text>
+            <Text style={s.heroTitle}>PrepFit</Text>
+            <Text style={s.heroSub}>User Guide</Text>
+          </View>
+        </View>
+        <Text style={s.heroDesc}>
+          Everything you need to know to get the most out of PrepFit — your AI-powered meal prep and health tracking companion.
         </Text>
       </View>
 
-      {/* Features */}
-      <Text style={s.sectionTitle}>Features</Text>
-      {FEATURES.map((f) => (
-        <View key={f.title} style={s.featureCard}>
-          <View style={s.featureIcon}>
-            {f.family === "community" ? (
-              <MaterialCommunityIcons
-                name={f.icon as MCIName}
-                size={22}
-                color={colors.primary}
-              />
-            ) : (
-              <Feather name={f.icon as FeatherName} size={22} color={colors.primary} />
-            )}
-          </View>
-          <View style={s.featureText}>
-            <Text style={s.featureTitle}>{f.title}</Text>
-            <Text style={s.featureDesc}>{f.desc}</Text>
-          </View>
-        </View>
-      ))}
-
-      {/* Tips */}
-      <Text style={s.sectionTitle}>Tips &amp; Tricks</Text>
-      <View style={s.tipsCard}>
-        {TIPS.map((tip, i) => (
-          <View key={i} style={s.tipRow}>
-            <View style={s.tipBullet}>
-              <Text style={s.tipNum}>{i + 1}</Text>
+      {/* Platform Support */}
+      <Text style={s.sectionLabel}>Platform Support</Text>
+      <View style={s.platformRow}>
+        {PLATFORM_CARDS.map((card) => (
+          <View key={card.title} style={s.platformCard}>
+            <View style={[s.platformIconWrap, { backgroundColor: `${card.color}22` }]}>
+              <Feather name={card.icon} size={20} color={card.color} />
             </View>
-            <Text style={s.tipText}>{tip}</Text>
+            <Text style={s.platformTitle}>{card.title}</Text>
+            <Text style={s.platformSubtitle}>{card.subtitle}</Text>
+            {card.steps.map((step, i) => (
+              <View key={i} style={s.stepRow}>
+                <View style={[s.stepNum, { backgroundColor: card.color }]}>
+                  <Text style={s.stepNumText}>{i + 1}</Text>
+                </View>
+                <Text style={s.stepText}>{step}</Text>
+              </View>
+            ))}
           </View>
         ))}
       </View>
 
+      {/* Feature Guide accordion */}
+      <Text style={s.sectionLabel}>Feature Guide</Text>
+      <View style={s.accordion}>
+        {ACCORDION_SECTIONS.map((section) => (
+          <AccordionItem key={section.title} section={section} />
+        ))}
+      </View>
+
       {/* Support */}
-      <Text style={s.sectionTitle}>Support</Text>
+      <Text style={s.sectionLabel}>Support</Text>
       <View style={s.supportCard}>
         <Text style={s.supportText}>
           Have a question or ran into an issue? We're here to help.
@@ -158,139 +192,185 @@ export default function GuideScreen() {
           onPress={() => Linking.openURL("https://prepfit.fit")}
         >
           <Feather name="globe" size={16} color={colors.primary} />
-          <Text style={[s.supportBtnText, { color: colors.primary }]}>
-            Visit prepfit.fit
-          </Text>
+          <Text style={[s.supportBtnText, { color: colors.primary }]}>Visit prepfit.fit</Text>
         </Pressable>
       </View>
 
-      <View style={{ height: 32 }} />
+      <View style={{ height: 40 }} />
     </ScrollView>
   );
 }
 
-function styles(colors: ReturnType<typeof useColors>) {
-  return StyleSheet.create({
+const accordionStyles = (colors: ReturnType<typeof useColors>) =>
+  StyleSheet.create({
+    item: {
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 14,
+      paddingHorizontal: 14,
+      gap: 10,
+    },
+    iconWrap: {
+      width: 32,
+      height: 32,
+      borderRadius: 8,
+      backgroundColor: colors.accent,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    title: {
+      flex: 1,
+      fontSize: 15,
+      fontFamily: "Inter_600SemiBold",
+      color: colors.foreground,
+    },
+    content: {
+      fontSize: 13,
+      fontFamily: "Inter_400Regular",
+      color: colors.mutedForeground,
+      lineHeight: 20,
+      paddingHorizontal: 14,
+      paddingBottom: 14,
+      paddingTop: 2,
+    },
+  });
+
+const styles = (colors: ReturnType<typeof useColors>) =>
+  StyleSheet.create({
     root: { flex: 1 },
     content: { paddingBottom: 24 },
-    header: {
+
+    heroCard: {
       backgroundColor: colors.sidebar,
-      paddingHorizontal: 20,
-      paddingTop: 20,
-      paddingBottom: 22,
+      marginHorizontal: 16,
+      marginTop: 16,
+      borderRadius: colors.radius,
+      padding: 18,
     },
-    headerTitle: {
-      fontSize: 26,
+    heroTop: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 14,
+      marginBottom: 12,
+    },
+    heroIconWrap: {
+      width: 60,
+      height: 60,
+      borderRadius: 16,
+      backgroundColor: "rgba(255,255,255,0.12)",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    heroEyebrow: {
+      fontSize: 11,
+      fontFamily: "Inter_600SemiBold",
+      color: colors.primary,
+      textTransform: "uppercase",
+      letterSpacing: 0.8,
+      marginBottom: 2,
+    },
+    heroTitle: {
+      fontSize: 22,
       fontFamily: "Inter_700Bold",
-      color: "#fff",
-      marginBottom: 4,
+      color: "#FFFFFF",
+      lineHeight: 26,
     },
-    headerSub: {
-      fontSize: 13,
+    heroSub: {
+      fontSize: 14,
       fontFamily: "Inter_400Regular",
       color: "rgba(255,255,255,0.6)",
     },
-    welcomeCard: {
-      margin: 16,
-      marginBottom: 4,
-      backgroundColor: colors.card,
-      borderRadius: colors.radius,
-      padding: 18,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    welcomeTitle: {
-      fontSize: 16,
-      fontFamily: "Inter_700Bold",
-      color: colors.foreground,
-      marginBottom: 8,
-    },
-    welcomeText: {
-      fontSize: 14,
+    heroDesc: {
+      fontSize: 13,
       fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-      lineHeight: 21,
+      color: "rgba(255,255,255,0.7)",
+      lineHeight: 20,
     },
-    sectionTitle: {
+
+    sectionLabel: {
       fontSize: 13,
       fontFamily: "Inter_600SemiBold",
       color: colors.primary,
       textTransform: "uppercase",
       letterSpacing: 0.8,
-      marginTop: 20,
-      marginBottom: 8,
-      marginHorizontal: 16,
-    },
-    featureCard: {
-      flexDirection: "row",
-      alignItems: "flex-start",
-      marginHorizontal: 16,
+      marginTop: 24,
       marginBottom: 10,
-      backgroundColor: colors.card,
-      borderRadius: colors.radius,
-      padding: 14,
-      borderWidth: 1,
-      borderColor: colors.border,
-      gap: 12,
-    },
-    featureIcon: {
-      width: 44,
-      height: 44,
-      borderRadius: 12,
-      backgroundColor: colors.accent,
-      alignItems: "center",
-      justifyContent: "center",
-      flexShrink: 0,
-    },
-    featureText: { flex: 1 },
-    featureTitle: {
-      fontSize: 15,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.foreground,
-      marginBottom: 4,
-    },
-    featureDesc: {
-      fontSize: 13,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-      lineHeight: 19,
-    },
-    tipsCard: {
       marginHorizontal: 16,
+    },
+
+    platformRow: {
+      gap: 10,
+      paddingHorizontal: 16,
+    },
+    platformCard: {
       backgroundColor: colors.card,
       borderRadius: colors.radius,
       padding: 16,
       borderWidth: 1,
       borderColor: colors.border,
-      gap: 14,
+      marginBottom: 2,
     },
-    tipRow: {
+    platformIconWrap: {
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 8,
+    },
+    platformTitle: {
+      fontSize: 16,
+      fontFamily: "Inter_700Bold",
+      color: colors.foreground,
+      marginBottom: 2,
+    },
+    platformSubtitle: {
+      fontSize: 13,
+      fontFamily: "Inter_400Regular",
+      color: colors.mutedForeground,
+      marginBottom: 12,
+    },
+    stepRow: {
       flexDirection: "row",
       alignItems: "flex-start",
-      gap: 12,
+      gap: 10,
+      marginBottom: 8,
     },
-    tipBullet: {
-      width: 24,
-      height: 24,
-      borderRadius: 12,
-      backgroundColor: colors.primary,
+    stepNum: {
+      width: 20,
+      height: 20,
+      borderRadius: 10,
       alignItems: "center",
       justifyContent: "center",
       flexShrink: 0,
       marginTop: 1,
     },
-    tipNum: {
-      fontSize: 12,
+    stepNumText: {
+      fontSize: 11,
       fontFamily: "Inter_700Bold",
-      color: "#fff",
+      color: "#FFF",
     },
-    tipText: {
+    stepText: {
       flex: 1,
       fontSize: 13,
       fontFamily: "Inter_400Regular",
       color: colors.mutedForeground,
       lineHeight: 19,
     },
+
+    accordion: {
+      marginHorizontal: 16,
+      backgroundColor: colors.card,
+      borderRadius: colors.radius,
+      borderWidth: 1,
+      borderColor: colors.border,
+      overflow: "hidden",
+    },
+
     supportCard: {
       marginHorizontal: 16,
       backgroundColor: colors.card,
@@ -326,4 +406,3 @@ function styles(colors: ReturnType<typeof useColors>) {
       color: "#fff",
     },
   });
-}

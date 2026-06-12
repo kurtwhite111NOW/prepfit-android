@@ -82,7 +82,7 @@ export default function SignUpScreen() {
       >
         <View style={s.header}>
           <View style={s.iconWrap}>
-            <Text style={s.iconText}>💪</Text>
+            <Text style={s.iconText}>👍</Text>
           </View>
           <Text style={s.brand}>PrepFit</Text>
           <Text style={s.tagline}>Start your fitness journey</Text>

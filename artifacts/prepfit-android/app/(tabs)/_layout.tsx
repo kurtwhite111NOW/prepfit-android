@@ -18,9 +18,12 @@ function AppBar() {
   return (
     <View style={[s.appbar, { paddingTop: insets.top }]}>
       <View style={s.appbarInner}>
-        <View>
-          <Text style={s.brand}>PrepFit</Text>
-          <Text style={s.brandSub}>Simple Meal Prep</Text>
+        <View style={s.brandRow}>
+          <Text style={s.brandEmoji}>🔥</Text>
+          <View>
+            <Text style={s.brand}>PrepFit</Text>
+            <Text style={s.brandSub}>Simple Meal Prep · Gym & Fitness</Text>
+          </View>
         </View>
         <Pressable onPress={toggleTheme} hitSlop={14} style={s.toggleBtn}>
           <Feather
@@ -74,6 +77,14 @@ const s = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
   },
+  brandRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  brandEmoji: {
+    fontSize: 22,
+  },
   brand: {
     fontSize: 20,
     fontFamily: "Inter_700Bold",
@@ -81,7 +92,7 @@ const s = StyleSheet.create({
     letterSpacing: 0.4,
   },
   brandSub: {
-    fontSize: 11,
+    fontSize: 10,
     fontFamily: "Inter_400Regular",
     color: "rgba(255,255,255,0.82)",
     marginTop: 1,

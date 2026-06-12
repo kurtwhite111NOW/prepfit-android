@@ -18,17 +18,24 @@ import {
   Text,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+const QUICK_ACTIONS = [
+  { icon: "calendar",       label: "Build a Meal Plan",  route: "/(tabs)/planner", family: "feather",    emoji: "🍽" },
+  { icon: "camera",         label: "Scan a Meal",        route: "/(tabs)/scan",    family: "feather",    emoji: "📷" },
+  { icon: "shopping-cart",  label: "Grocery List",       route: "/(tabs)/grocery", family: "feather",    emoji: "🛒" },
+  { icon: "water",          label: "Water Tracker",      route: "/(tabs)/water",   family: "community",  emoji: "💧" },
+  { icon: "trending-up",    label: "Track Weight",       route: "/(tabs)/weight",  family: "feather",    emoji: "📈" },
+  { icon: "clipboard",      label: "Saved Plans",        route: "/(tabs)/plans",   family: "feather",    emoji: "🔖" },
+];
+
 export default function DashboardScreen() {
   const { user } = useUser();
   const { signOut } = useClerk();
   const colors = useColors();
-  const insets = useSafeAreaInsets();
   const router = useRouter();
 
   const { data: plans, isLoading: plansLoading } = useQuery({
@@ -44,22 +51,12 @@ export default function DashboardScreen() {
   const now = new Date();
   const dayName = DAYS[now.getDay()];
   const dateStr = `${MONTHS[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+  const greeting =
+    now.getHours() < 12 ? "Good morning" : now.getHours() < 17 ? "Good afternoon" : "Good evening";
 
   const displayName = user?.firstName || user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] || "Athlete";
   const activePlan = plans?.[0] ?? null;
   const latestWeight = weightEntries?.[0];
-
-  const greeting =
-    now.getHours() < 12 ? "Good morning" : now.getHours() < 17 ? "Good afternoon" : "Good evening";
-
-  const quickActions = [
-    { icon: "calendar", label: "Meal Plan", route: "/(tabs)/planner", family: "feather" },
-    { icon: "camera", label: "Scan Meal", route: "/(tabs)/scan", family: "feather" },
-    { icon: "shopping-cart", label: "Grocery", route: "/(tabs)/grocery", family: "feather" },
-    { icon: "trending-up", label: "Weight", route: "/(tabs)/weight", family: "feather" },
-    { icon: "water", label: "Water", route: "/(tabs)/water", family: "community" },
-    { icon: "clipboard", label: "Plans", route: "/(tabs)/plans", family: "feather" },
-  ];
 
   const s = styles(colors);
 
@@ -69,15 +66,15 @@ export default function DashboardScreen() {
       contentInsetAdjustmentBehavior="automatic"
       showsVerticalScrollIndicator={false}
     >
-      <View style={[s.hero, { paddingTop: 20 }]}>
+      {/* Hero */}
+      <View style={s.hero}>
         <View style={s.heroRow}>
-          <View>
+          <View style={{ flex: 1 }}>
             <Text style={s.greeting}>{greeting},</Text>
             <Text style={s.name}>{displayName} 💪</Text>
             <Text style={s.date}>{dayName}, {dateStr}</Text>
           </View>
           <Pressable
-            style={s.avatarBtn}
             onPress={() =>
               Alert.alert("Account", `Signed in as ${user?.emailAddresses?.[0]?.emailAddress}`, [
                 { text: "Sign Out", style: "destructive", onPress: () => signOut() },
@@ -91,61 +88,28 @@ export default function DashboardScreen() {
           </Pressable>
         </View>
 
+        {/* Quick stats strip */}
         <View style={s.statsRow}>
-          <View style={[s.statCard, { backgroundColor: "rgba(255,255,255,0.12)" }]}>
-            <Text style={s.statValue}>{plans?.length ?? 0}</Text>
-            <Text style={s.statLabel}>Plans</Text>
+          <View style={s.statPill}>
+            <Text style={s.statPillVal}>{plans?.length ?? 0}</Text>
+            <Text style={s.statPillLabel}>Plans</Text>
           </View>
-          <View style={[s.statCard, { backgroundColor: "rgba(255,255,255,0.12)" }]}>
-            <Text style={s.statValue}>{activePlan?.dailyCalories ?? "—"}</Text>
-            <Text style={s.statLabel}>Daily kcal</Text>
+          <View style={s.statPill}>
+            <Text style={s.statPillVal}>{activePlan?.dailyCalories ?? "—"}</Text>
+            <Text style={s.statPillLabel}>kcal goal</Text>
           </View>
-          <View style={[s.statCard, { backgroundColor: "rgba(255,255,255,0.12)" }]}>
-            <Text style={s.statValue}>{latestWeight ? `${latestWeight.weight}` : "—"}</Text>
-            <Text style={s.statLabel}>{latestWeight?.unit ?? "lbs"}</Text>
+          <View style={s.statPill}>
+            <Text style={s.statPillVal}>{latestWeight ? `${latestWeight.weight}` : "—"}</Text>
+            <Text style={s.statPillLabel}>{latestWeight?.unit ?? "lbs"}</Text>
           </View>
         </View>
       </View>
 
+      {/* What do you want to do */}
       <View style={s.section}>
-        {plansLoading ? (
-          <View style={[s.planCard, { justifyContent: "center", alignItems: "center", height: 100 }]}>
-            <ActivityIndicator color={colors.primary} />
-          </View>
-        ) : activePlan ? (
-          <Pressable
-            style={({ pressed }) => [s.planCard, { opacity: pressed ? 0.9 : 1 }]}
-            onPress={() => router.push("/(tabs)/planner" as never)}
-          >
-            <View style={s.planCardHeader}>
-              <View style={s.planIconWrap}>
-                <Feather name="zap" size={18} color={colors.primary} />
-              </View>
-              <Text style={s.planCardLabel}>Active Plan</Text>
-            </View>
-            <Text style={s.planName}>{activePlan.name}</Text>
-            <View style={s.planMeta}>
-              <Text style={s.planMetaText}>{activePlan.mealsPerDay} meals/day</Text>
-              <View style={s.dot} />
-              <Text style={s.planMetaText}>{activePlan.dailyCalories} kcal/day</Text>
-            </View>
-          </Pressable>
-        ) : (
-          <Pressable
-            style={({ pressed }) => [s.emptyPlan, { opacity: pressed ? 0.85 : 1 }]}
-            onPress={() => router.push("/(tabs)/planner" as never)}
-          >
-            <Feather name="plus-circle" size={28} color={colors.primary} />
-            <Text style={s.emptyPlanText}>Create your first meal plan</Text>
-            <Text style={s.emptyPlanSub}>AI-powered plans in seconds</Text>
-          </Pressable>
-        )}
-      </View>
-
-      <View style={s.section}>
-        <Text style={s.sectionTitle}>Quick Actions</Text>
+        <Text style={s.sectionTitle}>What do you want to do?</Text>
         <View style={s.grid}>
-          {quickActions.map((action) => (
+          {QUICK_ACTIONS.map((action) => (
             <Pressable
               key={action.label}
               style={({ pressed }) => [s.actionCard, { opacity: pressed ? 0.85 : 1 }]}
@@ -164,6 +128,60 @@ export default function DashboardScreen() {
         </View>
       </View>
 
+      {/* Your Current Plan */}
+      <View style={s.section}>
+        <Text style={s.sectionTitle}>Your Current Plan</Text>
+        {plansLoading ? (
+          <View style={[s.planCard, { justifyContent: "center", alignItems: "center", height: 100 }]}>
+            <ActivityIndicator color={colors.primary} />
+          </View>
+        ) : activePlan ? (
+          <Pressable
+            style={({ pressed }) => [s.planCard, { opacity: pressed ? 0.9 : 1 }]}
+            onPress={() => router.push("/(tabs)/planner" as never)}
+          >
+            <View style={s.planCardHeader}>
+              <View style={s.planIconWrap}>
+                <Feather name="zap" size={18} color={colors.primary} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={s.planName}>{activePlan.name}</Text>
+                <View style={s.planMeta}>
+                  <Text style={s.planMetaText}>{activePlan.mealsPerDay} meals/day</Text>
+                  <View style={s.dot} />
+                  <Text style={s.planMetaText}>{activePlan.dailyCalories} kcal/day</Text>
+                </View>
+              </View>
+              <Feather name="chevron-right" size={16} color={colors.mutedForeground} />
+            </View>
+          </Pressable>
+        ) : (
+          <Pressable
+            style={({ pressed }) => [s.emptyPlan, { opacity: pressed ? 0.85 : 1 }]}
+            onPress={() => router.push("/(tabs)/planner" as never)}
+          >
+            <Feather name="plus-circle" size={28} color={colors.primary} />
+            <Text style={s.emptyPlanText}>Build My First Plan</Text>
+            <Text style={s.emptyPlanSub}>AI-powered meal plans in seconds</Text>
+          </Pressable>
+        )}
+      </View>
+
+      {/* Daily tip */}
+      <View style={s.section}>
+        <View style={s.tipCard}>
+          <View style={s.tipIconWrap}>
+            <Text style={{ fontSize: 18 }}>💡</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={s.tipTitle}>Daily Tip</Text>
+            <Text style={s.tipText}>
+              Start with the Meal Planner to generate your first plan — your Grocery List fills in automatically.
+            </Text>
+          </View>
+        </View>
+      </View>
+
       <View style={{ height: 100 }} />
     </ScrollView>
   );
@@ -175,6 +193,7 @@ const styles = (colors: ReturnType<typeof useColors>) =>
     hero: {
       backgroundColor: colors.sidebar,
       paddingHorizontal: 20,
+      paddingTop: 20,
       paddingBottom: 24,
     },
     heroRow: {
@@ -200,7 +219,6 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       color: "rgba(255,255,255,0.5)",
       marginTop: 4,
     },
-    avatarBtn: {},
     avatar: {
       width: 44,
       height: 44,
@@ -218,18 +236,19 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       flexDirection: "row",
       gap: 10,
     },
-    statCard: {
+    statPill: {
       flex: 1,
       borderRadius: 12,
       padding: 12,
       alignItems: "center",
+      backgroundColor: "rgba(255,255,255,0.12)",
     },
-    statValue: {
+    statPillVal: {
       fontSize: 20,
       fontFamily: "Inter_700Bold",
       color: "#FFFFFF",
     },
-    statLabel: {
+    statPillLabel: {
       fontSize: 11,
       fontFamily: "Inter_400Regular",
       color: "rgba(255,255,255,0.6)",
@@ -244,77 +263,6 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       fontFamily: "Inter_600SemiBold",
       color: colors.foreground,
       marginBottom: 12,
-    },
-    planCard: {
-      backgroundColor: colors.card,
-      borderRadius: colors.radius,
-      padding: 16,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    planCardHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginBottom: 10,
-      gap: 8,
-    },
-    planIconWrap: {
-      width: 30,
-      height: 30,
-      borderRadius: 8,
-      backgroundColor: colors.accent,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    planCardLabel: {
-      fontSize: 12,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.primary,
-      textTransform: "uppercase",
-      letterSpacing: 0.5,
-    },
-    planName: {
-      fontSize: 18,
-      fontFamily: "Inter_700Bold",
-      color: colors.foreground,
-    },
-    planMeta: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginTop: 6,
-      gap: 8,
-    },
-    planMetaText: {
-      fontSize: 13,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-    },
-    dot: {
-      width: 4,
-      height: 4,
-      borderRadius: 2,
-      backgroundColor: colors.mutedForeground,
-    },
-    emptyPlan: {
-      backgroundColor: colors.card,
-      borderRadius: colors.radius,
-      padding: 24,
-      alignItems: "center",
-      borderWidth: 1.5,
-      borderStyle: "dashed",
-      borderColor: colors.primary,
-    },
-    emptyPlanText: {
-      fontSize: 16,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.foreground,
-      marginTop: 10,
-    },
-    emptyPlanSub: {
-      fontSize: 13,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-      marginTop: 4,
     },
     grid: {
       flexDirection: "row",
@@ -340,9 +288,105 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       marginBottom: 8,
     },
     actionLabel: {
-      fontSize: 12,
+      fontSize: 11,
       fontFamily: "Inter_500Medium",
       color: colors.foreground,
       textAlign: "center",
+    },
+    planCard: {
+      backgroundColor: colors.card,
+      borderRadius: colors.radius,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    planCardHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+    },
+    planIconWrap: {
+      width: 36,
+      height: 36,
+      borderRadius: 10,
+      backgroundColor: colors.accent,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    planName: {
+      fontSize: 16,
+      fontFamily: "Inter_700Bold",
+      color: colors.foreground,
+    },
+    planMeta: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginTop: 3,
+      gap: 6,
+    },
+    planMetaText: {
+      fontSize: 12,
+      fontFamily: "Inter_400Regular",
+      color: colors.mutedForeground,
+    },
+    dot: {
+      width: 3,
+      height: 3,
+      borderRadius: 1.5,
+      backgroundColor: colors.mutedForeground,
+    },
+    emptyPlan: {
+      backgroundColor: colors.card,
+      borderRadius: colors.radius,
+      padding: 28,
+      alignItems: "center",
+      borderWidth: 1.5,
+      borderStyle: "dashed",
+      borderColor: colors.primary,
+    },
+    emptyPlanText: {
+      fontSize: 16,
+      fontFamily: "Inter_600SemiBold",
+      color: colors.foreground,
+      marginTop: 10,
+    },
+    emptyPlanSub: {
+      fontSize: 13,
+      fontFamily: "Inter_400Regular",
+      color: colors.mutedForeground,
+      marginTop: 4,
+      textAlign: "center",
+    },
+    tipCard: {
+      backgroundColor: colors.card,
+      borderRadius: colors.radius,
+      padding: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      flexDirection: "row",
+      gap: 12,
+      alignItems: "flex-start",
+    },
+    tipIconWrap: {
+      width: 36,
+      height: 36,
+      borderRadius: 10,
+      backgroundColor: colors.accent,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    tipTitle: {
+      fontSize: 13,
+      fontFamily: "Inter_600SemiBold",
+      color: colors.primary,
+      marginBottom: 4,
+      textTransform: "uppercase",
+      letterSpacing: 0.6,
+    },
+    tipText: {
+      fontSize: 13,
+      fontFamily: "Inter_400Regular",
+      color: colors.mutedForeground,
+      lineHeight: 19,
     },
   });
