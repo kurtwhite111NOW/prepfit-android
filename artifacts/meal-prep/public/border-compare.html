@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#E8E4DF; font-family: -apple-system, sans-serif; padding: 24px; display:flex; gap:20px; justify-content:center; align-items:flex-start; }
+
+.col { display:flex; flex-direction:column; align-items:center; gap:10px; }
+.label { font-size:13px; font-weight:700; color:#444; letter-spacing:.5px; text-transform:uppercase; }
+.verdict { font-size:12px; color:#888; text-align:center; max-width:160px; line-height:1.4; }
+
+/* Phone frame */
+.phone {
+  width: 200px; height: 430px;
+  border-radius: 32px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.22);
+  position: relative;
+  background: #F7F4F0;
+  display: flex; flex-direction: column;
+}
+
+/* Option A — no border */
+.phone-a {}
+
+/* Option B — full frame (2px inside) */
+.phone-b { outline: 2.5px solid #F26B1D; outline-offset: -2.5px; }
+
+/* Option C — top stripe only */
+.phone-c .top-stripe {
+  height: 3px; background: #F26B1D; flex-shrink: 0;
+}
+
+/* Shared inner content */
+.status-bar { height:18px; background:#12151A; display:flex; align-items:center; justify-content:space-between; padding: 0 12px; flex-shrink:0; }
+.status-dot { width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.4); }
+.status-time { font-size:8px; color:rgba(255,255,255,.6); font-weight:600; }
+
+.hero { background:#12151A; padding:14px; flex-shrink:0; }
+.hero-date { font-size:9px; font-weight:700; color:#F26B1D; letter-spacing:.6px; margin-bottom:6px; }
+.hero-title { font-size:18px; font-weight:800; color:#fff; line-height:1.2; }
+.hero-sub { font-size:8px; color:rgba(255,255,255,.55); margin-top:3px; display:flex; align-items:center; gap:3px; }
+.hero-sub span { color:#F26B1D; font-weight:600; }
+.calorie-pill-sm { display:inline-flex; align-items:center; gap:3px; margin-top:5px; background:rgba(242,107,29,.15); border-radius:100px; padding:2px 8px; font-size:7.5px; font-weight:600; color:#F26B1D; }
+
+.content { flex:1; padding:12px; }
+.section-lbl { font-size:8px; font-weight:700; color:#9CA3AF; letter-spacing:.7px; margin-bottom:8px; }
+.grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
+.card { background:#fff; border-radius:10px; padding:8px 6px; display:flex; flex-direction:column; align-items:center; gap:3px; }
+.card-icon { font-size:16px; }
+.card-lbl { font-size:7px; font-weight:600; color:#1A1A1A; text-align:center; }
+.card-sub { font-size:6px; color:#9CA3AF; text-align:center; }
+
+.navbar { background:#12151A; height:46px; display:flex; align-items:center; justify-content:space-around; flex-shrink:0; }
+.nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; opacity:.45; }
+.nav-item.active { opacity:1; }
+.nav-dot { width:18px; height:2px; background:#F26B1D; border-radius:2px; }
+.nav-icon { font-size:13px; }
+.nav-lbl { font-size:6px; color:rgba(255,255,255,.7); font-weight:600; }
+.nav-item.active .nav-lbl { color:#F26B1D; }
+</style>
+</head>
+<body>
+
+<!-- A: Nothing (current) -->
+<div class="col">
+  <div class="label">A — Current</div>
+  <div class="phone phone-a">
+    <div class="status-bar"><div class="status-time">9:41</div><div class="status-dot"></div></div>
+    <div class="hero">
+      <div class="hero-date">FRIDAY, JUNE 13</div>
+      <div class="hero-title">💪 Let's crush<br>today!</div>
+      <div class="hero-sub">⚡ <span>Active: Summer Shred</span></div>
+      <div class="calorie-pill-sm">🔥 480 kcal scanned today ›</div>
+    </div>
+    <div class="content">
+      <div class="section-lbl">WHAT DO YOU WANT TO DO?</div>
+      <div class="grid">
+        <div class="card"><div class="card-icon">📅</div><div class="card-lbl">Build a Meal Plan</div><div class="card-sub">Smart plans</div></div>
+        <div class="card"><div class="card-icon">📷</div><div class="card-lbl">Scan a Meal</div><div class="card-sub">480 kcal today</div></div>
+        <div class="card"><div class="card-icon">🛒</div><div class="card-lbl">Grocery List</div><div class="card-sub">What to buy</div></div>
+        <div class="card"><div class="card-icon">💧</div><div class="card-lbl">Water Tracker</div><div class="card-sub">3/8 glasses</div></div>
+        <div class="card"><div class="card-icon">⚖️</div><div class="card-lbl">Track Weight</div><div class="card-sub">Log progress</div></div>
+        <div class="card"><div class="card-icon">🔖</div><div class="card-lbl">Saved Plans</div><div class="card-sub">History</div></div>
+      </div>
+    </div>
+    <div class="navbar">
+      <div class="nav-item active"><div class="nav-dot"></div><div class="nav-icon">🏠</div><div class="nav-lbl">HOME</div></div>
+      <div class="nav-item"><div class="nav-icon">📅</div><div class="nav-lbl">MEAL</div></div>
+      <div class="nav-item"><div class="nav-icon">🛒</div><div class="nav-lbl">GROCERY</div></div>
+      <div class="nav-item"><div class="nav-icon">🍽</div><div class="nav-lbl">MEALS</div></div>
+      <div class="nav-item"><div class="nav-icon">📷</div><div class="nav-lbl">SCAN</div></div>
+    </div>
+  </div>
+  <div class="verdict">Clean. Orange lives where it belongs.</div>
+</div>
+
+<!-- B: Full frame border -->
+<div class="col">
+  <div class="label">B — Full Frame</div>
+  <div class="phone phone-b">
+    <div class="status-bar"><div class="status-time">9:41</div><div class="status-dot"></div></div>
+    <div class="hero">
+      <div class="hero-date">FRIDAY, JUNE 13</div>
+      <div class="hero-title">💪 Let's crush<br>today!</div>
+      <div class="hero-sub">⚡ <span>Active: Summer Shred</span></div>
+      <div class="calorie-pill-sm">🔥 480 kcal scanned today ›</div>
+    </div>
+    <div class="content">
+      <div class="section-lbl">WHAT DO YOU WANT TO DO?</div>
+      <div class="grid">
+        <div class="card"><div class="card-icon">📅</div><div class="card-lbl">Build a Meal Plan</div><div class="card-sub">Smart plans</div></div>
+        <div class="card"><div class="card-icon">📷</div><div class="card-lbl">Scan a Meal</div><div class="card-sub">480 kcal today</div></div>
+        <div class="card"><div class="card-icon">🛒</div><div class="card-lbl">Grocery List</div><div class="card-sub">What to buy</div></div>
+        <div class="card"><div class="card-icon">💧</div><div class="card-lbl">Water Tracker</div><div class="card-sub">3/8 glasses</div></div>
+        <div class="card"><div class="card-icon">⚖️</div><div class="card-lbl">Track Weight</div><div class="card-sub">Log progress</div></div>
+        <div class="card"><div class="card-icon">🔖</div><div class="card-lbl">Saved Plans</div><div class="card-sub">History</div></div>
+      </div>
+    </div>
+    <div class="navbar">
+      <div class="nav-item active"><div class="nav-dot"></div><div class="nav-icon">🏠</div><div class="nav-lbl">HOME</div></div>
+      <div class="nav-item"><div class="nav-icon">📅</div><div class="nav-lbl">MEAL</div></div>
+      <div class="nav-item"><div class="nav-icon">🛒</div><div class="nav-lbl">GROCERY</div></div>
+      <div class="nav-item"><div class="nav-icon">🍽</div><div class="nav-lbl">MEALS</div></div>
+      <div class="nav-item"><div class="nav-icon">📷</div><div class="nav-lbl">SCAN</div></div>
+    </div>
+  </div>
+  <div class="verdict">Feels like a web widget, not an app. Too "framed".</div>
+</div>
+
+<!-- C: Top stripe only -->
+<div class="col">
+  <div class="label">C — Top Stripe</div>
+  <div class="phone phone-c">
+    <div class="top-stripe"></div>
+    <div class="status-bar"><div class="status-time">9:41</div><div class="status-dot"></div></div>
+    <div class="hero">
+      <div class="hero-date">FRIDAY, JUNE 13</div>
+      <div class="hero-title">💪 Let's crush<br>today!</div>
+      <div class="hero-sub">⚡ <span>Active: Summer Shred</span></div>
+      <div class="calorie-pill-sm">🔥 480 kcal scanned today ›</div>
+    </div>
+    <div class="content">
+      <div class="section-lbl">WHAT DO YOU WANT TO DO?</div>
+      <div class="grid">
+        <div class="card"><div class="card-icon">📅</div><div class="card-lbl">Build a Meal Plan</div><div class="card-sub">Smart plans</div></div>
+        <div class="card"><div class="card-icon">📷</div><div class="card-lbl">Scan a Meal</div><div class="card-sub">480 kcal today</div></div>
+        <div class="card"><div class="card-icon">🛒</div><div class="card-lbl">Grocery List</div><div class="card-sub">What to buy</div></div>
+        <div class="card"><div class="card-icon">💧</div><div class="card-lbl">Water Tracker</div><div class="card-sub">3/8 glasses</div></div>
+        <div class="card"><div class="card-icon">⚖️</div><div class="card-lbl">Track Weight</div><div class="card-sub">Log progress</div></div>
+        <div class="card"><div class="card-icon">🔖</div><div class="card-lbl">Saved Plans</div><div class="card-sub">History</div></div>
+      </div>
+    </div>
+    <div class="navbar">
+      <div class="nav-item active"><div class="nav-dot"></div><div class="nav-icon">🏠</div><div class="nav-lbl">HOME</div></div>
+      <div class="nav-item"><div class="nav-icon">📅</div><div class="nav-lbl">MEAL</div></div>
+      <div class="nav-item"><div class="nav-icon">🛒</div><div class="nav-lbl">GROCERY</div></div>
+      <div class="nav-item"><div class="nav-icon">🍽</div><div class="nav-lbl">MEALS</div></div>
+      <div class="nav-item"><div class="nav-icon">📷</div><div class="nav-lbl">SCAN</div></div>
+    </div>
+  </div>
+  <div class="verdict">Subtle accent. Feels native. Reinforces brand on every screen.</div>
+</div>
+
+</body>
+</html>
