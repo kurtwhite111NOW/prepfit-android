@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=430, initial-scale=1.0">
+<title>PrepFit Screens</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 430px;
+    min-height: 932px;
+    background: #12151A;
+    font-family: -apple-system, 'Inter', 'Segoe UI', sans-serif;
+    color: #FFFFFF;
+    overflow-x: hidden;
+  }
+  /* ── Tokens ── */
+  :root {
+    --bg: #12151A;
+    --card: #1C2029;
+    --sidebar: #0D1117;
+    --primary: #F26B1D;
+    --border: rgba(255,255,255,0.08);
+    --muted: rgba(255,255,255,0.45);
+    --radius: 14px;
+  }
+
+  /* ── Screen container ── */
+  .screen { display: none; flex-direction: column; min-height: 932px; background: var(--bg); position: relative; }
+  .screen.active { display: flex; }
+
+  /* ── AppBar ── */
+  .appbar {
+    background: var(--sidebar);
+    padding: 14px 20px 12px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .appbar-brand { display: flex; align-items: center; gap: 10px; }
+  .appbar-logo {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 900;
+  }
+  .appbar-name { font-size: 17px; font-weight: 700; }
+  .appbar-sub { font-size: 11px; color: var(--muted); }
+  .appbar-btn {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; border: none; cursor: pointer; color: #fff;
+  }
+
+  /* ── Page header ── */
+  .page-header {
+    background: var(--sidebar);
+    padding: 16px 20px 20px;
+  }
+  .page-title { font-size: 26px; font-weight: 700; }
+  .page-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  /* ── Bottom nav ── */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; width: 430px;
+    background: var(--sidebar);
+    border-top: 1px solid var(--border);
+    display: flex; align-items: stretch;
+    height: 70px; z-index: 100;
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 3px;
+    cursor: pointer; padding: 8px 4px;
+  }
+  .nav-item.active .nav-label { color: var(--primary); }
+  .nav-item.active .nav-icon { color: var(--primary); }
+  .nav-icon { font-size: 20px; color: var(--muted); }
+  .nav-label { font-size: 9px; font-weight: 600; color: var(--muted); letter-spacing: 0.3px; text-transform: uppercase; }
+  .nav-dot { width: 4px; height: 4px; border-radius: 2px; background: var(--primary); }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Pill / Badge ── */
+  .pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(242,107,29,0.15);
+    border-radius: 20px; padding: 4px 10px;
+    font-size: 12px; font-weight: 600; color: var(--primary);
+  }
+
+  /* ── Scroll area ── */
+  .scroll { flex: 1; overflow-y: auto; padding-bottom: 80px; }
+
+  /* ── Chip ── */
+  .chip {
+    display: inline-flex; align-items: center;
+    background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+    border-radius: 20px; padding: 5px 14px;
+    font-size: 13px; font-weight: 500; color: #fff; gap: 5px;
+  }
+  .chip.active { background: rgba(242,107,29,0.2); border-color: var(--primary); color: var(--primary); }
+
+  /* ═══════════════════════════════════════════════════════
+     SCREEN 1 — HOME DASHBOARD
+  ═══════════════════════════════════════════════════════ */
+  .hero {
+    background: var(--sidebar);
+    padding: 18px 20px 22px;
+  }
+  .hero-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .hero-date { font-size: 11px; font-weight: 700; color: var(--primary); letter-spacing: 0.9px; }
+  .avatar {
+    width: 40px; height: 40px; border-radius: 20px;
+    background: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700;
+  }
+  .hero-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; line-height: 1.2; }
+  .hero-plan { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 5px; margin-bottom: 18px; }
+  .hero-plan span { color: var(--primary); }
+  .stats-row { display: flex; gap: 8px; }
+  .stat-pill {
+    flex: 1; border-radius: 10px; padding: 10px 8px;
+    background: rgba(255,255,255,0.08);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .stat-val { font-size: 15px; font-weight: 700; }
+  .stat-label { font-size: 9px; color: var(--muted); margin-top: 2px; text-align: center; }
+
+  .section { padding: 18px 16px 0; }
+  .section-title { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 0.9px; margin-bottom: 12px; }
+  .section-row { display: flex; justify-content: space-between; align-items: center; }
+  .section-link { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 12px; }
+
+  .action-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .action-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 12px;
+  }
+  .action-icon {
+    width: 44px; height: 44px; border-radius: 13px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; margin-bottom: 8px;
+  }
+  .action-label { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+  .action-desc { font-size: 10px; color: var(--muted); line-height: 1.3; }
+
+  .plan-card-inner { display: flex; align-items: center; gap: 12px; }
+  .plan-icon-wrap {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: rgba(242,107,29,0.15);
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+    flex-shrink: 0;
+  }
+  .plan-name { font-size: 16px; font-weight: 700; }
+  .plan-meta { display: flex; gap: 6px; align-items: center; margin-top: 3px; }
+  .plan-meta-text { font-size: 12px; color: var(--muted); }
+  .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
+
+  .tip-card { display: flex; gap: 12px; align-items: flex-start; }
+  .tip-emoji { font-size: 22px; margin-top: 2px; }
+  .tip-label { font-size: 10px; font-weight: 700; color: var(--primary); letter-spacing: 0.8px; margin-bottom: 5px; }
+  .tip-text { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* ═══════════════════════════════════════════════════════
+     SCREEN 2 — MEAL PLANNER
+  ═══════════════════════════════════════════════════════ */
+  .planner-config {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px; margin: 16px 16px 0;
+  }
+  .config-label { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 10px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .meals-row { display: flex; gap: 8px; }
+  .meal-btn {
+    flex: 1; height: 42px; border-radius: 10px;
+    background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 600; color: #fff;
+  }
+  .meal-btn.active { background: rgba(242,107,29,0.2); border-color: var(--primary); color: var(--primary); }
+  .cal-input {
+    width: 100%; height: 48px; border-radius: 10px;
+    background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+    color: #fff; font-size: 16px; font-weight: 600;
+    padding: 0 14px; margin-top: 4px;
+  }
+  .gen-btn {
+    width: 100%; height: 52px; border-radius: 13px;
+    background: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; font-size: 16px; font-weight: 700; color: #fff;
+    margin: 14px 16px 0; width: calc(100% - 32px);
+    border: none; cursor: pointer;
+  }
+
+  .plan-result { margin: 14px 16px 0; }
+  .plan-result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .plan-result-title { font-size: 16px; font-weight: 700; }
+  .macro-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .macro-pill {
+    flex: 1; background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 8px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .macro-val { font-size: 15px; font-weight: 700; color: var(--primary); }
+  .macro-label { font-size: 9px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .meal-item {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px; margin-bottom: 10px;
+  }
+  .meal-item-header { display: flex; align-items: flex-start; gap: 10px; }
+  .meal-num-badge {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
+  }
+  .meal-item-name { font-size: 14px; font-weight: 600; }
+  .meal-item-desc { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+  .meal-cals { font-size: 16px; font-weight: 700; color: var(--primary); margin-left: auto; flex-shrink: 0; }
+
+  /* ═══════════════════════════════════════════════════════
+     SCREEN 3 — GROCERY LIST
+  ═══════════════════════════════════════════════════════ */
+  .plan-chips { display: flex; gap: 8px; padding: 14px 16px; flex-wrap: wrap; }
+
+  .grocery-cat { margin: 12px 16px 0; }
+  .grocery-cat-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px 10px 0 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+  }
+  .grocery-cat-icon { font-size: 18px; }
+  .grocery-cat-name { font-size: 14px; font-weight: 600; }
+  .grocery-cat-count { font-size: 11px; color: var(--muted); margin-left: auto; }
+
+  .grocery-items {
+    border: 1px solid var(--border); border-top: none;
+    border-radius: 0 0 10px 10px; overflow: hidden; margin-bottom: 12px;
+  }
+  .grocery-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 14px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+  }
+  .grocery-item:last-child { border-bottom: none; }
+  .checkbox {
+    width: 20px; height: 20px; border-radius: 6px;
+    border: 2px solid var(--border); flex-shrink: 0;
+    background: transparent;
+  }
+  .checkbox.checked {
+    background: var(--primary); border-color: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+  }
+  .item-name { font-size: 14px; font-weight: 500; flex: 1; }
+  .item-brand { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .item-qty { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+  /* ═══════════════════════════════════════════════════════
+     SCREEN 4 — MY MEALS
+  ═══════════════════════════════════════════════════════ */
+  .empty-state {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px; gap: 10px; text-align: center;
+  }
+  .empty-icon {
+    width: 80px; height: 80px; border-radius: 40px;
+    background: rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; margin-bottom: 8px;
+  }
+  .empty-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .empty-sub { font-size: 14px; color: var(--muted); line-height: 1.5; }
+  .empty-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--primary);
+    padding: 12px 24px; border-radius: 12px;
+    font-size: 15px; font-weight: 600; margin-top: 10px;
+    border: none; color: #fff; cursor: pointer;
+  }
+
+  .meal-card-row {
+    display: flex; background: var(--card);
+    border-radius: 12px; border: 1px solid var(--border);
+    overflow: hidden; margin-bottom: 10px;
+  }
+  .meal-photo {
+    width: 80px; height: 80px; flex-shrink: 0;
+    object-fit: cover;
+  }
+  .meal-photo-placeholder {
+    width: 80px; height: 80px;
+    background: rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+  }
+  .meal-card-body { flex: 1; padding: 10px; }
+  .meal-card-name { font-size: 14px; font-weight: 600; }
+  .meal-card-desc { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+  .meal-card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+  .meal-kcal { font-size: 13px; font-weight: 700; color: var(--primary); }
+  .meal-date { font-size: 11px; color: var(--muted); }
+
+  /* ═══════════════════════════════════════════════════════
+     SCREEN 5 — SCAN PHOTO
+  ═══════════════════════════════════════════════════════ */
+  .scan-container {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 20px 20px 60px; gap: 12px; text-align: center;
+  }
+  .scan-ring {
+    width: 110px; height: 110px; border-radius: 55px;
+    background: rgba(242,107,29,0.12);
+    border: 2px dashed rgba(242,107,29,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px; margin-bottom: 8px;
+  }
+  .scan-title { font-size: 20px; font-weight: 700; }
+  .scan-sub { font-size: 14px; color: var(--muted); padding: 0 20px; }
+  .scan-btn-row { display: flex; gap: 12px; margin-top: 8px; }
+  .scan-btn-primary {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--primary); padding: 14px 28px; border-radius: 12px;
+    font-size: 15px; font-weight: 600; color: #fff; border: none;
+  }
+  .scan-btn-outline {
+    display: flex; align-items: center; gap: 8px;
+    border: 1.5px solid var(--primary); padding: 14px 28px; border-radius: 12px;
+    font-size: 15px; font-weight: 600; color: var(--primary); background: transparent;
+  }
+  .scan-tip {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 16px; margin: 0 16px;
+    display: flex; gap: 10px; align-items: center;
+  }
+  .scan-tip-text { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ═══════════════════════════════════════════════════════
+     SCREEN 6 — WEIGHT TRACKER
+  ═══════════════════════════════════════════════════════ */
+  .weight-stats { display: flex; gap: 10px; padding: 16px 16px 0; }
+  .weight-stat {
+    flex: 1; background: var(--card);
+    border: 1px solid var(--border); border-radius: 12px; padding: 12px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .weight-stat-val { font-size: 20px; font-weight: 700; color: var(--primary); }
+  .weight-stat-label { font-size: 10px; color: var(--muted); margin-top: 3px; }
+  .weight-stat-unit { font-size: 11px; color: var(--muted); font-weight: 600; }
+
+  .chart-card {
+    margin: 14px 16px 0;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+  }
+  .chart-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+  .chart-area {
+    width: 100%; height: 120px;
+    display: flex; align-items: flex-end;
+    gap: 6px; position: relative;
+  }
+  .chart-bar { flex: 1; border-radius: 3px 3px 0 0; min-height: 4px; }
+  .chart-line-svg { width: 100%; height: 120px; }
+
+  .log-form {
+    margin: 14px 16px 0;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+  }
+  .log-form-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+  .log-row { display: flex; gap: 10px; align-items: center; }
+  .log-input {
+    flex: 1; height: 44px; border-radius: 10px;
+    background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+    color: #fff; font-size: 15px; padding: 0 12px;
+  }
+  .unit-toggle { display: flex; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+  .unit-btn {
+    padding: 0 14px; height: 44px;
+    background: transparent; color: var(--muted);
+    font-size: 13px; font-weight: 600; border: none; cursor: pointer;
+  }
+  .unit-btn.active { background: var(--primary); color: #fff; }
+  .log-btn {
+    height: 44px; padding: 0 18px; border-radius: 10px;
+    background: var(--primary); color: #fff;
+    font-size: 14px; font-weight: 700; border: none;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .weight-entry {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .weight-entry:last-child { border-bottom: none; }
+  .entry-weight { font-size: 18px; font-weight: 700; color: var(--primary); }
+  .entry-unit { font-size: 12px; color: var(--muted); margin-left: 3px; }
+  .entry-date { font-size: 12px; color: var(--muted); }
+  .entry-change { font-size: 12px; font-weight: 600; }
+  .entry-change.down { color: #22C55E; }
+  .entry-change.up { color: #EF4444; }
+
+  /* ═══════════════════════════════════════════════════════
+     SCREEN 7 — WATER TRACKER
+  ═══════════════════════════════════════════════════════ */
+  .water-hero {
+    padding: 20px 16px 0;
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+  }
+  .ring-container { position: relative; width: 180px; height: 180px; }
+  .ring-svg { width: 180px; height: 180px; transform: rotate(-90deg); }
+  .ring-center {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .ring-count { font-size: 42px; font-weight: 700; color: var(--primary); line-height: 1; }
+  .ring-total { font-size: 14px; color: var(--muted); }
+  .ring-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .water-stats { display: flex; gap: 10px; width: 100%; padding: 0 16px; }
+  .water-stat {
+    flex: 1; background: var(--card);
+    border: 1px solid var(--border); border-radius: 12px; padding: 12px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .water-stat-val { font-size: 18px; font-weight: 700; color: #38BDF8; }
+  .water-stat-label { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  .glass-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 10px; padding: 16px;
+  }
+  .glass {
+    aspect-ratio: 1; border-radius: 12px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 5px; background: var(--card); border: 1px solid var(--border);
+    font-size: 26px;
+  }
+  .glass.filled { background: rgba(56,189,248,0.15); border-color: rgba(56,189,248,0.4); }
+  .glass-num { font-size: 10px; font-weight: 600; color: var(--muted); }
+  .glass.filled .glass-num { color: #38BDF8; }
+
+  .water-controls { display: flex; gap: 12px; padding: 0 16px 16px; }
+  .water-minus {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; color: var(--muted); flex-shrink: 0;
+  }
+  .water-add {
+    flex: 1; height: 52px; border-radius: 14px;
+    background: #38BDF8;
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; font-size: 15px; font-weight: 700; color: #fff;
+  }
+  .water-reset {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     SCREEN 8 — SAVED PLANS
+  ═══════════════════════════════════════════════════════ */
+  .plan-list-item {
+    display: flex; align-items: center;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px; margin-bottom: 10px; gap: 12px;
+  }
+  .plan-list-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: rgba(242,107,29,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .plan-list-name { font-size: 15px; font-weight: 600; }
+  .plan-list-meta { display: flex; gap: 6px; align-items: center; margin-top: 3px; }
+  .plan-list-meta-text { font-size: 12px; color: var(--muted); }
+  .chevron { font-size: 16px; color: var(--muted); margin-left: auto; }
+
+  /* ═══════════════════════════════════════════════════════
+     SCREEN 9 — USER GUIDE
+  ═══════════════════════════════════════════════════════ */
+  .guide-hero {
+    background: var(--sidebar);
+    margin: 16px 16px 0; border-radius: var(--radius); padding: 18px;
+  }
+  .guide-hero-top { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+  .guide-hero-icon {
+    width: 60px; height: 60px; border-radius: 16px;
+    background: rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center; font-size: 30px;
+  }
+  .guide-eyebrow { font-size: 11px; font-weight: 600; color: var(--primary); letter-spacing: 0.8px; margin-bottom: 3px; }
+  .guide-title { font-size: 22px; font-weight: 700; }
+  .guide-sub { font-size: 13px; color: var(--muted); }
+  .guide-desc { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.5; }
+
+  .guide-section { font-size: 11px; font-weight: 700; color: var(--primary); letter-spacing: 0.8px; margin: 20px 16px 10px; text-transform: uppercase; }
+
+  .platform-cards { display: flex; flex-direction: column; gap: 10px; padding: 0 16px; }
+  .platform-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+  }
+  .platform-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 8px; }
+  .platform-name { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .platform-sub { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  .step-row { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
+  .step-num {
+    width: 20px; height: 20px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; margin-top: 1px;
+  }
+  .step-text { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  .accordion {
+    margin: 0 16px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  .accordion-item { border-bottom: 1px solid var(--border); }
+  .accordion-item:last-child { border-bottom: none; }
+  .accordion-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px; cursor: pointer;
+  }
+  .accordion-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: center; font-size: 15px;
+  }
+  .accordion-title { flex: 1; font-size: 15px; font-weight: 600; }
+  .accordion-chevron { font-size: 14px; color: var(--muted); }
+
+  .support-card {
+    margin: 16px; background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px; display: flex; flex-direction: column; gap: 12px;
+  }
+  .support-text { font-size: 14px; color: var(--muted); line-height: 1.5; }
+  .support-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    height: 44px; border-radius: 10px; font-size: 14px; font-weight: 600;
+  }
+  .support-btn.primary { background: var(--primary); color: #fff; border: none; }
+  .support-btn.outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+</style>
+</head>
+<body>
+
+<!-- ═════════════════════════════════════════
+     SCREEN 1 — HOME / DASHBOARD
+════════════════════════════════════════════ -->
+<div class="screen" id="s1">
+  <div class="hero">
+    <div class="hero-top">
+      <div class="hero-date">FRIDAY, JUNE 13</div>
+      <div class="avatar">A</div>
+    </div>
+    <div class="hero-title">Let's crush today! 💪</div>
+    <div class="hero-plan">⚡ <span>Active: Summer Shred Plan</span></div>
+    <div class="stats-row">
+      <div class="stat-pill"><div class="stat-val">2,100</div><div class="stat-label">kcal goal</div></div>
+      <div class="stat-pill"><div class="stat-val">480</div><div class="stat-label">scanned today</div></div>
+      <div class="stat-pill"><div class="stat-val">183</div><div class="stat-label">lbs</div></div>
+      <div class="stat-pill"><div class="stat-val">3</div><div class="stat-label">plans saved</div></div>
+    </div>
+  </div>
+
+  <div class="scroll">
+    <div class="section">
+      <div class="section-title">WHAT DO YOU WANT TO DO?</div>
+      <div class="action-grid">
+        <div class="action-card">
+          <div class="action-icon" style="background:rgba(242,107,29,0.15)">📅</div>
+          <div class="action-label">Build a Meal Plan</div>
+          <div class="action-desc">Smart plans in seconds</div>
+        </div>
+        <div class="action-card">
+          <div class="action-icon" style="background:rgba(245,158,11,0.15)">📷</div>
+          <div class="action-label">Scan a Meal</div>
+          <div class="action-desc">Snap a photo — get instant calories</div>
+        </div>
+        <div class="action-card">
+          <div class="action-icon" style="background:rgba(59,130,246,0.15)">🛒</div>
+          <div class="action-label">Grocery List</div>
+          <div class="action-desc">What to buy for your plan</div>
+        </div>
+        <div class="action-card">
+          <div class="action-icon" style="background:rgba(56,189,248,0.15)">💧</div>
+          <div class="action-label">Water Tracker</div>
+          <div class="action-desc">3/8 glasses today</div>
+        </div>
+        <div class="action-card">
+          <div class="action-icon" style="background:rgba(34,197,94,0.15)">📈</div>
+          <div class="action-label">Track Weight</div>
+          <div class="action-desc">Log your progress</div>
+        </div>
+        <div class="action-card">
+          <div class="action-icon" style="background:rgba(168,85,247,0.15)">🔖</div>
+          <div class="action-label">Saved Plans</div>
+          <div class="action-desc">All your meal plan history</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-row">
+        <div class="section-title">YOUR CURRENT PLAN</div>
+        <div class="section-link">All plans →</div>
+      </div>
+      <div class="card" style="padding:16px">
+        <div class="plan-card-inner">
+          <div class="plan-icon-wrap">⚡</div>
+          <div style="flex:1">
+            <div class="plan-name">Summer Shred Plan</div>
+            <div class="plan-meta">
+              <div class="plan-meta-text">4 meals/day</div>
+              <div class="dot"></div>
+              <div class="plan-meta-text">2,100 kcal/day</div>
+            </div>
+          </div>
+          <span style="color:var(--muted);font-size:16px">›</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" style="margin-bottom:16px">
+      <div class="section-title" style="margin-bottom:0"></div>
+      <div class="card" style="padding:14px;margin-top:12px">
+        <div class="tip-card">
+          <div class="tip-emoji">💡</div>
+          <div>
+            <div class="tip-label">GYM &amp; MEAL PREP TIP</div>
+            <div class="tip-text">Consistency over 6 months beats intensity over 2 weeks every single time. Show up daily, even when it's hard.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item active"><div class="nav-icon">🏠</div><div class="nav-label" style="color:var(--primary)">Home</div><div class="nav-dot"></div></div>
+    <div class="nav-item"><div class="nav-icon">📅</div><div class="nav-label">Meal Plan</div></div>
+    <div class="nav-item"><div class="nav-icon">🛒</div><div class="nav-label">Grocery</div></div>
+    <div class="nav-item"><div class="nav-icon">🍽️</div><div class="nav-label">My Meals</div></div>
+    <div class="nav-item"><div class="nav-icon">📷</div><div class="nav-label">Scan</div></div>
+    <div class="nav-item"><div class="nav-icon">⚖️</div><div class="nav-label">Weight</div></div>
+    <div class="nav-item"><div class="nav-icon">💧</div><div class="nav-label">Water</div></div>
+    <div class="nav-item"><div class="nav-icon">🔖</div><div class="nav-label">Plans</div></div>
+    <div class="nav-item"><div class="nav-icon">📖</div><div class="nav-label">Guide</div></div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════
+     SCREEN 2 — MEAL PLANNER
+════════════════════════════════════════════ -->
+<div class="screen" id="s2">
+  <div class="appbar">
+    <div class="appbar-brand">
+      <div class="appbar-logo">PF</div>
+      <div><div class="appbar-name">Meal Planner</div><div class="appbar-sub">Build your weekly plan</div></div>
+    </div>
+  </div>
+
+  <div class="scroll">
+    <div class="planner-config">
+      <div class="config-label">Meals per day</div>
+      <div class="meals-row">
+        <div class="meal-btn">2</div>
+        <div class="meal-btn">3</div>
+        <div class="meal-btn active">4</div>
+        <div class="meal-btn">5</div>
+      </div>
+      <div style="margin-top:16px">
+        <div class="config-label">Daily calorie goal</div>
+        <div class="cal-input" style="display:flex;align-items:center;color:#fff;font-size:16px;font-weight:600;">2,100 kcal</div>
+      </div>
+    </div>
+
+    <button class="gen-btn">⚡ Generate My Plan</button>
+
+    <div class="plan-result">
+      <div class="plan-result-header">
+        <div class="plan-result-title">Summer Shred Plan</div>
+        <div class="pill">4 meals · 2,100 kcal</div>
+      </div>
+
+      <div class="macro-row">
+        <div class="macro-pill"><div class="macro-val">158g</div><div class="macro-label">Protein</div></div>
+        <div class="macro-pill"><div class="macro-val">220g</div><div class="macro-label">Carbs</div></div>
+        <div class="macro-pill"><div class="macro-val">67g</div><div class="macro-label">Fat</div></div>
+      </div>
+
+      <div class="meal-item">
+        <div class="meal-item-header">
+          <div class="meal-num-badge">1</div>
+          <div style="flex:1">
+            <div class="meal-item-name">🥣 Greek Yogurt Parfait</div>
+            <div class="meal-item-desc">Siggi's yogurt, berries, granola, honey drizzle</div>
+            <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+              <span class="chip" style="font-size:11px;padding:3px 10px;">P: 28g</span>
+              <span class="chip" style="font-size:11px;padding:3px 10px;">C: 42g</span>
+              <span class="chip" style="font-size:11px;padding:3px 10px;">F: 8g</span>
+            </div>
+          </div>
+          <div class="meal-cals">420<span style="font-size:11px;color:var(--muted);font-weight:400"> kcal</span></div>
+        </div>
+      </div>
+
+      <div class="meal-item">
+        <div class="meal-item-header">
+          <div class="meal-num-badge">2</div>
+          <div style="flex:1">
+            <div class="meal-item-name">🍗 Grilled Chicken Bowl</div>
+            <div class="meal-item-desc">Chicken breast, brown rice, roasted broccoli, olive oil</div>
+            <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+              <span class="chip" style="font-size:11px;padding:3px 10px;">P: 48g</span>
+              <span class="chip" style="font-size:11px;padding:3px 10px;">C: 58g</span>
+              <span class="chip" style="font-size:11px;padding:3px 10px;">F: 14g</span>
+            </div>
+          </div>
+          <div class="meal-cals">560<span style="font-size:11px;color:var(--muted);font-weight:400"> kcal</span></div>
+        </div>
+      </div>
+
+      <div class="meal-item">
+        <div class="meal-item-header">
+          <div class="meal-num-badge">3</div>
+          <div style="flex:1">
+            <div class="meal-item-name">🥗 Tuna Power Salad</div>
+            <div class="meal-item-desc">Wild Planet tuna, mixed greens, quinoa, lemon dressing</div>
+            <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+              <span class="chip" style="font-size:11px;padding:3px 10px;">P: 42g</span>
+              <span class="chip" style="font-size:11px;padding:3px 10px;">C: 35g</span>
+              <span class="chip" style="font-size:11px;padding:3px 10px;">F: 18g</span>
+            </div>
+          </div>
+          <div class="meal-cals">470<span style="font-size:11px;color:var(--muted);font-weight:400"> kcal</span></div>
+        </div>
+      </div>
+
+      <div class="meal-item" style="margin-bottom:16px">
+        <div class="meal-item-header">
+          <div class="meal-num-badge">4</div>
+          <div style="flex:1">
+            <div class="meal-item-name">🥩 Beef &amp; Veggie Stir Fry</div>
+            <div class="meal-item-desc">Lean ground beef, bell peppers, snap peas, coconut aminos</div>
+            <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+              <span class="chip" style="font-size:11px;padding:3px 10px;">P: 40g</span>
+              <span class="chip" style="font-size:11px;padding:3px 10px;">C: 35g</span>
+              <span class="chip" style="font-size:11px;padding:3px 10px;">F: 27g</span>
+            </div>
+          </div>
+          <div class="meal-cals">650<span style="font-size:11px;color:var(--muted);font-weight:400"> kcal</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+    <div class="nav-item active"><div class="nav-icon">📅</div><div class="nav-label" style="color:var(--primary)">Meal Plan</div><div class="nav-dot"></div></div>
+    <div class="nav-item"><div class="nav-icon">🛒</div><div class="nav-label">Grocery</div></div>
+    <div class="nav-item"><div class="nav-icon">🍽️</div><div class="nav-label">My Meals</div></div>
+    <div class="nav-item"><div class="nav-icon">📷</div><div class="nav-label">Scan</div></div>
+    <div class="nav-item"><div class="nav-icon">⚖️</div><div class="nav-label">Weight</div></div>
+    <div class="nav-item"><div class="nav-icon">💧</div><div class="nav-label">Water</div></div>
+    <div class="nav-item"><div class="nav-icon">🔖</div><div class="nav-label">Plans</div></div>
+    <div class="nav-item"><div class="nav-icon">📖</div><div class="nav-label">Guide</div></div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════
+     SCREEN 3 — GROCERY LIST
+════════════════════════════════════════════ -->
+<div class="screen" id="s3">
+  <div class="page-header">
+    <div class="page-title">Grocery List</div>
+    <div class="page-sub">Summer Shred Plan · 36 items</div>
+  </div>
+
+  <div class="scroll">
+    <div class="plan-chips">
+      <div class="chip active">✓ Summer Shred Plan</div>
+      <div class="chip">Lean Bulk</div>
+      <div class="chip">Maintenance</div>
+    </div>
+
+    <div class="grocery-cat">
+      <div class="grocery-cat-header">
+        <div class="grocery-cat-icon">🥬</div>
+        <div class="grocery-cat-name">Produce</div>
+        <div class="grocery-cat-count">6 items</div>
+      </div>
+      <div class="grocery-items">
+        <div class="grocery-item">
+          <div class="checkbox checked">✓</div>
+          <div style="flex:1"><div class="item-name">Broccoli florets</div><div class="item-brand">Fresh · Any brand</div></div>
+          <div class="item-qty">2 lbs</div>
+        </div>
+        <div class="grocery-item">
+          <div class="checkbox"></div>
+          <div style="flex:1"><div class="item-name">Mixed salad greens</div><div class="item-brand">Earthbound Farm</div></div>
+          <div class="item-qty">2 bags</div>
+        </div>
+        <div class="grocery-item">
+          <div class="checkbox"></div>
+          <div style="flex:1"><div class="item-name">Bell peppers (mixed)</div><div class="item-brand">Fresh · Any brand</div></div>
+          <div class="item-qty">4 peppers</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grocery-cat">
+      <div class="grocery-cat-header">
+        <div class="grocery-cat-icon">🥩</div>
+        <div class="grocery-cat-name">Protein</div>
+        <div class="grocery-cat-count">5 items</div>
+      </div>
+      <div class="grocery-items">
+        <div class="grocery-item">
+          <div class="checkbox checked">✓</div>
+          <div style="flex:1"><div class="item-name">Chicken breast</div><div class="item-brand">Simple Truth Organic</div></div>
+          <div class="item-qty">3 lbs</div>
+        </div>
+        <div class="grocery-item">
+          <div class="checkbox"></div>
+          <div style="flex:1"><div class="item-name">Wild-caught tuna (canned)</div><div class="item-brand">Wild Planet</div></div>
+          <div class="item-qty">4 cans</div>
+        </div>
+        <div class="grocery-item">
+          <div class="checkbox"></div>
+          <div style="flex:1"><div class="item-name">Lean ground beef 93/7</div><div class="item-brand">Any grass-fed brand</div></div>
+          <div class="item-qty">1.5 lbs</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grocery-cat">
+      <div class="grocery-cat-header">
+        <div class="grocery-cat-icon">🥛</div>
+        <div class="grocery-cat-name">Dairy</div>
+        <div class="grocery-cat-count">3 items</div>
+      </div>
+      <div class="grocery-items">
+        <div class="grocery-item">
+          <div class="checkbox"></div>
+          <div style="flex:1"><div class="item-name">Icelandic-style yogurt</div><div class="item-brand">Siggi's</div></div>
+          <div class="item-qty">4 cups</div>
+        </div>
+        <div class="grocery-item">
+          <div class="checkbox"></div>
+          <div style="flex:1"><div class="item-name">Eggs large</div><div class="item-brand">Vital Farms Pasture-Raised</div></div>
+          <div class="item-qty">1 dozen</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grocery-cat" style="margin-bottom:16px">
+      <div class="grocery-cat-header">
+        <div class="grocery-cat-icon">🍞</div>
+        <div class="grocery-cat-name">Pantry</div>
+        <div class="grocery-cat-count">8 items</div>
+      </div>
+      <div class="grocery-items">
+        <div class="grocery-item">
+          <div class="checkbox"></div>
+          <div style="flex:1"><div class="item-name">Brown rice</div><div class="item-brand">Lundberg Organic</div></div>
+          <div class="item-qty">2 lbs</div>
+        </div>
+        <div class="grocery-item">
+          <div class="checkbox"></div>
+          <div style="flex:1"><div class="item-name">Rolled oats</div><div class="item-brand">Bob's Red Mill</div></div>
+          <div class="item-qty">1 bag</div>
+        </div>
+        <div class="grocery-item">
+          <div class="checkbox"></div>
+          <div style="flex:1"><div class="item-name">Quinoa</div><div class="item-brand">Ancient Harvest</div></div>
+          <div class="item-qty">1 lb</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+    <div class="nav-item"><div class="nav-icon">📅</div><div class="nav-label">Meal Plan</div></div>
+    <div class="nav-item active"><div class="nav-icon">🛒</div><div class="nav-label" style="color:var(--primary)">Grocery</div><div class="nav-dot"></div></div>
+    <div class="nav-item"><div class="nav-icon">🍽️</div><div class="nav-label">My Meals</div></div>
+    <div class="nav-item"><div class="nav-icon">📷</div><div class="nav-label">Scan</div></div>
+    <div class="nav-item"><div class="nav-icon">⚖️</div><div class="nav-label">Weight</div></div>
+    <div class="nav-item"><div class="nav-icon">💧</div><div class="nav-label">Water</div></div>
+    <div class="nav-item"><div class="nav-icon">🔖</div><div class="nav-label">Plans</div></div>
+    <div class="nav-item"><div class="nav-icon">📖</div><div class="nav-label">Guide</div></div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════
+     SCREEN 4 — MY MEALS
+════════════════════════════════════════════ -->
+<div class="screen" id="s4">
+  <div class="page-header">
+    <div class="page-title">My Meals</div>
+    <div class="page-sub">4 meals scanned</div>
+  </div>
+
+  <div class="scroll">
+    <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+      <div class="meal-card-row">
+        <div class="meal-photo-placeholder">🥗</div>
+        <div class="meal-card-body">
+          <div class="meal-card-name">Grilled Chicken Salad</div>
+          <div class="meal-card-desc">Romaine, grilled chicken, cherry tomatoes, avocado, balsamic</div>
+          <div class="meal-card-footer">
+            <div class="meal-kcal">⚡ 480 kcal</div>
+            <div class="meal-date">Jun 12</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="meal-card-row">
+        <div class="meal-photo-placeholder">🍳</div>
+        <div class="meal-card-body">
+          <div class="meal-card-name">Egg White Omelette</div>
+          <div class="meal-card-desc">6 egg whites, spinach, mushrooms, goat cheese, whole grain toast</div>
+          <div class="meal-card-footer">
+            <div class="meal-kcal">⚡ 320 kcal</div>
+            <div class="meal-date">Jun 12</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="meal-card-row">
+        <div class="meal-photo-placeholder">🍱</div>
+        <div class="meal-card-body">
+          <div class="meal-card-name">Meal Prep Bowl</div>
+          <div class="meal-card-desc">Salmon, sweet potato, steamed broccoli, brown rice, tahini</div>
+          <div class="meal-card-footer">
+            <div class="meal-kcal">⚡ 610 kcal</div>
+            <div class="meal-date">Jun 11</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="meal-card-row">
+        <div class="meal-photo-placeholder">🥙</div>
+        <div class="meal-card-body">
+          <div class="meal-card-name">Turkey Wrap</div>
+          <div class="meal-card-desc">Sliced turkey, hummus, cucumber, spinach, whole wheat tortilla</div>
+          <div class="meal-card-footer">
+            <div class="meal-kcal">⚡ 390 kcal</div>
+            <div class="meal-date">Jun 10</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+    <div class="nav-item"><div class="nav-icon">📅</div><div class="nav-label">Meal Plan</div></div>
+    <div class="nav-item"><div class="nav-icon">🛒</div><div class="nav-label">Grocery</div></div>
+    <div class="nav-item active"><div class="nav-icon">🍽️</div><div class="nav-label" style="color:var(--primary)">My Meals</div><div class="nav-dot"></div></div>
+    <div class="nav-item"><div class="nav-icon">📷</div><div class="nav-label">Scan</div></div>
+    <div class="nav-item"><div class="nav-icon">⚖️</div><div class="nav-label">Weight</div></div>
+    <div class="nav-item"><div class="nav-icon">💧</div><div class="nav-label">Water</div></div>
+    <div class="nav-item"><div class="nav-icon">🔖</div><div class="nav-label">Plans</div></div>
+    <div class="nav-item"><div class="nav-icon">📖</div><div class="nav-label">Guide</div></div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════
+     SCREEN 5 — SCAN PHOTO
+════════════════════════════════════════════ -->
+<div class="screen" id="s5">
+  <div class="page-header">
+    <div class="page-title">Scan a Meal</div>
+    <div class="page-sub">Identifies food and estimates calories</div>
+  </div>
+
+  <div style="flex:1;display:flex;flex-direction:column;padding-bottom:80px">
+    <div class="scan-container">
+      <div class="scan-ring">📷</div>
+      <div class="scan-title">Take or choose a photo</div>
+      <div class="scan-sub">Point at any meal — it identifies the food and estimates calories instantly</div>
+      <div class="scan-btn-row">
+        <div class="scan-btn-primary">📷 Camera</div>
+        <div class="scan-btn-outline">🖼️ Gallery</div>
+      </div>
+    </div>
+
+    <div class="scan-tip">
+      <div style="font-size:22px">💡</div>
+      <div class="scan-tip-text">For best accuracy, photograph from directly above with good lighting. Include all food items in the frame.</div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+    <div class="nav-item"><div class="nav-icon">📅</div><div class="nav-label">Meal Plan</div></div>
+    <div class="nav-item"><div class="nav-icon">🛒</div><div class="nav-label">Grocery</div></div>
+    <div class="nav-item"><div class="nav-icon">🍽️</div><div class="nav-label">My Meals</div></div>
+    <div class="nav-item active"><div class="nav-icon">📷</div><div class="nav-label" style="color:var(--primary)">Scan</div><div class="nav-dot"></div></div>
+    <div class="nav-item"><div class="nav-icon">⚖️</div><div class="nav-label">Weight</div></div>
+    <div class="nav-item"><div class="nav-icon">💧</div><div class="nav-label">Water</div></div>
+    <div class="nav-item"><div class="nav-icon">🔖</div><div class="nav-label">Plans</div></div>
+    <div class="nav-item"><div class="nav-icon">📖</div><div class="nav-label">Guide</div></div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════
+     SCREEN 6 — WEIGHT TRACKER
+════════════════════════════════════════════ -->
+<div class="screen" id="s6">
+  <div class="page-header">
+    <div class="page-title">Weight Tracker</div>
+    <div class="page-sub">Track your body weight over time</div>
+  </div>
+
+  <div class="scroll">
+    <div class="weight-stats">
+      <div class="weight-stat">
+        <div class="weight-stat-val">183<span class="weight-stat-unit"> lbs</span></div>
+        <div class="weight-stat-label">Current</div>
+      </div>
+      <div class="weight-stat">
+        <div class="weight-stat-val" style="color:#22C55E">−0.8<span class="weight-stat-unit"> lbs</span></div>
+        <div class="weight-stat-label">Last change</div>
+      </div>
+      <div class="weight-stat">
+        <div class="weight-stat-val" style="color:#22C55E">−5.2<span class="weight-stat-unit"> lbs</span></div>
+        <div class="weight-stat-label">Total change</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">Weight trend — last 10 entries</div>
+      <svg class="chart-line-svg" viewBox="0 0 366 120">
+        <defs>
+          <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F26B1D" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="#F26B1D" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path d="M0,80 L40,75 L80,72 L120,70 L160,66 L200,62 L240,58 L280,54 L320,51 L366,46 L366,120 L0,120Z" fill="url(#grad)"/>
+        <path d="M0,80 L40,75 L80,72 L120,70 L160,66 L200,62 L240,58 L280,54 L320,51 L366,46" fill="none" stroke="#F26B1D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="366" cy="46" r="5" fill="#F26B1D"/>
+      </svg>
+    </div>
+
+    <div class="log-form">
+      <div class="log-form-title">Log weight</div>
+      <div class="log-row">
+        <div class="log-input" style="display:flex;align-items:center;color:#fff">183.0</div>
+        <div class="unit-toggle">
+          <div class="unit-btn active">lbs</div>
+          <div class="unit-btn">kg</div>
+        </div>
+        <div class="log-btn">+ Log</div>
+      </div>
+    </div>
+
+    <div style="margin:14px 16px 0">
+      <div class="section-title">HISTORY</div>
+      <div class="card" style="overflow:hidden">
+        <div class="weight-entry">
+          <div>
+            <div class="entry-weight">183.0<span class="entry-unit">lbs</span></div>
+            <div class="entry-date">Jun 12, 2025</div>
+          </div>
+          <div class="entry-change down">−0.8 lbs</div>
+        </div>
+        <div class="weight-entry">
+          <div>
+            <div class="entry-weight">183.8<span class="entry-unit">lbs</span></div>
+            <div class="entry-date">Jun 9, 2025</div>
+          </div>
+          <div class="entry-change down">−1.1 lbs</div>
+        </div>
+        <div class="weight-entry">
+          <div>
+            <div class="entry-weight">184.9<span class="entry-unit">lbs</span></div>
+            <div class="entry-date">Jun 5, 2025</div>
+          </div>
+          <div class="entry-change down">−0.6 lbs</div>
+        </div>
+        <div class="weight-entry">
+          <div>
+            <div class="entry-weight">185.5<span class="entry-unit">lbs</span></div>
+            <div class="entry-date">Jun 1, 2025</div>
+          </div>
+          <div class="entry-change down">−2.7 lbs</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:16px"></div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+    <div class="nav-item"><div class="nav-icon">📅</div><div class="nav-label">Meal Plan</div></div>
+    <div class="nav-item"><div class="nav-icon">🛒</div><div class="nav-label">Grocery</div></div>
+    <div class="nav-item"><div class="nav-icon">🍽️</div><div class="nav-label">My Meals</div></div>
+    <div class="nav-item"><div class="nav-icon">📷</div><div class="nav-label">Scan</div></div>
+    <div class="nav-item active"><div class="nav-icon">⚖️</div><div class="nav-label" style="color:var(--primary)">Weight</div><div class="nav-dot"></div></div>
+    <div class="nav-item"><div class="nav-icon">💧</div><div class="nav-label">Water</div></div>
+    <div class="nav-item"><div class="nav-icon">🔖</div><div class="nav-label">Plans</div></div>
+    <div class="nav-item"><div class="nav-icon">📖</div><div class="nav-label">Guide</div></div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════
+     SCREEN 7 — WATER TRACKER
+════════════════════════════════════════════ -->
+<div class="screen" id="s7">
+  <div class="page-header">
+    <div class="page-title">Water Tracker</div>
+    <div class="page-sub">Stay hydrated — 8 glasses daily</div>
+  </div>
+
+  <div class="scroll">
+    <div class="water-hero">
+      <div class="ring-container">
+        <svg class="ring-svg" viewBox="0 0 180 180">
+          <circle cx="90" cy="90" r="75" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="12"/>
+          <circle cx="90" cy="90" r="75" fill="none" stroke="#38BDF8" stroke-width="12"
+            stroke-dasharray="471" stroke-dashoffset="177" stroke-linecap="round"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-count" style="color:#38BDF8">3</div>
+          <div class="ring-total">/8 glasses</div>
+          <div class="ring-label">today</div>
+        </div>
+      </div>
+
+      <div class="water-stats">
+        <div class="water-stat">
+          <div class="water-stat-val">3</div>
+          <div class="water-stat-label">Glasses today</div>
+        </div>
+        <div class="water-stat">
+          <div class="water-stat-val">5</div>
+          <div class="water-stat-label">Remaining</div>
+        </div>
+        <div class="water-stat">
+          <div class="water-stat-val" style="color:#22C55E">38%</div>
+          <div class="water-stat-label">Goal reached</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-grid">
+      <div class="glass filled">💧<div class="glass-num">1</div></div>
+      <div class="glass filled">💧<div class="glass-num">2</div></div>
+      <div class="glass filled">💧<div class="glass-num">3</div></div>
+      <div class="glass">🫙<div class="glass-num">4</div></div>
+      <div class="glass">🫙<div class="glass-num">5</div></div>
+      <div class="glass">🫙<div class="glass-num">6</div></div>
+      <div class="glass">🫙<div class="glass-num">7</div></div>
+      <div class="glass">🫙<div class="glass-num">8</div></div>
+    </div>
+
+    <div class="water-controls">
+      <div class="water-minus">−</div>
+      <div class="water-add">💧 Add Glass</div>
+      <div class="water-reset">↺</div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+    <div class="nav-item"><div class="nav-icon">📅</div><div class="nav-label">Meal Plan</div></div>
+    <div class="nav-item"><div class="nav-icon">🛒</div><div class="nav-label">Grocery</div></div>
+    <div class="nav-item"><div class="nav-icon">🍽️</div><div class="nav-label">My Meals</div></div>
+    <div class="nav-item"><div class="nav-icon">📷</div><div class="nav-label">Scan</div></div>
+    <div class="nav-item"><div class="nav-icon">⚖️</div><div class="nav-label">Weight</div></div>
+    <div class="nav-item active"><div class="nav-icon">💧</div><div class="nav-label" style="color:var(--primary)">Water</div><div class="nav-dot"></div></div>
+    <div class="nav-item"><div class="nav-icon">🔖</div><div class="nav-label">Plans</div></div>
+    <div class="nav-item"><div class="nav-icon">📖</div><div class="nav-label">Guide</div></div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════
+     SCREEN 8 — SAVED PLANS
+════════════════════════════════════════════ -->
+<div class="screen" id="s8">
+  <div class="page-header">
+    <div class="page-title">Saved Plans</div>
+    <div class="page-sub">3 meal plans saved</div>
+  </div>
+
+  <div class="scroll">
+    <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+      <div class="plan-list-item">
+        <div class="plan-list-icon">📅</div>
+        <div style="flex:1">
+          <div class="plan-list-name">Summer Shred Plan</div>
+          <div class="plan-list-meta">
+            <div class="plan-list-meta-text">4 meals/day</div>
+            <div class="dot"></div>
+            <div class="plan-list-meta-text">2,100 kcal</div>
+          </div>
+        </div>
+        <div class="chevron">›</div>
+      </div>
+      <div class="plan-list-item">
+        <div class="plan-list-icon">📅</div>
+        <div style="flex:1">
+          <div class="plan-list-name">Lean Bulk — Off-season</div>
+          <div class="plan-list-meta">
+            <div class="plan-list-meta-text">5 meals/day</div>
+            <div class="dot"></div>
+            <div class="plan-list-meta-text">2,900 kcal</div>
+          </div>
+        </div>
+        <div class="chevron">›</div>
+      </div>
+      <div class="plan-list-item">
+        <div class="plan-list-icon">📅</div>
+        <div style="flex:1">
+          <div class="plan-list-name">Maintenance Cut</div>
+          <div class="plan-list-meta">
+            <div class="plan-list-meta-text">3 meals/day</div>
+            <div class="dot"></div>
+            <div class="plan-list-meta-text">2,400 kcal</div>
+          </div>
+        </div>
+        <div class="chevron">›</div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:14px;border:1px dashed var(--border);text-align:center;margin-top:4px">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Generate a new plan from the Planner tab</div>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:var(--primary);padding:10px 20px;border-radius:10px;font-size:14px;font-weight:600">
+          + Build New Plan
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+    <div class="nav-item"><div class="nav-icon">📅</div><div class="nav-label">Meal Plan</div></div>
+    <div class="nav-item"><div class="nav-icon">🛒</div><div class="nav-label">Grocery</div></div>
+    <div class="nav-item"><div class="nav-icon">🍽️</div><div class="nav-label">My Meals</div></div>
+    <div class="nav-item"><div class="nav-icon">📷</div><div class="nav-label">Scan</div></div>
+    <div class="nav-item"><div class="nav-icon">⚖️</div><div class="nav-label">Weight</div></div>
+    <div class="nav-item"><div class="nav-icon">💧</div><div class="nav-label">Water</div></div>
+    <div class="nav-item active"><div class="nav-icon">🔖</div><div class="nav-label" style="color:var(--primary)">Plans</div><div class="nav-dot"></div></div>
+    <div class="nav-item"><div class="nav-icon">📖</div><div class="nav-label">Guide</div></div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════════
+     SCREEN 9 — USER GUIDE
+════════════════════════════════════════════ -->
+<div class="screen" id="s9">
+  <div class="scroll" style="padding-bottom:80px">
+    <div class="guide-hero">
+      <div class="guide-hero-top">
+        <div class="guide-hero-icon">🥗</div>
+        <div>
+          <div class="guide-eyebrow">Complete Guide</div>
+          <div class="guide-title">PrepFit</div>
+          <div class="guide-sub">User Guide</div>
+        </div>
+      </div>
+      <div class="guide-desc">Everything you need to know to get the most out of PrepFit — your meal prep and health tracking companion.</div>
+    </div>
+
+    <div class="guide-section">Platform Support</div>
+    <div class="platform-cards">
+      <div class="platform-card">
+        <div class="platform-icon" style="background:rgba(0,122,255,0.15)">📱</div>
+        <div class="platform-name">iPhone (iOS)</div>
+        <div class="platform-sub">Install from the App Store</div>
+        <div class="step-row"><div class="step-num" style="background:#007AFF">1</div><div class="step-text">Open Safari and visit prepfit.fit</div></div>
+        <div class="step-row"><div class="step-num" style="background:#007AFF">2</div><div class="step-text">Tap the Share icon (square with arrow)</div></div>
+        <div class="step-row"><div class="step-num" style="background:#007AFF">3</div><div class="step-text">Tap "Add to Home Screen"</div></div>
+        <div class="step-row"><div class="step-num" style="background:#007AFF">4</div><div class="step-text">Tap "Add" — PrepFit appears on your home screen</div></div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon" style="background:rgba(52,168,83,0.15)">🤖</div>
+        <div class="platform-name">Android</div>
+        <div class="platform-sub">Install via Chrome or Play Store</div>
+        <div class="step-row"><div class="step-num" style="background:#34A853">1</div><div class="step-text">Open Chrome and visit prepfit.fit</div></div>
+        <div class="step-row"><div class="step-num" style="background:#34A853">2</div><div class="step-text">Tap the ⋮ menu in the top-right</div></div>
+        <div class="step-row"><div class="step-num" style="background:#34A853">3</div><div class="step-text">Tap "Add to Home Screen" or "Install App"</div></div>
+        <div class="step-row"><div class="step-num" style="background:#34A853">4</div><div class="step-text">Tap Add — PrepFit is now installed</div></div>
+      </div>
+    </div>
+
+    <div class="guide-section">Feature Guide</div>
+    <div class="accordion">
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-icon">▶️</div>
+          <div class="accordion-title">Getting Started</div>
+          <div class="accordion-chevron">›</div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-icon">🏠</div>
+          <div class="accordion-title">Dashboard</div>
+          <div class="accordion-chevron">›</div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-icon">📅</div>
+          <div class="accordion-title">Meal Planner</div>
+          <div class="accordion-chevron">›</div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-icon">🛒</div>
+          <div class="accordion-title">Grocery List</div>
+          <div class="accordion-chevron">›</div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-icon">📷</div>
+          <div class="accordion-title">Scan Photo</div>
+          <div class="accordion-chevron">›</div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-icon">⚖️</div>
+          <div class="accordion-title">Weight Tracker</div>
+          <div class="accordion-chevron">›</div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-icon">💧</div>
+          <div class="accordion-title">Water Tracker</div>
+          <div class="accordion-chevron">›</div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-icon">🔖</div>
+          <div class="accordion-title">Saved Plans</div>
+          <div class="accordion-chevron">›</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="guide-section">Support</div>
+    <div class="support-card">
+      <div class="support-text">Have a question or ran into an issue? We're here to help.</div>
+      <div class="support-btn primary">✉️ Email Support</div>
+      <div class="support-btn outline">🌐 Visit prepfit.fit</div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+    <div class="nav-item"><div class="nav-icon">📅</div><div class="nav-label">Meal Plan</div></div>
+    <div class="nav-item"><div class="nav-icon">🛒</div><div class="nav-label">Grocery</div></div>
+    <div class="nav-item"><div class="nav-icon">🍽️</div><div class="nav-label">My Meals</div></div>
+    <div class="nav-item"><div class="nav-icon">📷</div><div class="nav-label">Scan</div></div>
+    <div class="nav-item"><div class="nav-icon">⚖️</div><div class="nav-label">Weight</div></div>
+    <div class="nav-item"><div class="nav-icon">💧</div><div class="nav-label">Water</div></div>
+    <div class="nav-item"><div class="nav-icon">🔖</div><div class="nav-label">Plans</div></div>
+    <div class="nav-item active"><div class="nav-icon">📖</div><div class="nav-label" style="color:var(--primary)">Guide</div><div class="nav-dot"></div></div>
+  </div>
+</div>
+
+<script>
+  function show(n) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById('s' + n);
+    if (el) el.classList.add('active');
+  }
+  const params = new URLSearchParams(window.location.search);
+  const s = parseInt(params.get('s') || '1', 10);
+  show(s);
+</script>
+</body>
+</html>

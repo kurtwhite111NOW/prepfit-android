@@ -58,7 +58,7 @@ title = "08 — Grocery (paywall loading)"
 id = "VFBXkvYSyN4sHybke356e"
 uri = "file://screenshots/01-home.jpg"
 type = "image"
-title = "1 — Home Dashboard"
+title = "1 — Home / Dashboard"
 
 [[outputs]]
 id = "ZFnuHZwHlQYgBe2zjhqZQ"
@@ -173,3 +173,33 @@ id = "fAozfwNqDbU7WIH-Pl6_w"
 uri = "file://screenshots/prepfit-screen-8.jpg"
 type = "image"
 title = "8 — User Guide"
+
+[[outputs]]
+id = "IJ8-5fSpt9o0qthkrDYj8"
+uri = "file://screenshots/02-meal-plan.jpg"
+type = "image"
+title = "2 — Meal Planner"
+
+[[outputs]]
+id = "IjclEkysMWuYUf9r5yKJi"
+uri = "file://screenshots/04-my-meals.jpg"
+type = "image"
+title = "4 — My Meals"
+
+[[outputs]]
+id = "z-WSS4YpnhA8oihCDmKJw"
+uri = "file://screenshots/05-scan-photo.jpg"
+type = "image"
+title = "5 — Scan a Meal"
+
+[[outputs]]
+id = "PX50KAhCK1YUvYmjwl90U"
+uri = "file://screenshots/08-saved-plans.jpg"
+type = "image"
+title = "8 — Saved Plans"
+
+[[outputs]]
+id = "e0HrC4fQ-dzShBrE-J9vq"
+uri = "file://screenshots/09-user-guide.jpg"
+type = "image"
+title = "9 — User Guide"
