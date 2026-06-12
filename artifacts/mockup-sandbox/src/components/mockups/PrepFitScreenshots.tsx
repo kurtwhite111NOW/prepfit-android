@@ -130,7 +130,7 @@ function Screen2() {
     <>
       <AppBar />
       <div style={{ flex: 1, overflowY: "hidden", padding: "16px" }}>
-        <div style={{ color: TEXT, fontWeight: 800, fontSize: 20, marginBottom: 14 }}>AI Meal Planner</div>
+        <div style={{ color: TEXT, fontWeight: 800, fontSize: 20, marginBottom: 14 }}>Meal Planner</div>
         <div style={{ background: CARD, borderRadius: 14, padding: "14px", marginBottom: 12, border: `1px solid ${BORDER}` }}>
           <div style={{ color: PRIMARY, fontSize: 10, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 8 }}>Configure Your Plan</div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
@@ -147,7 +147,7 @@ function Screen2() {
           </div>
         </div>
         <div style={{ background: PRIMARY, borderRadius: 12, padding: "13px", textAlign: "center", marginBottom: 14 }}>
-          <div style={{ color: TEXT, fontWeight: 700, fontSize: 15 }}>✨ Generate AI Meal Plan</div>
+          <div style={{ color: TEXT, fontWeight: 700, fontSize: 15 }}>⚡ Generate Meal Plan</div>
         </div>
         <div style={{ color: TEXT, fontWeight: 700, fontSize: 14, marginBottom: 10 }}>Generated Plan — Monday</div>
         {[
@@ -262,7 +262,7 @@ function Screen5() {
             <div style={{ color: MUTED, fontSize: 12 }}>Grilled Chicken Breast</div>
           </div>
           <div style={{ padding: "12px 14px" }}>
-            <div style={{ color: PRIMARY, fontSize: 10, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 3 }}>AI Analysis Result</div>
+            <div style={{ color: PRIMARY, fontSize: 10, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 3 }}>Analysis Result</div>
             <div style={{ color: TEXT, fontWeight: 800, fontSize: 22, marginBottom: 6 }}>285 calories</div>
             <div style={{ display: "flex", gap: 16, marginBottom: 10 }}>
               {[{ l: "Protein", v: "53g", c: "#7B6EF6" }, { l: "Carbs", v: "0g", c: PRIMARY }, { l: "Fat", v: "6g", c: GREEN }].map((m) => (
@@ -429,7 +429,7 @@ function Screen8() {
         <div style={{ background: CARD, borderRadius: 14, padding: "20px", textAlign: "center", border: `1.5px dashed ${PRIMARY}` }}>
           <div style={{ fontSize: 26, marginBottom: 6 }}>➕</div>
           <div style={{ color: TEXT, fontWeight: 600, fontSize: 14 }}>Create New Plan</div>
-          <div style={{ color: MUTED, fontSize: 12, marginTop: 3 }}>AI-powered in seconds</div>
+          <div style={{ color: MUTED, fontSize: 12, marginTop: 3 }}>Smart plans in seconds</div>
         </div>
       </div>
       <TabBar active={7} />
@@ -440,7 +440,7 @@ function Screen8() {
 // Screen 9: User Guide — NEW accordion design
 function Screen9() {
   const sections = [
-    { icon: "▶", title: "Getting Started", open: true, content: "Sign in or create a free account to get started. Head to Meal Planner to generate your first AI-powered meal plan." },
+    { icon: "▶", title: "Getting Started", open: true, content: "Sign in or create a free account to get started. Head to Meal Planner to generate your first meal plan." },
     { icon: "⌂", title: "Dashboard", open: false },
     { icon: "📋", title: "Meal Planner", open: false },
     { icon: "🛒", title: "Grocery List", open: false },
