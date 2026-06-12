@@ -14,16 +14,20 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Feather } from "@expo/vector-icons";
 import { useColors } from "@/hooks/useColors";
+import { useDemoMode } from "@/lib/demo";
 
 export default function SignInScreen() {
   const { signIn, setActive, isLoaded } = useSignIn();
+  const { enterDemo } = useDemoMode();
   const router = useRouter();
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState(false);
 
   const handleSignIn = async () => {
     if (!isLoaded) return;
@@ -47,6 +51,13 @@ export default function SignInScreen() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleTryDemo = async () => {
+    setDemoLoading(true);
+    await enterDemo();
+    router.replace("/(tabs)" as never);
+    setDemoLoading(false);
   };
 
   const s = styles(colors);
@@ -122,6 +133,31 @@ export default function SignInScreen() {
             </Link>
           </View>
         </View>
+
+        {/* Demo Mode */}
+        <View style={s.dividerRow}>
+          <View style={s.dividerLine} />
+          <Text style={s.dividerText}>or</Text>
+          <View style={s.dividerLine} />
+        </View>
+
+        <Pressable
+          style={({ pressed }) => [s.demoBtn, { opacity: pressed || demoLoading ? 0.75 : 1 }]}
+          onPress={handleTryDemo}
+          disabled={demoLoading}
+        >
+          {demoLoading ? (
+            <ActivityIndicator color="#7c3aed" size="small" />
+          ) : (
+            <>
+              <Feather name="eye" size={16} color="#7c3aed" />
+              <Text style={s.demoBtnText}>Try Demo — no account needed</Text>
+            </>
+          )}
+        </Pressable>
+        <Text style={s.demoNote}>
+          Explore all Pro features instantly. Data is not saved in demo mode.
+        </Text>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -216,5 +252,46 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       fontSize: 14,
       fontFamily: "Inter_600SemiBold",
       color: colors.primary,
+    },
+    // Demo section
+    dividerRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginTop: 24,
+      marginBottom: 16,
+      gap: 10,
+    },
+    dividerLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: "rgba(255,255,255,0.12)",
+    },
+    dividerText: {
+      fontSize: 13,
+      fontFamily: "Inter_400Regular",
+      color: "rgba(255,255,255,0.35)",
+    },
+    demoBtn: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 8,
+      borderWidth: 1.5,
+      borderColor: "#7c3aed",
+      borderRadius: 12,
+      paddingVertical: 14,
+      backgroundColor: "rgba(124,58,237,0.08)",
+    },
+    demoBtnText: {
+      fontSize: 15,
+      fontFamily: "Inter_600SemiBold",
+      color: "#7c3aed",
+    },
+    demoNote: {
+      textAlign: "center",
+      fontSize: 12,
+      fontFamily: "Inter_400Regular",
+      color: "rgba(255,255,255,0.35)",
+      marginTop: 10,
     },
   });

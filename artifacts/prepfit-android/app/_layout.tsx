@@ -18,6 +18,7 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { initializeRevenueCat, SubscriptionProvider } from "@/lib/revenuecat";
+import { DemoProvider, useDemoMode } from "@/lib/demo";
 
 setBaseUrl(`https://${process.env.EXPO_PUBLIC_DOMAIN}`);
 
@@ -42,30 +43,35 @@ const CLERK_KEY =
   ) ?? "";
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { isSignedIn, isLoaded, getToken } = useAuth();
+  const { isSignedIn, isLoaded: clerkLoaded, getToken } = useAuth();
+  const { isDemoMode, isLoaded: demoLoaded } = useDemoMode();
   const segments = useSegments();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!isLoaded) return;
-    const inAuth = (segments as string[])[0] === "(auth)";
-    if (!isSignedIn && !inAuth) {
-      router.replace("/(auth)/sign-in" as never);
-    } else if (isSignedIn && inAuth) {
-      router.replace("/(tabs)" as never);
-    }
-  }, [isSignedIn, isLoaded, segments]);
+  const isFullyLoaded = clerkLoaded && demoLoaded;
+  const isAuthed = isSignedIn || isDemoMode;
 
   useEffect(() => {
-    if (!isLoaded) return;
+    if (!isFullyLoaded) return;
+    const inAuth = (segments as string[])[0] === "(auth)";
+    if (!isAuthed && !inAuth) {
+      router.replace("/(auth)/sign-in" as never);
+    } else if (isAuthed && inAuth) {
+      router.replace("/(tabs)" as never);
+    }
+  }, [isAuthed, isFullyLoaded, segments]);
+
+  useEffect(() => {
+    if (!clerkLoaded) return;
     setAuthTokenGetter(async () => {
+      if (isDemoMode) return null;
       try {
         return (await getToken()) ?? null;
       } catch {
         return null;
       }
     });
-  }, [getToken, isLoaded]);
+  }, [getToken, clerkLoaded, isDemoMode]);
 
   return <>{children}</>;
 }
@@ -97,21 +103,23 @@ export default function RootLayout() {
 
   return (
     <ClerkProvider publishableKey={CLERK_KEY}>
-      <SafeAreaProvider>
-        <ErrorBoundary>
-          <QueryClientProvider client={queryClient}>
-            <SubscriptionProvider>
-              <GestureHandlerRootView style={{ flex: 1 }}>
-                <KeyboardProvider>
-                  <AuthGuard>
-                    <RootLayoutNav />
-                  </AuthGuard>
-                </KeyboardProvider>
-              </GestureHandlerRootView>
-            </SubscriptionProvider>
-          </QueryClientProvider>
-        </ErrorBoundary>
-      </SafeAreaProvider>
+      <DemoProvider>
+        <SafeAreaProvider>
+          <ErrorBoundary>
+            <QueryClientProvider client={queryClient}>
+              <SubscriptionProvider>
+                <GestureHandlerRootView style={{ flex: 1 }}>
+                  <KeyboardProvider>
+                    <AuthGuard>
+                      <RootLayoutNav />
+                    </AuthGuard>
+                  </KeyboardProvider>
+                </GestureHandlerRootView>
+              </SubscriptionProvider>
+            </QueryClientProvider>
+          </ErrorBoundary>
+        </SafeAreaProvider>
+      </DemoProvider>
     </ClerkProvider>
   );
 }

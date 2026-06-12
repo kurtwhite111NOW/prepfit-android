@@ -4,6 +4,7 @@ import Purchases from "react-native-purchases";
 import { useAuth } from "@clerk/expo";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Constants from "expo-constants";
+import { useDemoMode } from "@/lib/demo";
 
 const REVENUECAT_TEST_API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_TEST_API_KEY;
 const REVENUECAT_IOS_API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY;
@@ -47,6 +48,7 @@ export function initializeRevenueCat() {
 
 function useSubscriptionContext() {
   const { userId, isSignedIn, isLoaded } = useAuth();
+  const { isDemoMode } = useDemoMode();
   const queryClient = useQueryClient();
   const appState = useRef(AppState.currentState);
 
@@ -122,6 +124,7 @@ function useSubscriptionContext() {
   });
 
   const isSubscribed =
+    isDemoMode ||
     customerInfoQuery.data?.entitlements.active?.[REVENUECAT_ENTITLEMENT_IDENTIFIER] !== undefined;
 
   return {
