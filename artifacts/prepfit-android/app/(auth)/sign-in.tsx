@@ -16,18 +16,23 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import { useColors } from "@/hooks/useColors";
-import { useDemoMode } from "@/lib/demo";
+
+const ORANGE = "#F26B1D";
+const BG = "#0D1117";
+const CARD = "#161B22";
+const BORDER = "rgba(255,255,255,0.08)";
+const WHITE = "#FFFFFF";
+const MUTED = "rgba(255,255,255,0.45)";
+const INPUT_BG = "#0D1117";
 
 export default function SignInScreen() {
   const { signIn, setActive, isLoaded } = useSignIn();
-  const { enterDemo } = useDemoMode();
   const router = useRouter();
-  const colors = useColors();
   const insets = useSafeAreaInsets();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [demoLoading, setDemoLoading] = useState(false);
 
   const handleSignIn = async () => {
     if (!isLoaded) return;
@@ -37,10 +42,7 @@ export default function SignInScreen() {
     }
     setLoading(true);
     try {
-      const result = await signIn.create({
-        identifier: email.trim(),
-        password,
-      });
+      const result = await signIn.create({ identifier: email.trim(), password });
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
         router.replace("/(tabs)" as never);
@@ -53,245 +55,142 @@ export default function SignInScreen() {
     }
   };
 
-  const handleTryDemo = async () => {
-    setDemoLoading(true);
-    await enterDemo();
-    router.replace("/(tabs)" as never);
-    setDemoLoading(false);
-  };
-
-  const s = styles(colors);
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={[s.root, { backgroundColor: colors.sidebar }]}
+      style={[s.root, { backgroundColor: BG }]}
     >
       <ScrollView
-        contentContainerStyle={[s.scroll, { paddingTop: insets.top + 40, paddingBottom: insets.bottom + 20 }]}
+        contentContainerStyle={[s.scroll, { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 24 }]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View style={s.header}>
-          <View style={s.iconWrap}>
-            <Text style={s.iconText}>👍</Text>
-          </View>
-          <Text style={s.brand}>PrepFit</Text>
-          <Text style={s.tagline}>Your Fitness Meal Planner</Text>
+        {/* Back */}
+        <Pressable style={s.backBtn} onPress={() => router.back()}>
+          <Feather name="arrow-left" size={20} color={WHITE} />
+        </Pressable>
+
+        {/* Heading */}
+        <View style={s.headingWrap}>
+          <Text style={s.heading}>Welcome back</Text>
+          <Text style={s.subheading}>Sign in to your PrepFit account</Text>
         </View>
 
+        {/* Card */}
         <View style={s.card}>
-          <Text style={s.title}>Welcome back</Text>
-          <Text style={s.subtitle}>Sign in to continue</Text>
-
+          {/* Email */}
           <View style={s.field}>
-            <Text style={s.label}>Email</Text>
-            <TextInput
-              style={s.input}
-              placeholder="you@example.com"
-              placeholderTextColor={colors.mutedForeground}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-              value={email}
-              onChangeText={setEmail}
-            />
+            <Text style={s.label}>Email address</Text>
+            <View style={s.inputWrap}>
+              <Feather name="mail" size={15} color={MUTED} style={s.inputIcon} />
+              <TextInput
+                style={s.input}
+                placeholder="you@example.com"
+                placeholderTextColor={MUTED}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                value={email}
+                onChangeText={setEmail}
+              />
+            </View>
           </View>
 
+          {/* Password */}
           <View style={s.field}>
             <Text style={s.label}>Password</Text>
-            <TextInput
-              style={s.input}
-              placeholder="Your password"
-              placeholderTextColor={colors.mutedForeground}
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-              onSubmitEditing={handleSignIn}
-              returnKeyType="go"
-            />
+            <View style={s.inputWrap}>
+              <Feather name="lock" size={15} color={MUTED} style={s.inputIcon} />
+              <TextInput
+                style={[s.input, { flex: 1 }]}
+                placeholder="Your password"
+                placeholderTextColor={MUTED}
+                secureTextEntry={!showPass}
+                value={password}
+                onChangeText={setPassword}
+                onSubmitEditing={handleSignIn}
+                returnKeyType="go"
+              />
+              <Pressable onPress={() => setShowPass(!showPass)} style={s.eyeBtn}>
+                <Feather name={showPass ? "eye-off" : "eye"} size={15} color={MUTED} />
+              </Pressable>
+            </View>
           </View>
 
+          {/* Sign In Button */}
           <Pressable
-            style={({ pressed }) => [s.btn, { opacity: pressed || loading ? 0.8 : 1 }]}
+            style={({ pressed }) => [s.btn, { opacity: pressed || loading ? 0.82 : 1 }]}
             onPress={handleSignIn}
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator color="#FFF" />
+              <ActivityIndicator color={WHITE} />
             ) : (
-              <Text style={s.btnText}>Sign In</Text>
+              <>
+                <Feather name="log-in" size={16} color={WHITE} style={{ marginRight: 8 }} />
+                <Text style={s.btnText}>Sign In</Text>
+              </>
             )}
           </Pressable>
-
-          <View style={s.footer}>
-            <Text style={s.footerText}>Don't have an account? </Text>
-            <Link href="/(auth)/sign-up" asChild>
-              <Pressable>
-                <Text style={s.link}>Sign Up</Text>
-              </Pressable>
-            </Link>
-          </View>
         </View>
 
-        {/* Demo Mode */}
-        <View style={s.dividerRow}>
-          <View style={s.dividerLine} />
-          <Text style={s.dividerText}>or</Text>
-          <View style={s.dividerLine} />
+        {/* Footer */}
+        <View style={s.footer}>
+          <Text style={s.footerText}>Don't have an account?</Text>
+          <Link href="/(auth)/sign-up" asChild>
+            <Pressable>
+              <Text style={s.link}> Sign Up Free</Text>
+            </Pressable>
+          </Link>
         </View>
-
-        <Pressable
-          style={({ pressed }) => [s.demoBtn, { opacity: pressed || demoLoading ? 0.75 : 1 }]}
-          onPress={handleTryDemo}
-          disabled={demoLoading}
-        >
-          {demoLoading ? (
-            <ActivityIndicator color="#7c3aed" size="small" />
-          ) : (
-            <>
-              <Feather name="eye" size={16} color="#7c3aed" />
-              <Text style={s.demoBtnText}>Try Demo — no account needed</Text>
-            </>
-          )}
-        </Pressable>
-        <Text style={s.demoNote}>
-          Explore all Pro features instantly. Data is not saved in demo mode.
-        </Text>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
 
-const styles = (colors: ReturnType<typeof useColors>) =>
-  StyleSheet.create({
-    root: { flex: 1 },
-    scroll: { flexGrow: 1, paddingHorizontal: 24, justifyContent: "center" },
-    header: { alignItems: "center", marginBottom: 32 },
-    iconWrap: {
-      width: 72,
-      height: 72,
-      borderRadius: 20,
-      backgroundColor: colors.primary,
-      alignItems: "center",
-      justifyContent: "center",
-      marginBottom: 12,
-    },
-    iconText: { fontSize: 36 },
-    brand: {
-      fontSize: 28,
-      fontFamily: "Inter_700Bold",
-      color: "#FFFFFF",
-      letterSpacing: -0.5,
-    },
-    tagline: {
-      fontSize: 14,
-      color: colors.primary,
-      fontFamily: "Inter_500Medium",
-      marginTop: 4,
-    },
-    card: {
-      backgroundColor: colors.card,
-      borderRadius: colors.radius,
-      padding: 24,
-    },
-    title: {
-      fontSize: 22,
-      fontFamily: "Inter_700Bold",
-      color: colors.foreground,
-      marginBottom: 4,
-    },
-    subtitle: {
-      fontSize: 14,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-      marginBottom: 24,
-    },
-    field: { marginBottom: 16 },
-    label: {
-      fontSize: 13,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.foreground,
-      marginBottom: 6,
-    },
-    input: {
-      height: 48,
-      borderRadius: 10,
-      borderWidth: 1,
-      borderColor: colors.border,
-      paddingHorizontal: 14,
-      fontSize: 15,
-      fontFamily: "Inter_400Regular",
-      color: colors.foreground,
-      backgroundColor: colors.background,
-    },
-    btn: {
-      height: 50,
-      borderRadius: 12,
-      backgroundColor: colors.primary,
-      alignItems: "center",
-      justifyContent: "center",
-      marginTop: 8,
-    },
-    btnText: {
-      fontSize: 16,
-      fontFamily: "Inter_700Bold",
-      color: "#FFFFFF",
-    },
-    footer: {
-      flexDirection: "row",
-      justifyContent: "center",
-      marginTop: 20,
-    },
-    footerText: {
-      fontSize: 14,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-    },
-    link: {
-      fontSize: 14,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.primary,
-    },
-    // Demo section
-    dividerRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginTop: 24,
-      marginBottom: 16,
-      gap: 10,
-    },
-    dividerLine: {
-      flex: 1,
-      height: 1,
-      backgroundColor: "rgba(255,255,255,0.12)",
-    },
-    dividerText: {
-      fontSize: 13,
-      fontFamily: "Inter_400Regular",
-      color: "rgba(255,255,255,0.35)",
-    },
-    demoBtn: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 8,
-      borderWidth: 1.5,
-      borderColor: "#7c3aed",
-      borderRadius: 12,
-      paddingVertical: 14,
-      backgroundColor: "rgba(124,58,237,0.08)",
-    },
-    demoBtnText: {
-      fontSize: 15,
-      fontFamily: "Inter_600SemiBold",
-      color: "#7c3aed",
-    },
-    demoNote: {
-      textAlign: "center",
-      fontSize: 12,
-      fontFamily: "Inter_400Regular",
-      color: "rgba(255,255,255,0.35)",
-      marginTop: 10,
-    },
-  });
+const s = StyleSheet.create({
+  root: { flex: 1 },
+  scroll: { flexGrow: 1, paddingHorizontal: 20 },
+
+  backBtn: {
+    width: 40, height: 40, borderRadius: 12,
+    backgroundColor: "rgba(255,255,255,0.06)",
+    alignItems: "center", justifyContent: "center",
+    marginBottom: 28,
+  },
+
+  headingWrap: { marginBottom: 28 },
+  heading: { fontSize: 28, fontFamily: "Inter_700Bold", color: WHITE, letterSpacing: -0.5 },
+  subheading: { fontSize: 14, fontFamily: "Inter_400Regular", color: MUTED, marginTop: 4 },
+
+  card: {
+    backgroundColor: CARD, borderRadius: 18,
+    borderWidth: 1, borderColor: BORDER,
+    padding: 20, gap: 16, marginBottom: 24,
+  },
+
+  field: { gap: 6 },
+  label: { fontSize: 12, fontFamily: "Inter_600SemiBold", color: "rgba(255,255,255,0.65)", letterSpacing: 0.3 },
+  inputWrap: {
+    flexDirection: "row", alignItems: "center",
+    height: 50, borderRadius: 12,
+    borderWidth: 1, borderColor: BORDER,
+    backgroundColor: INPUT_BG, paddingHorizontal: 14, gap: 10,
+  },
+  inputIcon: {},
+  input: {
+    flex: 1, fontSize: 15, fontFamily: "Inter_400Regular", color: WHITE,
+  },
+  eyeBtn: { padding: 4 },
+
+  btn: {
+    height: 52, borderRadius: 14, backgroundColor: ORANGE,
+    flexDirection: "row", alignItems: "center", justifyContent: "center",
+    marginTop: 4,
+  },
+  btnText: { fontSize: 16, fontFamily: "Inter_700Bold", color: WHITE },
+
+  footer: { flexDirection: "row", justifyContent: "center", alignItems: "center" },
+  footerText: { fontSize: 14, fontFamily: "Inter_400Regular", color: MUTED },
+  link: { fontSize: 14, fontFamily: "Inter_700Bold", color: ORANGE },
+});

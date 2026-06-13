@@ -68,7 +68,7 @@ export function AuthGate({ children }: AuthGateProps) {
 
         <Pressable
           style={({ pressed }) => [s.signInBtn, { opacity: pressed ? 0.85 : 1 }]}
-          onPress={() => router.replace("/(auth)/sign-in" as never)}
+          onPress={() => router.replace("/(auth)" as never)}
         >
           <Text style={s.signInBtnText}>Sign In</Text>
         </Pressable>

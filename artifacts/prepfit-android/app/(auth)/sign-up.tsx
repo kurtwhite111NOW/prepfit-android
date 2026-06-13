@@ -14,16 +14,24 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useColors } from "@/hooks/useColors";
+import { Feather } from "@expo/vector-icons";
+
+const ORANGE = "#F26B1D";
+const BG = "#0D1117";
+const CARD = "#161B22";
+const BORDER = "rgba(255,255,255,0.08)";
+const WHITE = "#FFFFFF";
+const MUTED = "rgba(255,255,255,0.45)";
+const INPUT_BG = "#0D1117";
 
 export default function SignUpScreen() {
   const { signUp, setActive, isLoaded } = useSignUp();
   const router = useRouter();
-  const colors = useColors();
   const insets = useSafeAreaInsets();
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPass, setShowPass] = useState(false);
   const [code, setCode] = useState("");
   const [pendingVerification, setPendingVerification] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -31,12 +39,16 @@ export default function SignUpScreen() {
   const handleSignUp = async () => {
     if (!isLoaded) return;
     if (!email.trim() || !password.trim()) {
-      Alert.alert("Missing fields", "Please fill in all required fields.");
+      Alert.alert("Missing fields", "Please fill in your email and password.");
       return;
     }
     setLoading(true);
     try {
-      await signUp.create({ emailAddress: email.trim(), password, firstName: firstName.trim() || undefined });
+      await signUp.create({
+        emailAddress: email.trim(),
+        password,
+        firstName: firstName.trim() || undefined,
+      });
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setPendingVerification(true);
     } catch (err: any) {
@@ -68,219 +80,242 @@ export default function SignUpScreen() {
     }
   };
 
-  const s = styles(colors);
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={[s.root, { backgroundColor: colors.sidebar }]}
+      style={[s.root, { backgroundColor: BG }]}
     >
       <ScrollView
-        contentContainerStyle={[s.scroll, { paddingTop: insets.top + 40, paddingBottom: insets.bottom + 20 }]}
+        contentContainerStyle={[s.scroll, { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 24 }]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View style={s.header}>
-          <View style={s.iconWrap}>
-            <Text style={s.iconText}>👍</Text>
-          </View>
-          <Text style={s.brand}>PrepFit</Text>
-          <Text style={s.tagline}>Start your fitness journey</Text>
-        </View>
+        {/* Back */}
+        <Pressable style={s.backBtn} onPress={() => router.back()}>
+          <Feather name="arrow-left" size={20} color={WHITE} />
+        </Pressable>
 
-        <View style={s.card}>
-          {!pendingVerification ? (
-            <>
-              <Text style={s.title}>Create account</Text>
-              <Text style={s.subtitle}>Join PrepFit today — it's free</Text>
+        {!pendingVerification ? (
+          <>
+            {/* Heading */}
+            <View style={s.headingWrap}>
+              <Text style={s.heading}>Start free today</Text>
+              <Text style={s.subheading}>3-day free trial — cancel anytime</Text>
+            </View>
 
+            {/* Trial badge */}
+            <View style={s.trialBadge}>
+              <Feather name="zap" size={13} color={ORANGE} />
+              <Text style={s.trialBadgeText}>Full access to all features during your trial</Text>
+            </View>
+
+            {/* Card */}
+            <View style={s.card}>
+              {/* First name */}
               <View style={s.field}>
-                <Text style={s.label}>First name (optional)</Text>
-                <TextInput
-                  style={s.input}
-                  placeholder="Alex"
-                  placeholderTextColor={colors.mutedForeground}
-                  autoCapitalize="words"
-                  value={firstName}
-                  onChangeText={setFirstName}
-                />
+                <Text style={s.label}>First name <Text style={s.optional}>(optional)</Text></Text>
+                <View style={s.inputWrap}>
+                  <Feather name="user" size={15} color={MUTED} style={s.inputIcon} />
+                  <TextInput
+                    style={s.input}
+                    placeholder="Alex"
+                    placeholderTextColor={MUTED}
+                    autoCapitalize="words"
+                    value={firstName}
+                    onChangeText={setFirstName}
+                  />
+                </View>
               </View>
 
+              {/* Email */}
               <View style={s.field}>
-                <Text style={s.label}>Email</Text>
-                <TextInput
-                  style={s.input}
-                  placeholder="you@example.com"
-                  placeholderTextColor={colors.mutedForeground}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  value={email}
-                  onChangeText={setEmail}
-                />
+                <Text style={s.label}>Email address</Text>
+                <View style={s.inputWrap}>
+                  <Feather name="mail" size={15} color={MUTED} style={s.inputIcon} />
+                  <TextInput
+                    style={s.input}
+                    placeholder="you@example.com"
+                    placeholderTextColor={MUTED}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    value={email}
+                    onChangeText={setEmail}
+                  />
+                </View>
               </View>
 
+              {/* Password */}
               <View style={s.field}>
                 <Text style={s.label}>Password</Text>
-                <TextInput
-                  style={s.input}
-                  placeholder="Min. 8 characters"
-                  placeholderTextColor={colors.mutedForeground}
-                  secureTextEntry
-                  value={password}
-                  onChangeText={setPassword}
-                  returnKeyType="go"
-                  onSubmitEditing={handleSignUp}
-                />
+                <View style={s.inputWrap}>
+                  <Feather name="lock" size={15} color={MUTED} style={s.inputIcon} />
+                  <TextInput
+                    style={[s.input, { flex: 1 }]}
+                    placeholder="Min. 8 characters"
+                    placeholderTextColor={MUTED}
+                    secureTextEntry={!showPass}
+                    value={password}
+                    onChangeText={setPassword}
+                    returnKeyType="go"
+                    onSubmitEditing={handleSignUp}
+                  />
+                  <Pressable onPress={() => setShowPass(!showPass)} style={s.eyeBtn}>
+                    <Feather name={showPass ? "eye-off" : "eye"} size={15} color={MUTED} />
+                  </Pressable>
+                </View>
               </View>
 
+              {/* Sign Up Button */}
               <Pressable
-                style={({ pressed }) => [s.btn, { opacity: pressed || loading ? 0.8 : 1 }]}
+                style={({ pressed }) => [s.btn, { opacity: pressed || loading ? 0.82 : 1 }]}
                 onPress={handleSignUp}
                 disabled={loading}
               >
                 {loading ? (
-                  <ActivityIndicator color="#FFF" />
+                  <ActivityIndicator color={WHITE} />
                 ) : (
-                  <Text style={s.btnText}>Create Account</Text>
+                  <>
+                    <Feather name="zap" size={16} color={WHITE} style={{ marginRight: 8 }} />
+                    <Text style={s.btnText}>Create Free Account</Text>
+                  </>
                 )}
               </Pressable>
 
-              <View style={s.footer}>
-                <Text style={s.footerText}>Already have an account? </Text>
-                <Link href="/(auth)/sign-in" asChild>
-                  <Pressable>
-                    <Text style={s.link}>Sign In</Text>
-                  </Pressable>
-                </Link>
-              </View>
-            </>
-          ) : (
-            <>
-              <Text style={s.title}>Verify your email</Text>
-              <Text style={s.subtitle}>We sent a code to {email}</Text>
+              <Text style={s.terms}>
+                By signing up you agree to our Terms of Service and Privacy Policy.
+              </Text>
+            </View>
 
+            {/* Footer */}
+            <View style={s.footer}>
+              <Text style={s.footerText}>Already have an account?</Text>
+              <Link href="/(auth)/sign-in" asChild>
+                <Pressable>
+                  <Text style={s.link}> Sign In</Text>
+                </Pressable>
+              </Link>
+            </View>
+          </>
+        ) : (
+          <>
+            {/* Verify heading */}
+            <View style={s.headingWrap}>
+              <Text style={s.heading}>Check your email</Text>
+              <Text style={s.subheading}>We sent a 6-digit code to</Text>
+              <Text style={s.emailHighlight}>{email}</Text>
+            </View>
+
+            <View style={s.card}>
               <View style={s.field}>
                 <Text style={s.label}>Verification code</Text>
-                <TextInput
-                  style={s.input}
-                  placeholder="123456"
-                  placeholderTextColor={colors.mutedForeground}
-                  keyboardType="number-pad"
-                  value={code}
-                  onChangeText={setCode}
-                  returnKeyType="go"
-                  onSubmitEditing={handleVerify}
-                />
+                <View style={[s.inputWrap, s.codeInputWrap]}>
+                  <Feather name="shield" size={15} color={MUTED} style={s.inputIcon} />
+                  <TextInput
+                    style={[s.input, s.codeInput]}
+                    placeholder="123456"
+                    placeholderTextColor={MUTED}
+                    keyboardType="number-pad"
+                    value={code}
+                    onChangeText={setCode}
+                    returnKeyType="go"
+                    onSubmitEditing={handleVerify}
+                    maxLength={6}
+                  />
+                </View>
               </View>
 
               <Pressable
-                style={({ pressed }) => [s.btn, { opacity: pressed || loading ? 0.8 : 1 }]}
+                style={({ pressed }) => [s.btn, { opacity: pressed || loading ? 0.82 : 1 }]}
                 onPress={handleVerify}
                 disabled={loading}
               >
                 {loading ? (
-                  <ActivityIndicator color="#FFF" />
+                  <ActivityIndicator color={WHITE} />
                 ) : (
-                  <Text style={s.btnText}>Verify & Continue</Text>
+                  <>
+                    <Feather name="check-circle" size={16} color={WHITE} style={{ marginRight: 8 }} />
+                    <Text style={s.btnText}>Verify & Start Trial</Text>
+                  </>
                 )}
               </Pressable>
-            </>
-          )}
-        </View>
+
+              <Pressable onPress={() => setPendingVerification(false)} style={s.resendBtn}>
+                <Text style={s.resendText}>← Use a different email</Text>
+              </Pressable>
+            </View>
+          </>
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
 
-const styles = (colors: ReturnType<typeof useColors>) =>
-  StyleSheet.create({
-    root: { flex: 1 },
-    scroll: { flexGrow: 1, paddingHorizontal: 24, justifyContent: "center" },
-    header: { alignItems: "center", marginBottom: 32 },
-    iconWrap: {
-      width: 72,
-      height: 72,
-      borderRadius: 20,
-      backgroundColor: colors.primary,
-      alignItems: "center",
-      justifyContent: "center",
-      marginBottom: 12,
-    },
-    iconText: { fontSize: 36 },
-    brand: {
-      fontSize: 28,
-      fontFamily: "Inter_700Bold",
-      color: "#FFFFFF",
-      letterSpacing: -0.5,
-    },
-    tagline: {
-      fontSize: 14,
-      color: colors.primary,
-      fontFamily: "Inter_500Medium",
-      marginTop: 4,
-    },
-    card: {
-      backgroundColor: colors.card,
-      borderRadius: colors.radius,
-      padding: 24,
-    },
-    title: {
-      fontSize: 22,
-      fontFamily: "Inter_700Bold",
-      color: colors.foreground,
-      marginBottom: 4,
-    },
-    subtitle: {
-      fontSize: 14,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-      marginBottom: 24,
-    },
-    field: { marginBottom: 16 },
-    label: {
-      fontSize: 13,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.foreground,
-      marginBottom: 6,
-    },
-    input: {
-      height: 48,
-      borderRadius: 10,
-      borderWidth: 1,
-      borderColor: colors.border,
-      paddingHorizontal: 14,
-      fontSize: 15,
-      fontFamily: "Inter_400Regular",
-      color: colors.foreground,
-      backgroundColor: colors.background,
-    },
-    btn: {
-      height: 50,
-      borderRadius: 12,
-      backgroundColor: colors.primary,
-      alignItems: "center",
-      justifyContent: "center",
-      marginTop: 8,
-    },
-    btnText: {
-      fontSize: 16,
-      fontFamily: "Inter_700Bold",
-      color: "#FFFFFF",
-    },
-    footer: {
-      flexDirection: "row",
-      justifyContent: "center",
-      marginTop: 20,
-    },
-    footerText: {
-      fontSize: 14,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-    },
-    link: {
-      fontSize: 14,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.primary,
-    },
-  });
+const s = StyleSheet.create({
+  root: { flex: 1 },
+  scroll: { flexGrow: 1, paddingHorizontal: 20 },
+
+  backBtn: {
+    width: 40, height: 40, borderRadius: 12,
+    backgroundColor: "rgba(255,255,255,0.06)",
+    alignItems: "center", justifyContent: "center",
+    marginBottom: 28,
+  },
+
+  headingWrap: { marginBottom: 16 },
+  heading: { fontSize: 28, fontFamily: "Inter_700Bold", color: WHITE, letterSpacing: -0.5 },
+  subheading: { fontSize: 14, fontFamily: "Inter_400Regular", color: MUTED, marginTop: 4 },
+  emailHighlight: { fontSize: 14, fontFamily: "Inter_600SemiBold", color: ORANGE, marginTop: 2 },
+
+  trialBadge: {
+    flexDirection: "row", alignItems: "center", gap: 7,
+    backgroundColor: "rgba(242,107,29,0.1)",
+    borderWidth: 1, borderColor: "rgba(242,107,29,0.3)",
+    borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8,
+    marginBottom: 18, alignSelf: "flex-start",
+  },
+  trialBadgeText: { fontSize: 12, fontFamily: "Inter_600SemiBold", color: ORANGE },
+
+  card: {
+    backgroundColor: CARD, borderRadius: 18,
+    borderWidth: 1, borderColor: BORDER,
+    padding: 20, gap: 16, marginBottom: 24,
+  },
+
+  field: { gap: 6 },
+  label: { fontSize: 12, fontFamily: "Inter_600SemiBold", color: "rgba(255,255,255,0.65)", letterSpacing: 0.3 },
+  optional: { fontFamily: "Inter_400Regular", color: MUTED },
+  inputWrap: {
+    flexDirection: "row", alignItems: "center",
+    height: 50, borderRadius: 12,
+    borderWidth: 1, borderColor: BORDER,
+    backgroundColor: INPUT_BG, paddingHorizontal: 14, gap: 10,
+  },
+  codeInputWrap: {},
+  inputIcon: {},
+  input: {
+    flex: 1, fontSize: 15, fontFamily: "Inter_400Regular", color: WHITE,
+  },
+  codeInput: { fontSize: 22, fontFamily: "Inter_700Bold", letterSpacing: 8 },
+  eyeBtn: { padding: 4 },
+
+  btn: {
+    height: 52, borderRadius: 14, backgroundColor: ORANGE,
+    flexDirection: "row", alignItems: "center", justifyContent: "center",
+    marginTop: 4,
+  },
+  btnText: { fontSize: 16, fontFamily: "Inter_700Bold", color: WHITE },
+
+  terms: {
+    fontSize: 11, fontFamily: "Inter_400Regular",
+    color: "rgba(255,255,255,0.25)", textAlign: "center", lineHeight: 16,
+    marginTop: -4,
+  },
+
+  footer: { flexDirection: "row", justifyContent: "center", alignItems: "center" },
+  footerText: { fontSize: 14, fontFamily: "Inter_400Regular", color: MUTED },
+  link: { fontSize: 14, fontFamily: "Inter_700Bold", color: ORANGE },
+
+  resendBtn: { alignItems: "center", marginTop: -4 },
+  resendText: { fontSize: 13, fontFamily: "Inter_500Medium", color: MUTED },
+});
