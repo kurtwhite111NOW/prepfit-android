@@ -3,7 +3,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  Animated,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -13,6 +12,7 @@ import {
 import Svg, { Circle, Defs, LinearGradient, Stop } from "react-native-svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
+import { updateWaterStreak } from "@/hooks/useStreaks";
 
 const DAILY_GOAL = 8;
 const STORAGE_KEY = "prepfit_water_data";
@@ -111,6 +111,9 @@ export default function WaterScreen() {
   const saveCount = async (newCount: number) => {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ date: todayKey, count: newCount }));
+      if (newCount >= DAILY_GOAL) {
+        await updateWaterStreak();
+      }
     } catch {}
   };
 
@@ -203,7 +206,7 @@ export default function WaterScreen() {
       <View style={s.statsCard}>
         <View style={s.statRow}>
           <Text style={s.statLabel}>Today's intake</Text>
-          <Text style={s.statValue}>{count * 250}ml · {count * 8.45}oz</Text>
+          <Text style={s.statValue}>{count * 250}ml · {(count * 8.45).toFixed(0)}oz</Text>
         </View>
         <View style={s.statRow}>
           <Text style={s.statLabel}>Goal completion</Text>
