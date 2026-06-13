@@ -4,12 +4,12 @@ import {
   getGetMealPlanQueryKey,
   listMealPlans,
   getMealPlan,
-  useDeleteMealPlan,
+  deleteMealPlan,
 } from "@workspace/api-client-react";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -21,7 +21,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { Swipeable } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 
@@ -30,8 +29,10 @@ export default function PlansScreen() {
   const insets = useSafeAreaInsets();
   const qc = useQueryClient();
   const router = useRouter();
+
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
-  const swipeableRefs = useRef<Map<number, Swipeable | null>>(new Map());
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
 
   const { data: plans, isLoading, refetch } = useQuery({
     queryKey: getListMealPlansQueryKey(),
@@ -44,34 +45,67 @@ export default function PlansScreen() {
     enabled: !!selectedPlanId,
   });
 
-  const deleteMutation = useDeleteMealPlan({
-    mutation: {
-      onSuccess: () => {
-        qc.invalidateQueries({ queryKey: getListMealPlansQueryKey() });
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      },
-      onError: () => Alert.alert("Error", "Failed to delete plan."),
-    },
-  });
+  const toggleSelect = (id: number) => {
+    const next = new Set(selected);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setSelected(next);
+    if (next.size > 0) Haptics.selectionAsync();
+  };
 
-  const handleDelete = (id: number, name: string) => {
-    Alert.alert("Delete Plan", `Delete "${name}"? This cannot be undone.`, [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: () => deleteMutation.mutate({ id }),
-      },
-    ]);
+  const startSelecting = () => {
+    setIsSelecting(true);
+    setSelected(new Set());
+  };
+
+  const cancelSelecting = () => {
+    setIsSelecting(false);
+    setSelected(new Set());
+  };
+
+  const handleDeleteSelected = () => {
+    const ids = Array.from(selected);
+    Alert.alert(
+      "Delete Plans",
+      `Delete ${ids.length} plan${ids.length !== 1 ? "s" : ""}? This cannot be undone.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            await Promise.all(ids.map((id) => deleteMealPlan(id)));
+            qc.invalidateQueries({ queryKey: getListMealPlansQueryKey() });
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            cancelSelecting();
+          },
+        },
+      ]
+    );
   };
 
   const s = styles(colors);
+  const hasPlans = !!(plans && plans.length > 0);
 
   return (
     <View style={[s.root, { backgroundColor: colors.background }]}>
       <View style={[s.header, { paddingTop: 16 }]}>
-        <Text style={s.headerTitle}>Saved Plans</Text>
-        <Text style={s.headerSub}>{plans?.length ?? 0} meal plans saved</Text>
+        <View>
+          <Text style={s.headerTitle}>Saved Plans</Text>
+          <Text style={s.headerSub}>{plans?.length ?? 0} meal plans saved</Text>
+        </View>
+        {hasPlans && (
+          isSelecting ? (
+            <Pressable onPress={cancelSelecting} style={s.selectBtn}>
+              <Text style={s.selectBtnText}>Cancel</Text>
+            </Pressable>
+          ) : (
+            <Pressable onPress={startSelecting} style={s.selectBtn}>
+              <Feather name="check-square" size={14} color="#fff" />
+              <Text style={s.selectBtnText}>Select</Text>
+            </Pressable>
+          )
+        )}
       </View>
 
       <FlatList
@@ -80,10 +114,11 @@ export default function PlansScreen() {
         contentContainerStyle={[
           s.list,
           (!plans || plans.length === 0) && { flex: 1 },
+          isSelecting && { paddingBottom: 80 + insets.bottom },
         ]}
         refreshing={isLoading}
         onRefresh={refetch}
-        scrollEnabled={!!(plans && plans.length > 0)}
+        scrollEnabled={hasPlans}
         ListEmptyComponent={
           isLoading ? (
             <View style={s.center}>
@@ -103,49 +138,70 @@ export default function PlansScreen() {
             </View>
           )
         }
-        renderItem={({ item }) => (
-          <Swipeable
-            ref={(ref) => { swipeableRefs.current.set(item.id, ref); }}
-            onSwipeableWillOpen={() => {
-              swipeableRefs.current.forEach((ref, id) => {
-                if (id !== item.id) ref?.close();
-              });
-            }}
-            renderRightActions={() => (
-              <Pressable
-                style={s.swipeDelete}
-                onPress={() => {
-                  swipeableRefs.current.get(item.id)?.close();
-                  handleDelete(item.id, item.name);
-                }}
-              >
-                <Feather name="trash-2" size={20} color="#FFF" />
-                <Text style={s.swipeDeleteText}>Delete</Text>
-              </Pressable>
-            )}
-          >
+        renderItem={({ item }) => {
+          const checked = selected.has(item.id);
+          return (
             <Pressable
-              style={({ pressed }) => [s.card, { opacity: pressed ? 0.93 : 1 }]}
-              onPress={() => setSelectedPlanId(item.id)}
+              style={({ pressed }) => [
+                s.card,
+                checked && s.cardSelected,
+                { opacity: pressed ? 0.93 : 1 },
+              ]}
+              onPress={() => {
+                if (isSelecting) toggleSelect(item.id);
+                else setSelectedPlanId(item.id);
+              }}
+              onLongPress={() => {
+                if (!isSelecting) startSelecting();
+                toggleSelect(item.id);
+              }}
             >
-              <View style={s.cardLeft}>
+              {isSelecting ? (
+                <View style={[s.checkbox, checked && s.checkboxChecked]}>
+                  {checked && <Feather name="check" size={12} color="#fff" />}
+                </View>
+              ) : (
                 <View style={s.planIcon}>
                   <Feather name="calendar" size={18} color={colors.primary} />
                 </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={s.planName} numberOfLines={1}>{item.name}</Text>
-                  <View style={s.planMeta}>
-                    <Text style={s.planMetaText}>{item.mealsPerDay} meals/day</Text>
-                    <View style={s.dot} />
-                    <Text style={s.planMetaText}>{item.dailyCalories} kcal</Text>
-                  </View>
+              )}
+              <View style={s.cardContent}>
+                <Text style={s.planName} numberOfLines={1}>{item.name}</Text>
+                <View style={s.planMeta}>
+                  <Text style={s.planMetaText}>{item.mealsPerDay} meals/day</Text>
+                  <View style={s.dot} />
+                  <Text style={s.planMetaText}>{item.dailyCalories} kcal</Text>
                 </View>
               </View>
-              <Feather name="chevron-right" size={16} color={colors.mutedForeground} />
+              {!isSelecting && (
+                <Feather name="chevron-right" size={16} color={colors.mutedForeground} />
+              )}
             </Pressable>
-          </Swipeable>
-        )}
+          );
+        }}
       />
+
+      {isSelecting && (
+        <View style={[s.deleteBar, { paddingBottom: insets.bottom + 12 }]}>
+          <Text style={s.deleteBarCount}>
+            {selected.size} selected
+          </Text>
+          <Pressable
+            style={({ pressed }) => [
+              s.deleteBarBtn,
+              selected.size === 0 && s.deleteBarBtnDisabled,
+              { opacity: pressed ? 0.8 : 1 },
+            ]}
+            onPress={handleDeleteSelected}
+            disabled={selected.size === 0}
+          >
+            <Feather name="trash-2" size={16} color="#fff" />
+            <Text style={s.deleteBarBtnText}>
+              Delete{selected.size > 0 ? ` (${selected.size})` : ""}
+            </Text>
+          </Pressable>
+        </View>
+      )}
 
       <Modal
         visible={!!selectedPlanId}
@@ -228,7 +284,10 @@ const styles = (colors: ReturnType<typeof useColors>) =>
     header: {
       backgroundColor: colors.sidebar,
       paddingHorizontal: 20,
-      paddingBottom: 20,
+      paddingBottom: 16,
+      flexDirection: "row",
+      alignItems: "flex-end",
+      justifyContent: "space-between",
     },
     headerTitle: {
       fontSize: 26,
@@ -240,6 +299,21 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       fontFamily: "Inter_400Regular",
       color: "rgba(255,255,255,0.5)",
       marginTop: 4,
+    },
+    selectBtn: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 5,
+      backgroundColor: "rgba(255,255,255,0.15)",
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 20,
+      marginBottom: 4,
+    },
+    selectBtnText: {
+      fontSize: 13,
+      fontFamily: "Inter_600SemiBold",
+      color: "#fff",
     },
     list: { padding: 16, gap: 10 },
     center: { flex: 1, alignItems: "center", justifyContent: "center" },
@@ -277,17 +351,34 @@ const styles = (colors: ReturnType<typeof useColors>) =>
     card: {
       flexDirection: "row",
       alignItems: "center",
+      gap: 12,
       backgroundColor: colors.card,
       borderRadius: 12,
       padding: 14,
       borderWidth: 1,
       borderColor: colors.border,
     },
-    cardLeft: {
-      flex: 1,
-      flexDirection: "row",
+    cardSelected: {
+      borderColor: colors.primary,
+      borderWidth: 2,
+    },
+    checkbox: {
+      width: 22,
+      height: 22,
+      borderRadius: 11,
+      borderWidth: 2,
+      borderColor: colors.border,
       alignItems: "center",
-      gap: 12,
+      justifyContent: "center",
+      backgroundColor: colors.card,
+      flexShrink: 0,
+    },
+    checkboxChecked: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    cardContent: {
+      flex: 1,
     },
     planIcon: {
       width: 40,
@@ -296,6 +387,7 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       backgroundColor: colors.accent,
       alignItems: "center",
       justifyContent: "center",
+      flexShrink: 0,
     },
     planName: {
       fontSize: 15,
@@ -319,19 +411,46 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       borderRadius: 1.5,
       backgroundColor: colors.mutedForeground,
     },
-    swipeDelete: {
-      backgroundColor: colors.destructive,
-      justifyContent: "center",
+    deleteBar: {
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: colors.card,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+      paddingHorizontal: 20,
+      paddingTop: 12,
+      flexDirection: "row",
       alignItems: "center",
-      width: 80,
-      borderRadius: 12,
-      marginLeft: 8,
-      gap: 4,
+      justifyContent: "space-between",
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: -2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      elevation: 8,
     },
-    swipeDeleteText: {
-      fontSize: 11,
+    deleteBarCount: {
+      fontSize: 14,
+      fontFamily: "Inter_500Medium",
+      color: colors.mutedForeground,
+    },
+    deleteBarBtn: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      backgroundColor: colors.destructive,
+      paddingHorizontal: 20,
+      paddingVertical: 10,
+      borderRadius: 12,
+    },
+    deleteBarBtnDisabled: {
+      opacity: 0.4,
+    },
+    deleteBarBtnText: {
+      fontSize: 14,
       fontFamily: "Inter_600SemiBold",
-      color: "#FFF",
+      color: "#fff",
     },
     modal: {
       flex: 1,
