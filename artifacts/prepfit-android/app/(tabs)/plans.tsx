@@ -74,9 +74,15 @@ export default function PlansScreen() {
           text: "Delete",
           style: "destructive",
           onPress: async () => {
-            await Promise.all(ids.map((id) => deleteMealPlan(id)));
+            const results = await Promise.allSettled(ids.map((id) => deleteMealPlan(id)));
+            const failed = results.filter((r) => r.status === "rejected").length;
             qc.invalidateQueries({ queryKey: getListMealPlansQueryKey() });
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            if (failed > 0) {
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+              Alert.alert("Partial Delete", `${ids.length - failed} removed, ${failed} failed. Please try again.`);
+            } else {
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            }
             cancelSelecting();
           },
         },

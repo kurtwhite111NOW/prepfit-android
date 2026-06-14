@@ -1,5 +1,5 @@
 import { useUser, useClerk } from "@clerk/expo";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getListMealPlansQueryKey,
   getListSavedMealsQueryKey,
@@ -12,8 +12,8 @@ import {
 } from "@workspace/api-client-react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -114,15 +114,22 @@ const QUICK_ACTIONS = [
 function useWaterCount() {
   const [count, setCount] = useState(0);
   const todayKey = new Date().toISOString().split("T")[0];
-  useEffect(() => {
+
+  const refresh = useCallback(() => {
     AsyncStorage.getItem(WATER_KEY).then((raw) => {
       if (raw) {
         const data = JSON.parse(raw);
-        if (data.date === todayKey) setCount(data.count);
+        setCount(data.date === todayKey ? data.count : 0);
+      } else {
+        setCount(0);
       }
     }).catch(() => {});
   }, [todayKey]);
-  return count;
+
+  // Initial load
+  useEffect(() => { refresh(); }, [refresh]);
+
+  return { count, refresh };
 }
 
 function getDailyTip(): string {
@@ -168,7 +175,18 @@ export default function DashboardScreen() {
   const colors = useColors();
   const { resolvedTheme } = useTheme();
   const router = useRouter();
-  const waterCount = useWaterCount();
+  const { count: waterCount, refresh: refreshWater } = useWaterCount();
+  const qc = useQueryClient();
+
+  // Refresh water count + all API data whenever this tab comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refreshWater();
+      qc.invalidateQueries({ queryKey: getListSavedMealsQueryKey() });
+      qc.invalidateQueries({ queryKey: getListWeightEntriesQueryKey() });
+      qc.invalidateQueries({ queryKey: getListMealPlansQueryKey() });
+    }, [refreshWater, qc])
+  );
 
   const { data: plans, isLoading: plansLoading } = useQuery({
     queryKey: getListMealPlansQueryKey(),

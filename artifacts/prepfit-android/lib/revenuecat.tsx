@@ -13,26 +13,30 @@ const REVENUECAT_ANDROID_API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_AP
 export const REVENUECAT_ENTITLEMENT_IDENTIFIER = "pro";
 
 function getRevenueCatApiKey() {
-  if (!REVENUECAT_TEST_API_KEY || !REVENUECAT_IOS_API_KEY || !REVENUECAT_ANDROID_API_KEY) {
-    throw new Error("RevenueCat Public API Keys not found");
-  }
-
   if (!REVENUECAT_ENTITLEMENT_IDENTIFIER) {
     throw new Error("RevenueCat Entitlement Identifier not provided");
   }
 
+  // Dev / web / Expo Go: always use the test key
   if (__DEV__ || Platform.OS === "web" || Constants.executionEnvironment === "storeClient") {
+    if (!REVENUECAT_TEST_API_KEY) throw new Error("RevenueCat test API key not found");
     return REVENUECAT_TEST_API_KEY;
   }
 
-  if (Platform.OS === "ios") {
-    return REVENUECAT_IOS_API_KEY;
-  }
-
+  // Production Android — only the Android key is required
   if (Platform.OS === "android") {
+    if (!REVENUECAT_ANDROID_API_KEY) throw new Error("RevenueCat Android API key not found");
     return REVENUECAT_ANDROID_API_KEY;
   }
 
+  // Production iOS — only the iOS key is required
+  if (Platform.OS === "ios") {
+    if (!REVENUECAT_IOS_API_KEY) throw new Error("RevenueCat iOS API key not found");
+    return REVENUECAT_IOS_API_KEY;
+  }
+
+  // Fallback: test key
+  if (!REVENUECAT_TEST_API_KEY) throw new Error("RevenueCat API key not found for platform");
   return REVENUECAT_TEST_API_KEY;
 }
 

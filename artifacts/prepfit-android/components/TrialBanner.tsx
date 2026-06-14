@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useSubscription } from "@/lib/revenuecat";
+import { useLocalTrial } from "@/hooks/useLocalTrial";
 import { PaywallModal } from "@/components/PaywallModal";
 
 const ORANGE = "#F26B1D";
@@ -9,15 +10,28 @@ const ORANGE_DARK = "#C9540F";
 const AMBER_BG = "rgba(242,107,29,0.12)";
 const AMBER_BORDER = "rgba(242,107,29,0.30)";
 const WHITE = "#ffffff";
-const WHITE_80 = "rgba(255,255,255,0.80)";
 
+/**
+ * Trial banner shown at the top of every tab screen.
+ * Visible when:
+ *   - RevenueCat reports periodType === "TRIAL" (paid trial via in-app purchase), OR
+ *   - Local 3-day trial window is still active (new sign-ups before first purchase)
+ * Hidden once the user has an active paid subscription.
+ */
 export function TrialBanner() {
-  const { isInTrial, trialDaysLeft } = useSubscription();
+  const { isInTrial, trialDaysLeft, isSubscribed } = useSubscription();
+  const { isActive: isLocalTrialActive, daysLeft: localDaysLeft, isLoaded } = useLocalTrial();
   const [paywallVisible, setPaywallVisible] = useState(false);
 
-  if (!isInTrial) return null;
+  // Don't show if paid subscription is active (not in trial)
+  if (isSubscribed && !isInTrial) return null;
 
-  const days = trialDaysLeft ?? 0;
+  // Determine which trial source is active
+  const showBanner = isInTrial || (isLoaded && isLocalTrialActive);
+  if (!showBanner) return null;
+
+  // Prefer RevenueCat days if in RC trial, otherwise use local countdown
+  const days = isInTrial ? (trialDaysLeft ?? 0) : localDaysLeft;
   const label =
     days === 0
       ? "Trial ends today"
@@ -28,14 +42,12 @@ export function TrialBanner() {
   return (
     <>
       <View style={s.bar}>
-        {/* Left pill */}
         <View style={s.pill}>
           <Feather name="clock" size={11} color={ORANGE} style={s.pillIcon} />
           <Text style={s.pillText}>{label}</Text>
           <Feather name="arrow-right" size={11} color={ORANGE} style={s.pillArrow} />
         </View>
 
-        {/* Upgrade button */}
         <Pressable
           style={({ pressed }) => [s.upgradeBtn, pressed && s.upgradeBtnPressed]}
           onPress={() => setPaywallVisible(true)}
