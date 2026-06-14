@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDemoMode } from "@/lib/demo";
+import { TRIAL_START_KEY, TRIAL_DURATION_MS } from "@/hooks/useLocalTrial";
 
 const ORANGE = "#F26B1D";
 const ORANGE_DARK = "#C9540F";
@@ -22,8 +23,6 @@ const CARD = "#161B22";
 const BORDER = "rgba(255,255,255,0.08)";
 const WHITE = "#FFFFFF";
 const MUTED = "rgba(255,255,255,0.55)";
-const TRIAL_KEY = "prepfit_trial_start";
-const TRIAL_DAYS = 3;
 
 const { width: SCREEN_W } = Dimensions.get("window");
 
@@ -42,13 +41,14 @@ function useTrialCountdown() {
     let interval: ReturnType<typeof setInterval>;
 
     async function init() {
-      let startStr = await AsyncStorage.getItem(TRIAL_KEY);
+      // Use the shared key/duration from useLocalTrial — single source of truth
+      let startStr = await AsyncStorage.getItem(TRIAL_START_KEY);
       if (!startStr) {
         startStr = Date.now().toString();
-        await AsyncStorage.setItem(TRIAL_KEY, startStr);
+        await AsyncStorage.setItem(TRIAL_START_KEY, startStr);
       }
       const start = parseInt(startStr, 10);
-      const end = start + TRIAL_DAYS * 24 * 60 * 60 * 1000;
+      const end = start + TRIAL_DURATION_MS;
 
       function tick() {
         const now = Date.now();

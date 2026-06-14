@@ -48,7 +48,7 @@ type ConfirmState = { pkg: any; price: string } | null;
 
 export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps) {
   const insets = useSafeAreaInsets();
-  const { offerings, purchase, restore, isPurchasing, isRestoring } = useSubscription();
+  const { offerings, purchase, restore, isPurchasing, isRestoring, isLoading } = useSubscription();
   const [confirm, setConfirm] = useState<ConfirmState>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -56,6 +56,7 @@ export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps)
   const annualPkg = current?.availablePackages.find(
     (p) => p.identifier === "$rc_annual",
   );
+  const offeringsReady = !isLoading && !!offerings;
 
   // Pricing display
   const annualTotal = annualPkg?.product.priceString ?? "$168.00";
@@ -178,22 +179,39 @@ export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps)
               </View>
             )}
 
-            {/* ── CTA ── */}
-            <Pressable
-              style={[s.cta, (!annualPkg || isPurchasing) && s.ctaDisabled]}
-              onPress={handleSubscribe}
-              disabled={!annualPkg || isPurchasing}
-            >
-              {isPurchasing ? (
+            {/* ── CTA — three states: loading / no-offerings / ready ── */}
+            {!offeringsReady ? (
+              /* Still loading offerings from RevenueCat */
+              <View style={[s.cta, s.ctaDisabled]}>
                 <ActivityIndicator color={WHITE} />
-              ) : (
-                <Text style={s.ctaText}>
-                  Start Pro Plan — {currency}{perMonth} / month
+              </View>
+            ) : !annualPkg ? (
+              /* Loaded but no annual package found — show a clear error */
+              <View style={s.offeringsErrorBox}>
+                <Feather name="wifi-off" size={20} color={WHITE_45} style={{ marginBottom: 8 }} />
+                <Text style={s.offeringsErrorTitle}>Pricing unavailable</Text>
+                <Text style={s.offeringsErrorBody}>
+                  Could not load subscription options. Please check your connection and try reopening this screen.
                 </Text>
-              )}
-            </Pressable>
+              </View>
+            ) : (
+              /* Ready — show normal subscribe button */
+              <Pressable
+                style={[s.cta, isPurchasing && s.ctaDisabled]}
+                onPress={handleSubscribe}
+                disabled={isPurchasing}
+              >
+                {isPurchasing ? (
+                  <ActivityIndicator color={WHITE} />
+                ) : (
+                  <Text style={s.ctaText}>
+                    Start Pro Plan — {currency}{perMonth} / month
+                  </Text>
+                )}
+              </Pressable>
+            )}
 
-            {/* ── Restore ── */}
+            {/* ── Restore ── always visible so users with existing subs can recover ── */}
             <Pressable style={s.restoreBtn} onPress={handleRestore} disabled={isRestoring}>
               <Text style={s.restoreText}>
                 {isRestoring ? "Restoring…" : "Restore Purchases"}
@@ -470,6 +488,30 @@ const styles = (insets: ReturnType<typeof useSafeAreaInsets>) =>
       fontSize: 13,
       fontFamily: "Inter_400Regular",
       textAlign: "center",
+    },
+    // Offerings unavailable fallback
+    offeringsErrorBox: {
+      width: "100%",
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: CARD_BORDER,
+      backgroundColor: CARD_BG,
+      padding: 20,
+      alignItems: "center",
+      marginBottom: 12,
+    },
+    offeringsErrorTitle: {
+      color: WHITE,
+      fontSize: 15,
+      fontFamily: "Inter_600SemiBold",
+      marginBottom: 6,
+    },
+    offeringsErrorBody: {
+      color: WHITE_60,
+      fontSize: 13,
+      fontFamily: "Inter_400Regular",
+      textAlign: "center",
+      lineHeight: 19,
     },
     // CTA
     cta: {
