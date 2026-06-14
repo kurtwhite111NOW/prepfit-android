@@ -12,6 +12,7 @@
         "gradleCommand": ":app:assembleDebug"
       },
       "env": {
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_REPLACE_WITH_YOUR_CLERK_DEV_KEY",
         "EXPO_PUBLIC_REVENUECAT_TEST_API_KEY": "test_YBLjPglOOEgLBdWYsXOIrIRhlqL",
         "EXPO_PUBLIC_REVENUECAT_IOS_API_KEY": "appl_CEcdrdMFWpfUsbxRcyBUKfqmzHD",
         "EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY": "goog_qaBImqeAPHVuTpYJJBXcLwHzrKz"
@@ -23,6 +24,7 @@
         "buildType": "apk"
       },
       "env": {
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_REPLACE_WITH_YOUR_CLERK_DEV_KEY",
         "EXPO_PUBLIC_REVENUECAT_TEST_API_KEY": "test_YBLjPglOOEgLBdWYsXOIrIRhlqL",
         "EXPO_PUBLIC_REVENUECAT_IOS_API_KEY": "appl_CEcdrdMFWpfUsbxRcyBUKfqmzHD",
         "EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY": "goog_qaBImqeAPHVuTpYJJBXcLwHzrKz"
@@ -34,6 +36,7 @@
         "buildType": "app-bundle"
       },
       "env": {
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_live_REPLACE_WITH_YOUR_CLERK_LIVE_KEY",
         "EXPO_PUBLIC_DOMAIN": "prepfit.fit",
         "EXPO_PUBLIC_REVENUECAT_TEST_API_KEY": "test_YBLjPglOOEgLBdWYsXOIrIRhlqL",
         "EXPO_PUBLIC_REVENUECAT_IOS_API_KEY": "appl_CEcdrdMFWpfUsbxRcyBUKfqmzHD",
