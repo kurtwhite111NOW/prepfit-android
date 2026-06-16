@@ -6,7 +6,6 @@ import {
   useFonts,
 } from "@expo-google-fonts/inter";
 import { ClerkProvider, useAuth } from "@clerk/expo";
-import { publishableKeyFromHost } from "@clerk/shared/keys";
 import { setBaseUrl, setAuthTokenGetter } from "@workspace/api-client-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack, useRouter, useSegments } from "expo-router";
@@ -37,11 +36,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const CLERK_KEY =
-  publishableKeyFromHost(
-    process.env.EXPO_PUBLIC_DOMAIN ?? "",
-    process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY,
-  ) ?? "";
+const CLERK_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "";
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const { isSignedIn, isLoaded: clerkLoaded, getToken } = useAuth();

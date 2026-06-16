@@ -12,7 +12,8 @@
         "gradleCommand": ":app:assembleDebug"
       },
       "env": {
-        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsuODQwMzYwZDYtNTVmMC00ZjZhLTlhZjUtZWNiNTgwNGE3NzU4LTAwLTExdmt0NGN1OTd2cGUucGljYXJkLnJlcGxpdC5kZXYk",
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_a2luZC10YXJwb24tMjcuY2xlcmsuYWNjb3VudHMuZGV2JA",
+        "EXPO_PUBLIC_DOMAIN": "840360d6-55f0-4f6a-9af5-ecb5804a7758-00-11vkt4cu97vpe.picard.replit.dev",
         "EXPO_PUBLIC_REVENUECAT_TEST_API_KEY": "test_YBLjPglOOEgLBdWYsXOIrIRhlqL",
         "EXPO_PUBLIC_REVENUECAT_IOS_API_KEY": "appl_CEcdrdMFWpfUsbxRcyBUKfqmzHD",
         "EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY": "goog_qaBImqeAPHVuTpYJJBXcLwHzrKz"
@@ -24,7 +25,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsuODQwMzYwZDYtNTVmMC00ZjZhLTlhZjUtZWNiNTgwNGE3NzU4LTAwLTExdmt0NGN1OTd2cGUucGljYXJkLnJlcGxpdC5kZXYk",
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_a2luZC10YXJwb24tMjcuY2xlcmsuYWNjb3VudHMuZGV2JA",
         "EXPO_PUBLIC_DOMAIN": "840360d6-55f0-4f6a-9af5-ecb5804a7758-00-11vkt4cu97vpe.picard.replit.dev",
         "EXPO_PUBLIC_REVENUECAT_TEST_API_KEY": "test_YBLjPglOOEgLBdWYsXOIrIRhlqL",
         "EXPO_PUBLIC_REVENUECAT_IOS_API_KEY": "appl_CEcdrdMFWpfUsbxRcyBUKfqmzHD",
@@ -37,7 +38,7 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsuODQwMzYwZDYtNTVmMC00ZjZhLTlhZjUtZWNiNTgwNGE3NzU4LTAwLTExdmt0NGN1OTd2cGUucGljYXJkLnJlcGxpdC5kZXYk",
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_a2luZC10YXJwb24tMjcuY2xlcmsuYWNjb3VudHMuZGV2JA",
         "EXPO_PUBLIC_DOMAIN": "prepfit.fit",
         "EXPO_PUBLIC_REVENUECAT_TEST_API_KEY": "test_YBLjPglOOEgLBdWYsXOIrIRhlqL",
         "EXPO_PUBLIC_REVENUECAT_IOS_API_KEY": "appl_CEcdrdMFWpfUsbxRcyBUKfqmzHD",
