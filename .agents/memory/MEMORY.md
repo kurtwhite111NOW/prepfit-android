@@ -3,3 +3,5 @@
 - [Orval mutation pattern](orval-mutation-pattern.md) — Orval-generated mutation hooks require { data: BodyType<T> } wrapper, not flat body args.
 - [RevenueCat proxy API paths](revenuecat-proxy-paths.md) — correct action paths for attach/create; proxy pattern vs v2 connection approach
 - [PrepFit Android nav & theme](prepfit-android-nav-theme.md) — scrollable tab bar, orange status bar, ThemeContext pattern; @react-navigation/bottom-tabs not a direct dep so tabBar prop needs (props: any)
+- [EAS native build: Replit-managed Clerk fails](eas-replit-clerk-native.md) — Replit-managed Clerk key (picard.replit.dev) is unreachable from real devices; always use an external Clerk account for EAS builds.
+- [EAS native build: demo mode auth token](eas-demo-mode-token.md) — setAuthTokenGetter must NOT be gated on clerkLoaded; demo mode needs token getter registered immediately on mount.
