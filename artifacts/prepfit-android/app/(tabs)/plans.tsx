@@ -9,12 +9,13 @@ import {
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Animated,
+  Dimensions,
   FlatList,
-  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -23,6 +24,8 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
+
+const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 export default function PlansScreen() {
   const colors = useColors();
@@ -33,6 +36,28 @@ export default function PlansScreen() {
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
   const [isSelecting, setIsSelecting] = useState(false);
   const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [panelVisible, setPanelVisible] = useState(false);
+  const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
+  const backdropAnim = useRef(new Animated.Value(0)).current;
+
+  const openPanel = (id: number) => {
+    setSelectedPlanId(id);
+    setPanelVisible(true);
+    Animated.parallel([
+      Animated.spring(slideAnim, { toValue: 0, useNativeDriver: true, bounciness: 0, speed: 20 }),
+      Animated.timing(backdropAnim, { toValue: 1, duration: 200, useNativeDriver: true }),
+    ]).start();
+  };
+
+  const closePanel = () => {
+    Animated.parallel([
+      Animated.timing(slideAnim, { toValue: SCREEN_HEIGHT, duration: 260, useNativeDriver: true }),
+      Animated.timing(backdropAnim, { toValue: 0, duration: 220, useNativeDriver: true }),
+    ]).start(() => {
+      setPanelVisible(false);
+      setSelectedPlanId(null);
+    });
+  };
 
   const { data: plans, isLoading, refetch } = useQuery({
     queryKey: getListMealPlansQueryKey(),
@@ -155,7 +180,7 @@ export default function PlansScreen() {
               ]}
               onPress={() => {
                 if (isSelecting) toggleSelect(item.id);
-                else setSelectedPlanId(item.id);
+                else openPanel(item.id);
               }}
               onLongPress={() => {
                 if (!isSelecting) startSelecting();
@@ -209,19 +234,34 @@ export default function PlansScreen() {
         </View>
       )}
 
-      <Modal
-        visible={!!selectedPlanId}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={() => setSelectedPlanId(null)}
-      >
-        <View style={[s.modal, { paddingTop: insets.top + 16 }]}>
+      {/* Backdrop */}
+      {panelVisible && (
+        <Animated.View
+          style={[s.backdrop, { opacity: backdropAnim }]}
+          pointerEvents={panelVisible ? "auto" : "none"}
+        >
+          <Pressable style={{ flex: 1 }} onPress={closePanel} />
+        </Animated.View>
+      )}
+
+      {/* Slide-up panel — stays inside tab screen so tab bar remains visible */}
+      {panelVisible && (
+        <Animated.View
+          style={[
+            s.panel,
+            { backgroundColor: colors.background, transform: [{ translateY: slideAnim }] },
+          ]}
+        >
+          {/* Handle */}
+          <View style={s.panelHandle} />
+
+          {/* Header */}
           <View style={s.modalHeader}>
             <Text style={s.modalTitle} numberOfLines={1}>
               {planDetail?.name ?? "Loading..."}
             </Text>
-            <Pressable onPress={() => setSelectedPlanId(null)}>
-              <Feather name="x" size={24} color={colors.foreground} />
+            <Pressable onPress={closePanel} style={s.closeBtn}>
+              <Feather name="x" size={20} color={colors.foreground} />
             </Pressable>
           </View>
 
@@ -230,7 +270,10 @@ export default function PlansScreen() {
               <ActivityIndicator color={colors.primary} />
             </View>
           ) : planDetail ? (
-            <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 40 }}>
+            <ScrollView
+              contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 24 }}
+              showsVerticalScrollIndicator={false}
+            >
               <View style={s.planStats}>
                 <View style={s.planStatItem}>
                   <Text style={s.planStatVal}>{planDetail.mealsPerDay}</Text>
@@ -278,8 +321,8 @@ export default function PlansScreen() {
               ))}
             </ScrollView>
           ) : null}
-        </View>
-      </Modal>
+        </Animated.View>
+      )}
     </View>
   );
 }
@@ -458,9 +501,39 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       fontFamily: "Inter_600SemiBold",
       color: "#fff",
     },
-    modal: {
-      flex: 1,
-      backgroundColor: colors.background,
+    backdrop: {
+      position: "absolute",
+      top: 0, left: 0, right: 0, bottom: 0,
+      backgroundColor: "rgba(0,0,0,0.55)",
+      zIndex: 10,
+    },
+    panel: {
+      position: "absolute",
+      left: 0, right: 0, bottom: 0,
+      height: "88%",
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      zIndex: 11,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: -4 },
+      shadowOpacity: 0.18,
+      shadowRadius: 16,
+      elevation: 24,
+    },
+    panelHandle: {
+      width: 36, height: 4,
+      borderRadius: 2,
+      backgroundColor: "rgba(255,255,255,0.18)",
+      alignSelf: "center",
+      marginTop: 10,
+      marginBottom: 6,
+    },
+    closeBtn: {
+      width: 32, height: 32,
+      borderRadius: 16,
+      backgroundColor: "rgba(255,255,255,0.08)",
+      alignItems: "center",
+      justifyContent: "center",
     },
     modalHeader: {
       flexDirection: "row",
