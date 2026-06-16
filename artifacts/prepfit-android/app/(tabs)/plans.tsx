@@ -319,9 +319,7 @@ export default function PlansScreen() {
                         <Text style={s.mealEmoji}>{emoji}</Text>
                       </View>
                       <View style={{ flex: 1 }}>
-                        {meal.mealType && (
-                          <Text style={s.mealTypeLabel}>{meal.mealType.toUpperCase()}</Text>
-                        )}
+                        <Text style={s.mealTypeLabel}>MEAL {meal.mealNumber}</Text>
                         <Text style={s.mealName}>{meal.name}</Text>
                       </View>
                       <View style={s.mealHeaderRight}>
