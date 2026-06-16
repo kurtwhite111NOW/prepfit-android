@@ -88,6 +88,13 @@ export const requireAuth = (req: any, res: any, next: any) => {
   );
   if (isPublic) return next();
 
+  // Demo / 3-day trial users get isolated data under a fixed demo user ID
+  const authHeader = req.headers["authorization"] as string | undefined;
+  if (authHeader === "Bearer demo-mode-prepfit") {
+    req.userId = "demo-user";
+    return next();
+  }
+
   const auth = getAuth(req);
   const userId = auth?.sessionClaims?.userId || auth?.userId;
   if (!userId) {

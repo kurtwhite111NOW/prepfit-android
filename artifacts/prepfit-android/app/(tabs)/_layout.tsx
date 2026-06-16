@@ -12,10 +12,8 @@ import { useColors } from "@/hooks/useColors";
 const ORANGE = "#F26B1D";
 
 function AppBar() {
-  const insets = useSafeAreaInsets();
-
   return (
-    <View style={[s.appbar, { paddingTop: insets.top }]}>
+    <View style={s.appbar}>
       <View style={s.appbarInner}>
         <View style={s.brandRow}>
           <Image
@@ -35,10 +33,12 @@ function AppBar() {
 
 export default function TabLayout() {
   const colors = useColors();
+  const insets = useSafeAreaInsets();
 
   return (
     <View style={[s.root, { backgroundColor: colors.background }]}>
-      <StatusBar backgroundColor={ORANGE} style="light" translucent />
+      <StatusBar backgroundColor="#0D1117" style="light" translucent />
+      <View style={{ height: insets.top, backgroundColor: "#0D1117" }} />
       <DemoBanner />
       <TrialBanner />
       <AppBar />
@@ -68,6 +68,7 @@ const s = StyleSheet.create({
   },
   appbar: {
     backgroundColor: ORANGE,
+    paddingTop: 0,
   },
   appbarInner: {
     flexDirection: "row",
