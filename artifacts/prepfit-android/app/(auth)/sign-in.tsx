@@ -135,6 +135,13 @@ export default function SignInScreen() {
               </>
             )}
           </Pressable>
+
+          {/* Forgot Password */}
+          <Link href="/(auth)/forgot-password" asChild>
+            <Pressable style={s.forgotBtn}>
+              <Text style={s.forgotText}>Forgot password?</Text>
+            </Pressable>
+          </Link>
         </View>
 
         {/* Footer */}
@@ -192,6 +199,9 @@ const s = StyleSheet.create({
     marginTop: 4,
   },
   btnText: { fontSize: 16, fontFamily: "Inter_700Bold", color: WHITE },
+
+  forgotBtn: { alignItems: "center", paddingVertical: 4 },
+  forgotText: { fontSize: 13, fontFamily: "Inter_400Regular", color: ORANGE },
 
   footer: { flexDirection: "row", justifyContent: "center", alignItems: "center" },
   footerText: { fontSize: 14, fontFamily: "Inter_400Regular", color: MUTED },
