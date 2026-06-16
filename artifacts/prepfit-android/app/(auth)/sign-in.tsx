@@ -35,7 +35,10 @@ export default function SignInScreen() {
   const [loading, setLoading] = useState(false);
 
   const handleSignIn = async () => {
-    if (!isLoaded) return;
+    if (!isLoaded) {
+      Alert.alert("Not ready", "Authentication is still loading. Please wait a moment and try again.");
+      return;
+    }
     if (!email.trim() || !password.trim()) {
       Alert.alert("Missing fields", "Please enter your email and password.");
       return;

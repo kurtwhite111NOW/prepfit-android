@@ -1,6 +1,6 @@
 import { useAuth } from "@clerk/expo";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -34,14 +34,21 @@ export function AuthGate({ children }: AuthGateProps) {
   const { isDemoMode, isLoaded: demoLoaded } = useDemoMode();
   const colors = useColors();
   const router = useRouter();
+  const [clerkTimedOut, setClerkTimedOut] = useState(false);
 
-  const isFullyLoaded = clerkLoaded && demoLoaded;
+  // Give Clerk 10 s to load; if it can't connect on this device, proceed
+  // anyway so demo mode and the auth wall are never permanently blocked.
+  useEffect(() => {
+    if (clerkLoaded) return;
+    const t = setTimeout(() => setClerkTimedOut(true), 10_000);
+    return () => clearTimeout(t);
+  }, [clerkLoaded]);
+
+  const isFullyLoaded = (clerkLoaded || clerkTimedOut) && demoLoaded;
   const isAuthed = isSignedIn || isDemoMode;
 
   const s = styles(colors);
 
-  // While either Clerk or demo-mode context is still hydrating, show a neutral
-  // loading spinner rather than flashing children or the wall prematurely.
   if (!isFullyLoaded) {
     return (
       <View style={[s.root, s.center, { backgroundColor: colors.background }]}>
