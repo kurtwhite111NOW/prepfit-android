@@ -29,6 +29,8 @@ export const mealItemsTable = pgTable("meal_items", {
   protein: integer("protein"),
   carbs: integer("carbs"),
   fat: integer("fat"),
+  mealType: text("meal_type"),
+  youtubeUrl: text("youtube_url"),
 }, (table) => [
   index("meal_items_meal_plan_id_idx").on(table.mealPlanId),
 ]);

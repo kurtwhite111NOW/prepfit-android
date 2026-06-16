@@ -44,6 +44,14 @@ export const CreateMealPlanBody = zod.object({
       protein: zod.number().optional(),
       carbs: zod.number().optional(),
       fat: zod.number().optional(),
+      mealType: zod
+        .string()
+        .optional()
+        .describe("Type of meal (breakfast, lunch, dinner, snack)"),
+      youtubeUrl: zod
+        .string()
+        .optional()
+        .describe("YouTube search URL for recipe guidance"),
     }),
   ),
 });
@@ -73,6 +81,14 @@ export const GetMealPlanResponse = zod.object({
       protein: zod.number().optional(),
       carbs: zod.number().optional(),
       fat: zod.number().optional(),
+      mealType: zod
+        .string()
+        .optional()
+        .describe("Type of meal (breakfast, lunch, dinner, snack)"),
+      youtubeUrl: zod
+        .string()
+        .optional()
+        .describe("YouTube search URL for recipe guidance"),
     }),
   ),
 });

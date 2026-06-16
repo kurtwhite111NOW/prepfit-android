@@ -28,6 +28,10 @@ export interface MealItem {
   protein?: number;
   carbs?: number;
   fat?: number;
+  /** Type of meal (breakfast, lunch, dinner, snack) */
+  mealType?: string;
+  /** YouTube search URL for recipe guidance */
+  youtubeUrl?: string;
 }
 
 export interface MealPlanWithMeals {
@@ -76,6 +80,10 @@ export interface CreateMealItemBody {
   protein?: number;
   carbs?: number;
   fat?: number;
+  /** Type of meal (breakfast, lunch, dinner, snack) */
+  mealType?: string;
+  /** YouTube search URL for recipe guidance */
+  youtubeUrl?: string;
 }
 
 export interface CreateMealPlanBody {

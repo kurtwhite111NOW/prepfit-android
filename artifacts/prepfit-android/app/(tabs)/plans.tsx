@@ -9,13 +9,14 @@ import {
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
   Animated,
   Dimensions,
   FlatList,
+  Linking,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -27,6 +28,13 @@ import { useColors } from "@/hooks/useColors";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
+const MEAL_TYPE_EMOJI: Record<string, string> = {
+  breakfast: "🌅",
+  lunch: "☀️",
+  dinner: "🌙",
+  snack: "🍎",
+};
+
 export default function PlansScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
@@ -37,6 +45,7 @@ export default function PlansScreen() {
   const [isSelecting, setIsSelecting] = useState(false);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [panelVisible, setPanelVisible] = useState(false);
+  const [expandedMealId, setExpandedMealId] = useState<number | null>(null);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const backdropAnim = useRef(new Animated.Value(0)).current;
 
@@ -289,36 +298,103 @@ export default function PlansScreen() {
                 </View>
               </View>
 
-              {planDetail.meals.map((meal) => (
-                <View key={meal.id} style={s.mealCard}>
-                  <View style={s.mealCardHeader}>
-                    <View style={s.mealNumBadge}>
-                      <Text style={s.mealNum}>{meal.mealNumber}</Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={s.mealName}>{meal.name}</Text>
-                      <Text style={s.mealDesc} numberOfLines={2}>{meal.description}</Text>
-                    </View>
-                    <View style={s.calsBadge}>
-                      <Text style={s.cals}>{meal.calories}</Text>
-                      <Text style={s.calsUnit}>kcal</Text>
-                    </View>
-                  </View>
-                  {(meal.protein || meal.carbs || meal.fat) ? (
-                    <View style={s.macrosRow}>
-                      {[
-                        { label: "P", value: meal.protein },
-                        { label: "C", value: meal.carbs },
-                        { label: "F", value: meal.fat },
-                      ].map(({ label, value }) => value !== undefined && value !== null ? (
-                        <View key={label} style={s.macroPill}>
-                          <Text style={s.macroPillText}>{label}: {value}g</Text>
+              {planDetail.meals.map((meal) => {
+                const isExpanded = expandedMealId === meal.id;
+                const emoji = meal.mealType ? (MEAL_TYPE_EMOJI[meal.mealType] ?? "🍽️") : "🍽️";
+                const ingredientList = meal.ingredients
+                  ? meal.ingredients.split(",").map((i) => i.trim()).filter(Boolean)
+                  : [];
+                return (
+                  <Pressable
+                    key={meal.id}
+                    style={({ pressed }) => [s.mealCard, isExpanded && s.mealCardExpanded, { opacity: pressed ? 0.95 : 1 }]}
+                    onPress={() => {
+                      Haptics.selectionAsync();
+                      setExpandedMealId(isExpanded ? null : meal.id);
+                    }}
+                  >
+                    {/* Header row — always visible */}
+                    <View style={s.mealCardHeader}>
+                      <View style={s.mealEmojiWrap}>
+                        <Text style={s.mealEmoji}>{emoji}</Text>
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        {meal.mealType && (
+                          <Text style={s.mealTypeLabel}>{meal.mealType.toUpperCase()}</Text>
+                        )}
+                        <Text style={s.mealName}>{meal.name}</Text>
+                      </View>
+                      <View style={s.mealHeaderRight}>
+                        <View style={s.calsBadge}>
+                          <Text style={s.cals}>{meal.calories}</Text>
+                          <Text style={s.calsUnit}>kcal</Text>
                         </View>
-                      ) : null)}
+                        <Feather
+                          name={isExpanded ? "chevron-up" : "chevron-down"}
+                          size={16}
+                          color={colors.mutedForeground}
+                        />
+                      </View>
                     </View>
-                  ) : null}
-                </View>
-              ))}
+
+                    {/* Expanded detail */}
+                    {isExpanded && (
+                      <View style={s.mealDetail}>
+                        {/* Description */}
+                        <Text style={s.mealDesc}>{meal.description}</Text>
+
+                        {/* Macros */}
+                        {(meal.protein || meal.carbs || meal.fat) ? (
+                          <View style={s.macrosRow}>
+                            {meal.protein != null && (
+                              <View style={[s.macroPill, s.macroPillProtein]}>
+                                <Text style={s.macroPillText}>💪 {meal.protein}g protein</Text>
+                              </View>
+                            )}
+                            {meal.carbs != null && (
+                              <View style={[s.macroPill, s.macroPillCarbs]}>
+                                <Text style={s.macroPillText}>🍚 {meal.carbs}g carbs</Text>
+                              </View>
+                            )}
+                            {meal.fat != null && (
+                              <View style={[s.macroPill, s.macroPillFat]}>
+                                <Text style={s.macroPillText}>🥑 {meal.fat}g fat</Text>
+                              </View>
+                            )}
+                          </View>
+                        ) : null}
+
+                        {/* Ingredients */}
+                        {ingredientList.length > 0 && (
+                          <View>
+                            <Text style={s.sectionLabel}>INGREDIENTS</Text>
+                            <View style={s.ingredientsWrap}>
+                              {ingredientList.map((ing, idx) => (
+                                <View key={idx} style={s.ingChip}>
+                                  <Text style={s.ingChipText}>{ing}</Text>
+                                </View>
+                              ))}
+                            </View>
+                          </View>
+                        )}
+
+                        {/* YouTube button */}
+                        {meal.youtubeUrl ? (
+                          <Pressable
+                            style={({ pressed }) => [s.ytBtn, { opacity: pressed ? 0.8 : 1 }]}
+                            onPress={() => {
+                              if (meal.youtubeUrl) Linking.openURL(meal.youtubeUrl);
+                            }}
+                          >
+                            <Feather name="youtube" size={16} color="#fff" style={{ marginRight: 8 }} />
+                            <Text style={s.ytBtnText}>Watch How to Make It</Text>
+                          </Pressable>
+                        ) : null}
+                      </View>
+                    )}
+                  </Pressable>
+                );
+              })}
             </ScrollView>
           ) : null}
         </Animated.View>
@@ -578,44 +654,52 @@ const styles = (colors: ReturnType<typeof useColors>) =>
     },
     mealCard: {
       backgroundColor: colors.card,
-      borderRadius: 12,
+      borderRadius: 14,
       padding: 14,
       marginBottom: 10,
       borderWidth: 1,
       borderColor: colors.border,
     },
+    mealCardExpanded: {
+      borderColor: colors.primary,
+      borderWidth: 1.5,
+    },
     mealCardHeader: {
       flexDirection: "row",
       gap: 10,
-      alignItems: "flex-start",
+      alignItems: "center",
     },
-    mealNumBadge: {
-      width: 28,
-      height: 28,
-      borderRadius: 8,
-      backgroundColor: colors.primary,
+    mealEmojiWrap: {
+      width: 38,
+      height: 38,
+      borderRadius: 10,
+      backgroundColor: colors.accent,
       alignItems: "center",
       justifyContent: "center",
+      flexShrink: 0,
     },
-    mealNum: {
-      fontSize: 13,
-      fontFamily: "Inter_700Bold",
-      color: "#FFF",
+    mealEmoji: { fontSize: 20 },
+    mealTypeLabel: {
+      fontSize: 10,
+      fontFamily: "Inter_600SemiBold",
+      color: colors.primary,
+      letterSpacing: 0.6,
+      marginBottom: 1,
     },
     mealName: {
       fontSize: 14,
       fontFamily: "Inter_600SemiBold",
       color: colors.foreground,
     },
-    mealDesc: {
-      fontSize: 12,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-      marginTop: 2,
+    mealHeaderRight: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      flexShrink: 0,
     },
     calsBadge: { alignItems: "center" },
     cals: {
-      fontSize: 16,
+      fontSize: 15,
       fontFamily: "Inter_700Bold",
       color: colors.primary,
     },
@@ -624,21 +708,78 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       fontFamily: "Inter_400Regular",
       color: colors.mutedForeground,
     },
+
+    /* Expanded detail area */
+    mealDetail: {
+      marginTop: 14,
+      paddingTop: 14,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+      gap: 12,
+    },
+    mealDesc: {
+      fontSize: 13,
+      fontFamily: "Inter_400Regular",
+      color: colors.mutedForeground,
+      lineHeight: 19,
+    },
     macrosRow: {
       flexDirection: "row",
       gap: 6,
-      marginTop: 10,
       flexWrap: "wrap",
     },
     macroPill: {
-      backgroundColor: colors.accent,
       paddingHorizontal: 10,
-      paddingVertical: 4,
-      borderRadius: 12,
+      paddingVertical: 5,
+      borderRadius: 10,
+      backgroundColor: colors.accent,
     },
+    macroPillProtein: { backgroundColor: "rgba(249,115,22,0.12)" },
+    macroPillCarbs: { backgroundColor: "rgba(245,158,11,0.12)" },
+    macroPillFat: { backgroundColor: "rgba(59,130,246,0.12)" },
     macroPillText: {
       fontSize: 12,
       fontFamily: "Inter_500Medium",
-      color: colors.accentForeground,
+      color: colors.foreground,
+    },
+    sectionLabel: {
+      fontSize: 10,
+      fontFamily: "Inter_600SemiBold",
+      color: colors.mutedForeground,
+      letterSpacing: 0.8,
+      marginBottom: 8,
+    },
+    ingredientsWrap: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 6,
+    },
+    ingChip: {
+      backgroundColor: colors.accent,
+      borderRadius: 8,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    ingChipText: {
+      fontSize: 12,
+      fontFamily: "Inter_400Regular",
+      color: colors.foreground,
+    },
+    ytBtn: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "#FF0000",
+      borderRadius: 12,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      marginTop: 2,
+    },
+    ytBtnText: {
+      fontSize: 14,
+      fontFamily: "Inter_600SemiBold",
+      color: "#fff",
     },
   });

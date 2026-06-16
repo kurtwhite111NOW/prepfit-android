@@ -334,6 +334,12 @@ components:
           type: integer
         fat:
           type: integer
+        mealType:
+          type: string
+          description: Type of meal (breakfast, lunch, dinner, snack)
+        youtubeUrl:
+          type: string
+          description: YouTube search URL for recipe guidance
       required:
         - id
         - mealPlanId
@@ -479,6 +485,12 @@ components:
           type: integer
         fat:
           type: integer
+        mealType:
+          type: string
+          description: Type of meal (breakfast, lunch, dinner, snack)
+        youtubeUrl:
+          type: string
+          description: YouTube search URL for recipe guidance
       required:
         - name
         - description
