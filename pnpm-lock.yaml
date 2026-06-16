@@ -650,8 +650,8 @@ importers:
         specifier: ^4.17.0
         version: 4.17.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       expo-build-properties:
-        specifier: ^56.0.18
-        version: 56.0.18(expo@54.0.35)
+        specifier: ^1.0.10
+        version: 1.0.10(expo@54.0.35)
       expo-secure-store:
         specifier: ^15.0.8
         version: 15.0.8(expo@54.0.35)
@@ -1723,9 +1723,6 @@ packages:
 
   '@expo/schema-utils@0.1.8':
     resolution: {integrity: sha512-9I6ZqvnAvKKDiO+ZF8BpQQFYWXOJvTAL5L/227RUbWG1OVZDInFifzCBiqAZ3b67NRfeAgpgvbA7rejsqhY62A==}
-
-  '@expo/schema-utils@56.0.1':
-    resolution: {integrity: sha512-CZ/+mYbQmWeOnkCGlWy9K+lFxbJSMFY7+TqBZcKzBSTU5Q7IGRvn/sOG3TdNjIdLPmbA8xe7R/c3UUQ28R9i9w==}
 
   '@expo/sdk-runtime-versions@1.0.0':
     resolution: {integrity: sha512-Doz2bfiPndXYFPMRwPyGa1k5QaKDVpY806UJj570epIiMzWaYyCtobasyfC++qfIXVb5Ocy7r3tP9d62hAQ7IQ==}
@@ -4442,8 +4439,8 @@ packages:
       react: '*'
       react-native: '*'
 
-  expo-build-properties@56.0.18:
-    resolution: {integrity: sha512-at03ytur1Vfyl9ddtRMqIdSyR/oV57GM04+NZ5rhFTF0mC7dmKzxS9RBb34KHDPdT8UwUt7KsKbzYD1lnxLAKg==}
+  expo-build-properties@1.0.10:
+    resolution: {integrity: sha512-mFCZbrbrv0AP5RB151tAoRzwRJelqM7bCJzCkxpu+owOyH+p/rFC/q7H5q8B9EpVWj8etaIuszR+gKwohpmu1Q==}
     peerDependencies:
       expo: '*'
 
@@ -6594,6 +6591,7 @@ packages:
   tsconfck@3.1.6:
     resolution: {integrity: sha512-ks6Vjr/jEw0P1gmOVwutM3B7fWxoWBL2KRDb1JfqGVawBmO5UsvmWOQFGHBPl5yxYz4eERr19E6L7NMv+Fej4w==}
     engines: {node: ^18 || >=20}
+    deprecated: unmaintained
     hasBin: true
     peerDependencies:
       typescript: ^5.0.0
@@ -8433,8 +8431,6 @@ snapshots:
       - supports-color
 
   '@expo/schema-utils@0.1.8': {}
-
-  '@expo/schema-utils@56.0.1': {}
 
   '@expo/sdk-runtime-versions@1.0.0': {}
 
@@ -11663,11 +11659,10 @@ snapshots:
       react: 19.1.0
       react-native: 0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0)
 
-  expo-build-properties@56.0.18(expo@54.0.35):
+  expo-build-properties@1.0.10(expo@54.0.35):
     dependencies:
-      '@expo/schema-utils': 56.0.1
+      ajv: 8.18.0
       expo: 54.0.35(@babel/core@7.29.0)(@expo/metro-runtime@6.1.2)(expo-router@6.0.24)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)(typescript@5.9.3)
-      resolve-from: 5.0.0
       semver: 7.8.4
 
   expo-constants@18.0.13(expo@54.0.35)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0)):
