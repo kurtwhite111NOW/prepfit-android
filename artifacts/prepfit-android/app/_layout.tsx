@@ -67,9 +67,9 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   }, [isAuthed, isFullyLoaded, segments]);
 
   useEffect(() => {
-    if (!clerkLoaded) return;
     setAuthTokenGetter(async () => {
       if (isDemoMode) return "demo-mode-prepfit";
+      if (!clerkLoaded) return null;
       try {
         return (await getToken()) ?? null;
       } catch {
