@@ -4,4 +4,5 @@
 - [RevenueCat proxy API paths](revenuecat-proxy-paths.md) — correct action paths for attach/create; proxy pattern vs v2 connection approach
 - [PrepFit Android nav & theme](prepfit-android-nav-theme.md) — scrollable tab bar, orange status bar, ThemeContext pattern; @react-navigation/bottom-tabs not a direct dep so tabBar prop needs (props: any)
 - [EAS native build: Replit-managed Clerk fails](eas-replit-clerk-native.md) — Replit-managed Clerk key (picard.replit.dev) is unreachable from real devices; always use an external Clerk account for EAS builds.
+- [API server Clerk key: use env var directly](api-server-clerk-key.md) — server must use CLERK_PUBLISHABLE_KEY directly, NOT publishableKeyFromHost; that function derives a wrong key from the Replit proxy host → all real-device JWTs return 401.
 - [EAS native build: demo mode auth token](eas-demo-mode-token.md) — setAuthTokenGetter must NOT be gated on clerkLoaded; demo mode needs token getter registered immediately on mount.
