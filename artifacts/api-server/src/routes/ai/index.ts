@@ -3,6 +3,7 @@ import { GenerateMealPlanBody, AnalyzeMealPhotoBody } from "@workspace/api-zod";
 import { openai } from "@workspace/integrations-openai-ai-server";
 import { getRandomMealSample, getRandomIngredients, getRandomTheme } from "../../data/mealLibrary";
 import { aiRateLimit, photoRateLimit } from "../../middlewares/aiRateLimit";
+import { logger } from "../../lib/logger";
 
 const router: IRouter = Router();
 
@@ -144,7 +145,7 @@ Shopping categories: Produce, Proteins, Dairy & Eggs, Grains & Bread, Pantry Sta
 
     res.json(result);
   } catch (err: any) {
-    console.error("generate-meal-plan error:", err?.message ?? err);
+    logger.error({ err }, "generate-meal-plan error");
     res.status(500).json({ error: "Failed to generate meal plan. Please try again." });
   }
 });
@@ -198,7 +199,7 @@ Confidence is High/Medium/Low based on how clearly you can identify the food. If
     const result = JSON.parse(cleaned);
     res.json(result);
   } catch (err: any) {
-    console.error("analyze-meal-photo error:", err?.message ?? err);
+    logger.error({ err }, "analyze-meal-photo error");
     res.status(500).json({ error: "Failed to analyze photo. Please try a clearer, well-lit image." });
   }
 });
