@@ -4,10 +4,12 @@ import { db, mealPlansTable, mealItemsTable } from "@workspace/db";
 import { GetShoppingListParams } from "@workspace/api-zod";
 import { openai } from "@workspace/integrations-openai-ai-server";
 import { shoppingListCache, shoppingListCacheKey } from "../../lib/shoppingListCache";
+import { logger } from "../../lib/logger";
 
 const router: IRouter = Router();
 
 router.get("/shopping-lists/:mealPlanId", async (req: any, res): Promise<void> => {
+  try {
   const userId: string = req.userId;
   const params = GetShoppingListParams.safeParse(req.params);
   if (!params.success) {
@@ -94,6 +96,10 @@ Return the result as valid JSON in this exact format:
 
   shoppingListCache.set(cacheKey, result);
   res.json(result);
+  } catch (err) {
+    logger.error({ err }, "Failed to generate shopping list");
+    res.status(500).json({ error: "Failed to generate shopping list. Please try again." });
+  }
 });
 
 export default router;

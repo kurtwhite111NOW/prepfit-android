@@ -14,7 +14,9 @@ router.delete("/account", async (req: any, res): Promise<void> => {
     await db.delete(savedMealsTable).where(eq(savedMealsTable.userId, userId));
     await db.delete(weightEntriesTable).where(eq(weightEntriesTable.userId, userId));
 
-    await clerkClient.users.deleteUser(userId);
+    if (userId !== "demo-user") {
+      await clerkClient.users.deleteUser(userId);
+    }
 
     res.status(200).json({ deleted: true });
   } catch (err: any) {

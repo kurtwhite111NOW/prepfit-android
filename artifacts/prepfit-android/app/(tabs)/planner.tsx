@@ -232,10 +232,11 @@ function MacroTotal({
   bg: string;
   border: string;
 }) {
+  const colors = useColors();
   return (
     <View style={[macroTotalStyles.box, { backgroundColor: bg, borderColor: border }]}>
       <Text style={[macroTotalStyles.value, { color }]}>{value}g</Text>
-      <Text style={macroTotalStyles.label}>{label}</Text>
+      <Text style={[macroTotalStyles.label, { color: colors.mutedForeground }]}>{label}</Text>
     </View>
   );
 }
@@ -256,7 +257,6 @@ const macroTotalStyles = StyleSheet.create({
   label: {
     fontSize: 10,
     fontFamily: "Inter_600SemiBold",
-    color: "rgba(255,255,255,0.5)",
     marginTop: 2,
     letterSpacing: 0.8,
   },
@@ -344,10 +344,11 @@ function MacroPill({
   color: string;
   bg: string;
 }) {
+  const colors = useColors();
   return (
     <View style={[macroPillStyles.pill, { backgroundColor: bg }]}>
       <Text style={[macroPillStyles.value, { color }]}>{value ?? "—"}g</Text>
-      <Text style={macroPillStyles.label}>{label}</Text>
+      <Text style={[macroPillStyles.label, { color: colors.mutedForeground }]}>{label}</Text>
     </View>
   );
 }
@@ -369,7 +370,6 @@ const macroPillStyles = StyleSheet.create({
   label: {
     fontSize: 12,
     fontFamily: "Inter_400Regular",
-    color: "rgba(255,255,255,0.6)",
   },
 });
 
