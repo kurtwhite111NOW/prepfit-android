@@ -23,9 +23,6 @@
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#12151A"
       },
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ],
       "versionCode": 5
     },
     "web": {
