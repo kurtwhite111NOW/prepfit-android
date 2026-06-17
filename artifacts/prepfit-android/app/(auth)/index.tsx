@@ -195,7 +195,7 @@ export default function HeroScreen() {
 
         {/* ── Fine print ── */}
         <Text style={s.finePrint}>
-          After 3 days, $9.99/month. Cancel anytime. No commitment.
+          After 3 days, $12/month (billed annually at $144). Cancel anytime.
         </Text>
       </ScrollView>
     </View>

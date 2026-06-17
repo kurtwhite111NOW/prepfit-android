@@ -111,20 +111,20 @@ export default function RootLayout() {
       <ThemeProvider>
         <DemoProvider>
           <SafeAreaProvider>
-          <ErrorBoundary>
-            <QueryClientProvider client={queryClient}>
-              <SubscriptionProvider>
-                <GestureHandlerRootView style={{ flex: 1 }}>
-                  <KeyboardProvider>
-                    <AuthGuard>
-                      <RootLayoutNav />
-                    </AuthGuard>
-                  </KeyboardProvider>
-                </GestureHandlerRootView>
-              </SubscriptionProvider>
-            </QueryClientProvider>
-          </ErrorBoundary>
-        </SafeAreaProvider>
+            <ErrorBoundary>
+              <QueryClientProvider client={queryClient}>
+                <SubscriptionProvider>
+                  <GestureHandlerRootView style={{ flex: 1 }}>
+                    <KeyboardProvider>
+                      <AuthGuard>
+                        <RootLayoutNav />
+                      </AuthGuard>
+                    </KeyboardProvider>
+                  </GestureHandlerRootView>
+                </SubscriptionProvider>
+              </QueryClientProvider>
+            </ErrorBoundary>
+          </SafeAreaProvider>
         </DemoProvider>
       </ThemeProvider>
     </ClerkProvider>
