@@ -8,7 +8,6 @@ import { WebhookHandlers } from "./webhookHandlers";
 import {
   CLERK_PROXY_PATH,
   clerkProxyMiddleware,
-  getClerkProxyHost,
 } from "./middlewares/clerkProxyMiddleware";
 
 const app: Express = express();

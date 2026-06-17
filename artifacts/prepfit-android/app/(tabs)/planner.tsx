@@ -90,6 +90,8 @@ function PlannerScreenContent() {
           protein: m.protein,
           carbs: m.carbs,
           fat: m.fat,
+          mealType: m.mealType,
+          youtubeUrl: m.youtubeUrl,
         })),
       },
     });
