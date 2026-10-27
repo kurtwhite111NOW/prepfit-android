@@ -19,11 +19,11 @@ const SECTIONS = [
     content: [
       {
         heading: "What is PrepFit?",
-        text: "PrepFit is an AI-powered meal prep and fitness tracking app. It helps you plan healthy meals, track calories, monitor your weight and water intake, and build smart grocery lists — all in one place. No App Store needed: just visit prepfit.fit from your phone and install it to your home screen.",
+        text: "PrepFit is a smart meal prep and fitness tracking app. It helps you plan healthy meals, track calories, monitor your weight and water intake, and build smart grocery lists — all in one place. No App Store needed: just visit prepfit.fit from your phone and install it to your home screen.",
       },
       {
         heading: "Free Trial",
-        text: "You get a 3-day free trial with full access to every feature. The countdown shows in the sidebar. Before it expires, tap 'Upgrade to Pro' to continue at $14/month (billed annually at $168/year). There are no ads, no data selling — just the app.",
+        text: "You get a 3-day free trial with full access to every feature. The countdown shows in the sidebar. Before it expires, tap 'Upgrade to Pro' to continue at $12/month (billed annually at $144/year). There are no ads, no data selling — just the app.",
       },
       {
         heading: "Installing on your phone",
@@ -61,7 +61,7 @@ const SECTIONS = [
     content: [
       {
         heading: "Generating a meal plan",
-        text: "Go to Meal Planner and choose how many meals per day (2–5) and your daily calorie goal. Tap 'Generate Meal Plan' and the AI builds a full week of balanced, gym-friendly meals with per-meal calorie and macro targets in seconds.",
+        text: "Go to Meal Planner and choose how many meals per day (2–5) and your daily calorie goal. Tap 'Generate Meal Plan' and it builds a full week of balanced, gym-friendly meals with per-meal calorie and macro targets in seconds.",
       },
       {
         heading: "Saving your plan",
@@ -69,11 +69,11 @@ const SECTIONS = [
       },
       {
         heading: "Understanding macros",
-        text: "Each meal shows Protein (g), Carbs (g), and Fat (g) alongside calories. These are calculated by the AI to hit your daily goal. High-protein plans are great for muscle building; lower-carb plans suit fat loss.",
+        text: "Each meal shows Protein (g), Carbs (g), and Fat (g) alongside calories. These are calculated to hit your daily goal. High-protein plans are great for muscle building; lower-carb plans suit fat loss.",
       },
       {
         heading: "Tips for best results",
-        text: "Set a realistic calorie goal — 1,800–2,200 cal for maintenance, 1,400–1,700 for fat loss, 2,500+ for muscle gain. The AI adjusts meal size and composition to match your target.",
+        text: "Set a realistic calorie goal — 1,800–2,200 cal for maintenance, 1,400–1,700 for fat loss, 2,500+ for muscle gain. Meal size and composition are adjusted automatically to match your target.",
       },
     ],
   },
@@ -130,11 +130,11 @@ const SECTIONS = [
     content: [
       {
         heading: "Scanning a meal",
-        text: "Go to Scan Photo and either take a photo or upload one from your camera roll. The AI analyzes the image, identifies the food, estimates the calorie count, and lists the ingredients. Results appear in about 10–15 seconds.",
+        text: "Go to Scan Photo and either take a photo or upload one from your camera roll. It analyzes the image, identifies the food, estimates the calorie count, and lists the ingredients. Results appear in about 10–15 seconds.",
       },
       {
         heading: "Best photo tips",
-        text: "For the most accurate results: use good lighting, photograph from directly above, make sure the plate fills most of the frame, and avoid blurry or dark images. The AI works better with clear, well-lit photos.",
+        text: "For the most accurate results: use good lighting, photograph from directly above, make sure the plate fills most of the frame, and avoid blurry or dark images. Clear, well-lit photos give the best results.",
       },
       {
         heading: "Saving to your journal",
@@ -288,7 +288,7 @@ function Section({ section }: { section: typeof SECTIONS[0] }) {
 }
 
 export default function GuidePage() {
-  usePageTitle("User Guide", "Learn how to use PrepFit — AI meal planning, calorie scanning, grocery lists, weight tracking, and more.");
+  usePageTitle("User Guide", "Learn how to use PrepFit — smart meal planning, calorie scanning, grocery lists, weight tracking, and more.");
   return (
     <div className="space-y-8 animate-in fade-in duration-500 max-w-3xl mx-auto">
 
@@ -316,7 +316,7 @@ export default function GuidePage() {
             User Guide
           </h1>
           <p className="text-sidebar-foreground/50 text-sm leading-relaxed max-w-md">
-            Everything you need to know to get the most out of PrepFit — from generating your first AI meal plan to tracking your weight and water. Works on both iPhone and Android.
+            Everything you need to know to get the most out of PrepFit — from generating your first meal plan to tracking your weight and water. Works on both iPhone and Android.
           </p>
         </div>
       </section>

@@ -44,7 +44,7 @@ function getCategoryIcon(cat: string) {
 }
 
 export default function Shopping() {
-  usePageTitle("Smart Grocery List", "AI-generated grocery list from your meal plan. Organized by category with clean-brand suggestions for gym nutrition.");
+  usePageTitle("Smart Grocery List", "Smart grocery list from your meal plan. Organized by category with clean-brand suggestions for gym nutrition.");
   const { data: mealPlans, isLoading: isLoadingPlans } = useListMealPlans({
     query: { queryKey: getListMealPlansQueryKey() },
   });

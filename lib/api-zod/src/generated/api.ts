@@ -200,6 +200,14 @@ export const GenerateMealPlanBody = zod.object({
     .min(generateMealPlanBodyMealsPerDayMin)
     .max(generateMealPlanBodyMealsPerDayMax),
   dailyCalories: zod.number(),
+  allergies: zod
+    .array(zod.string())
+    .optional()
+    .describe("Foods to exclude from the meal plan"),
+  highProtein: zod
+    .boolean()
+    .optional()
+    .describe("Prioritise high protein and reduce carbs"),
 });
 
 export const GenerateMealPlanResponse = zod.object({
@@ -248,4 +256,47 @@ export const AnalyzeMealPhotoResponse = zod.object({
   estimatedCalories: zod.number(),
   ingredients: zod.string(),
   confidence: zod.string(),
+});
+
+/**
+ * @summary Request a presigned URL for file upload
+ */
+
+export const RequestUploadUrlBody = zod.object({
+  name: zod.string().min(1),
+  size: zod.number().min(1),
+  contentType: zod.string().min(1),
+});
+
+export const RequestUploadUrlResponse = zod.object({
+  uploadURL: zod.string().url(),
+  objectPath: zod.string(),
+});
+
+/**
+ * @summary Serve a public asset
+ */
+export const GetPublicObjectParams = zod.object({
+  filePath: zod.coerce.string(),
+});
+
+/**
+ * @summary Get user preferences
+ */
+export const GetPreferencesResponse = zod.object({
+  allergies: zod.array(zod.string()),
+  highProteinMode: zod.boolean(),
+});
+
+/**
+ * @summary Update user preferences
+ */
+export const UpdatePreferencesBody = zod.object({
+  allergies: zod.array(zod.string()),
+  highProteinMode: zod.boolean(),
+});
+
+export const UpdatePreferencesResponse = zod.object({
+  allergies: zod.array(zod.string()),
+  highProteinMode: zod.boolean(),
 });

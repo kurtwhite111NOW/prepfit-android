@@ -19,12 +19,14 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { useRouter } from "expo-router";
+import { useLanguage } from "@/lib/i18n";
 
 export default function MealsScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const qc = useQueryClient();
   const router = useRouter();
+  const { t } = useLanguage();
 
   const [isSelecting, setIsSelecting] = useState(false);
   const [selected, setSelected] = useState<Set<number>>(new Set());
@@ -55,12 +57,12 @@ export default function MealsScreen() {
   const handleDeleteSelected = () => {
     const ids = Array.from(selected);
     Alert.alert(
-      "Delete Meals",
-      `Remove ${ids.length} meal${ids.length !== 1 ? "s" : ""} from your journal?`,
+      t.meals.deleteTitle,
+      t.meals.deleteMsg(ids.length),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t.meals.cancel, style: "cancel" },
         {
-          text: "Delete",
+          text: t.common.delete,
           style: "destructive",
           onPress: async () => {
             const results = await Promise.allSettled(ids.map((id) => deleteSavedMeal(id)));
@@ -68,7 +70,7 @@ export default function MealsScreen() {
             qc.invalidateQueries({ queryKey: getListSavedMealsQueryKey() });
             if (failed > 0) {
               Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-              Alert.alert("Partial Delete", `${ids.length - failed} removed, ${failed} failed. Please try again.`);
+              Alert.alert(t.meals.partialDelete, t.meals.partialDeleteMsg(ids.length - failed, failed));
             } else {
               Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             }
@@ -86,18 +88,18 @@ export default function MealsScreen() {
     <View style={[s.root, { backgroundColor: colors.background }]}>
       <View style={[s.header, { paddingTop: 16 }]}>
         <View>
-          <Text style={s.headerTitle}>My Meals</Text>
-          <Text style={s.headerSub}>{meals?.length ?? 0} meals scanned</Text>
+          <Text style={s.headerTitle}>{t.meals.title}</Text>
+          <Text style={s.headerSub}>{t.meals.scanned(meals?.length ?? 0)}</Text>
         </View>
         {hasMeals && (
           isSelecting ? (
             <Pressable onPress={cancelSelecting} style={s.selectBtn}>
-              <Text style={s.selectBtnText}>Cancel</Text>
+              <Text style={s.selectBtnText}>{t.meals.cancel}</Text>
             </Pressable>
           ) : (
             <Pressable onPress={startSelecting} style={s.selectBtn}>
               <Feather name="check-square" size={14} color="#fff" />
-              <Text style={s.selectBtnText}>Select</Text>
+              <Text style={s.selectBtnText}>{t.meals.select}</Text>
             </Pressable>
           )
         )}
@@ -118,14 +120,14 @@ export default function MealsScreen() {
           isLoading ? null : (
             <View style={s.empty}>
               <Feather name="camera" size={52} color={colors.mutedForeground} />
-              <Text style={s.emptyTitle}>No meals scanned yet</Text>
-              <Text style={s.emptySub}>Take a photo of your meal to log calories</Text>
+              <Text style={s.emptyTitle}>{t.meals.noMeals}</Text>
+              <Text style={s.emptySub}>{t.meals.noMealsSub}</Text>
               <Pressable
                 style={({ pressed }) => [s.scanBtn, { opacity: pressed ? 0.8 : 1 }]}
                 onPress={() => router.push("/(tabs)/scan" as never)}
               >
                 <Feather name="camera" size={16} color="#FFF" />
-                <Text style={s.scanBtnText}>Scan a Meal</Text>
+                <Text style={s.scanBtnText}>{t.meals.scanBtn}</Text>
               </Pressable>
             </View>
           )
@@ -181,9 +183,7 @@ export default function MealsScreen() {
 
       {isSelecting && (
         <View style={[s.deleteBar, { paddingBottom: insets.bottom + 12 }]}>
-          <Text style={s.deleteBarCount}>
-            {selected.size} selected
-          </Text>
+          <Text style={s.deleteBarCount}>{t.meals.selected(selected.size)}</Text>
           <Pressable
             style={({ pressed }) => [
               s.deleteBarBtn,
@@ -194,9 +194,7 @@ export default function MealsScreen() {
             disabled={selected.size === 0}
           >
             <Feather name="trash-2" size={16} color="#fff" />
-            <Text style={s.deleteBarBtnText}>
-              Delete{selected.size > 0 ? ` (${selected.size})` : ""}
-            </Text>
+            <Text style={s.deleteBarBtnText}>{t.meals.deleteBtn(selected.size)}</Text>
           </Pressable>
         </View>
       )}

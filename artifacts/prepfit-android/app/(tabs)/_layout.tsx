@@ -7,7 +7,9 @@ import { DemoBanner } from "@/components/DemoBanner";
 import { TrialBanner } from "@/components/TrialBanner";
 import { ScrollableTabBar } from "@/components/ScrollableTabBar";
 import { AuthGate } from "@/components/AuthGate";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import { useColors } from "@/hooks/useColors";
+import { useLanguage } from "@/lib/i18n";
 
 const ORANGE = "#F26B1D";
 
@@ -26,6 +28,7 @@ function AppBar() {
             <Text style={s.brandSub}>Simple Meal Prep · Gym & Fitness</Text>
           </View>
         </View>
+        <LanguageToggle />
       </View>
     </View>
   );
@@ -34,6 +37,7 @@ function AppBar() {
 export default function TabLayout() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
+  const { t } = useLanguage();
 
   return (
     <View style={[s.root, { backgroundColor: colors.background }]}>
@@ -47,15 +51,15 @@ export default function TabLayout() {
           tabBar={(props: any) => <ScrollableTabBar {...props} />}
           screenOptions={{ headerShown: false }}
         >
-          <Tabs.Screen name="index"   options={{ title: "Home" }} />
-          <Tabs.Screen name="planner" options={{ title: "Meal Plan" }} />
-          <Tabs.Screen name="grocery" options={{ title: "Grocery" }} />
-          <Tabs.Screen name="meals"   options={{ title: "My Meals" }} />
-          <Tabs.Screen name="scan"    options={{ title: "Scan Photo" }} />
-          <Tabs.Screen name="weight"  options={{ title: "Weight" }} />
-          <Tabs.Screen name="water"   options={{ title: "Water" }} />
-          <Tabs.Screen name="plans"   options={{ title: "Saved Plans" }} />
-          <Tabs.Screen name="guide"   options={{ title: "User Guide" }} />
+          <Tabs.Screen name="index"   options={{ title: t.tabs.home }} />
+          <Tabs.Screen name="planner" options={{ title: t.tabs.mealPlan }} />
+          <Tabs.Screen name="grocery" options={{ title: t.tabs.grocery }} />
+          <Tabs.Screen name="meals"   options={{ title: t.tabs.myMeals }} />
+          <Tabs.Screen name="scan"    options={{ title: t.tabs.scan }} />
+          <Tabs.Screen name="weight"  options={{ title: t.tabs.weight }} />
+          <Tabs.Screen name="water"   options={{ title: t.tabs.water }} />
+          <Tabs.Screen name="plans"   options={{ title: t.tabs.savedPlans }} />
+          <Tabs.Screen name="guide"   options={{ title: t.tabs.guide }} />
         </Tabs>
       </AuthGate>
     </View>

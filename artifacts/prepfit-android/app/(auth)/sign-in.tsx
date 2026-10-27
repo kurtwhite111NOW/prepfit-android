@@ -15,7 +15,6 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
-import { useColors } from "@/hooks/useColors";
 
 const ORANGE = "#F26B1D";
 const BG = "#0D1117";
@@ -34,9 +33,19 @@ export default function SignInScreen() {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const [needsSecondFactor, setNeedsSecondFactor] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+
+  const clerkErr = (err: any): string =>
+    err?.errors?.[0]?.longMessage ||
+    err?.errors?.[0]?.message ||
+    err?.message ||
+    JSON.stringify(err?.errors ?? err) ||
+    "Something went wrong. Please try again.";
+
   const handleSignIn = async () => {
     if (!isLoaded) {
-      Alert.alert("Not ready", "Authentication is still loading. Please wait a moment and try again.");
+      Alert.alert("Not ready", "Authentication is still loading.");
       return;
     }
     if (!email.trim() || !password.trim()) {
@@ -45,18 +54,112 @@ export default function SignInScreen() {
     }
     setLoading(true);
     try {
-      const result = await signIn.create({ identifier: email.trim(), password });
+      const result = await signIn!.create({ identifier: email.trim(), password });
       if (result.status === "complete") {
-        await setActive({ session: result.createdSessionId });
+        await setActive!({ session: result.createdSessionId });
         router.replace("/(tabs)" as never);
+      } else if (result.status === "needs_second_factor") {
+        await signIn!.prepareSecondFactor({ strategy: "email_code" });
+        setNeedsSecondFactor(true);
+      } else {
+        Alert.alert("Sign In Error", `Unexpected status: ${result.status}`);
       }
     } catch (err: any) {
-      const message = err?.errors?.[0]?.longMessage ?? err?.message ?? "Sign in failed. Please try again.";
-      Alert.alert("Sign In Error", message);
+      Alert.alert("Sign In Error", clerkErr(err));
     } finally {
       setLoading(false);
     }
   };
+
+  const handleVerifyOtp = async () => {
+    if (!isLoaded || !otpCode.trim()) {
+      Alert.alert("Missing code", "Please enter the verification code.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const result = await signIn!.attemptSecondFactor({
+        strategy: "email_code",
+        code: otpCode.trim(),
+      });
+      if (result.status === "complete") {
+        await setActive!({ session: result.createdSessionId });
+        router.replace("/(tabs)" as never);
+      } else {
+        Alert.alert("Verification Error", `Unexpected status: ${result.status}`);
+      }
+    } catch (err: any) {
+      Alert.alert("Verification Error", clerkErr(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (needsSecondFactor) {
+    return (
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={[s.root, { backgroundColor: BG }]}
+      >
+        <ScrollView
+          contentContainerStyle={[s.scroll, { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 24 }]}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <Pressable style={s.backBtn} onPress={() => setNeedsSecondFactor(false)}>
+            <Feather name="arrow-left" size={20} color={WHITE} />
+          </Pressable>
+
+          <View style={s.headingWrap}>
+            <Text style={s.heading}>Check your email</Text>
+            <Text style={s.subheading}>
+              We sent a verification code to{"\n"}{email}
+            </Text>
+          </View>
+
+          <View style={s.card}>
+            <View style={s.field}>
+              <Text style={s.label}>Verification code</Text>
+              <View style={s.inputWrap}>
+                <Feather name="shield" size={15} color={MUTED} style={s.inputIcon} />
+                <TextInput
+                  style={[s.input, { letterSpacing: 8, fontSize: 20 }]}
+                  placeholder="123456"
+                  placeholderTextColor={MUTED}
+                  keyboardType="number-pad"
+                  value={otpCode}
+                  onChangeText={setOtpCode}
+                  maxLength={6}
+                  autoFocus
+                  returnKeyType="go"
+                  onSubmitEditing={handleVerifyOtp}
+                />
+              </View>
+            </View>
+
+            <Pressable
+              style={({ pressed }) => [s.btn, { opacity: pressed || loading ? 0.82 : 1 }]}
+              onPress={handleVerifyOtp}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color={WHITE} />
+              ) : (
+                <>
+                  <Feather name="check-circle" size={16} color={WHITE} style={{ marginRight: 8 }} />
+                  <Text style={s.btnText}>Verify & Sign In</Text>
+                </>
+              )}
+            </Pressable>
+
+            <Text style={s.hint}>
+              This is a one-time security check for new devices.
+            </Text>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
@@ -68,20 +171,16 @@ export default function SignInScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Back */}
         <Pressable style={s.backBtn} onPress={() => router.back()}>
           <Feather name="arrow-left" size={20} color={WHITE} />
         </Pressable>
 
-        {/* Heading */}
         <View style={s.headingWrap}>
           <Text style={s.heading}>Welcome back</Text>
           <Text style={s.subheading}>Sign in to your PrepFit account</Text>
         </View>
 
-        {/* Card */}
         <View style={s.card}>
-          {/* Email */}
           <View style={s.field}>
             <Text style={s.label}>Email address</Text>
             <View style={s.inputWrap}>
@@ -99,7 +198,6 @@ export default function SignInScreen() {
             </View>
           </View>
 
-          {/* Password */}
           <View style={s.field}>
             <Text style={s.label}>Password</Text>
             <View style={s.inputWrap}>
@@ -120,7 +218,6 @@ export default function SignInScreen() {
             </View>
           </View>
 
-          {/* Sign In Button */}
           <Pressable
             style={({ pressed }) => [s.btn, { opacity: pressed || loading ? 0.82 : 1 }]}
             onPress={handleSignIn}
@@ -136,7 +233,6 @@ export default function SignInScreen() {
             )}
           </Pressable>
 
-          {/* Forgot Password */}
           <Link href="/(auth)/forgot-password" asChild>
             <Pressable style={s.forgotBtn}>
               <Text style={s.forgotText}>Forgot password?</Text>
@@ -144,7 +240,6 @@ export default function SignInScreen() {
           </Link>
         </View>
 
-        {/* Footer */}
         <View style={s.footer}>
           <Text style={s.footerText}>Don't have an account?</Text>
           <Link href="/(auth)/sign-up" asChild>
@@ -171,7 +266,7 @@ const s = StyleSheet.create({
 
   headingWrap: { marginBottom: 28 },
   heading: { fontSize: 28, fontFamily: "Inter_700Bold", color: WHITE, letterSpacing: -0.5 },
-  subheading: { fontSize: 14, fontFamily: "Inter_400Regular", color: MUTED, marginTop: 4 },
+  subheading: { fontSize: 14, fontFamily: "Inter_400Regular", color: MUTED, marginTop: 4, lineHeight: 20 },
 
   card: {
     backgroundColor: CARD, borderRadius: 18,
@@ -202,6 +297,11 @@ const s = StyleSheet.create({
 
   forgotBtn: { alignItems: "center", paddingVertical: 4 },
   forgotText: { fontSize: 13, fontFamily: "Inter_400Regular", color: ORANGE },
+
+  hint: {
+    fontSize: 12, fontFamily: "Inter_400Regular",
+    color: MUTED, textAlign: "center", lineHeight: 17,
+  },
 
   footer: { flexDirection: "row", justifyContent: "center", alignItems: "center" },
   footerText: { fontSize: 14, fontFamily: "Inter_400Regular", color: MUTED },

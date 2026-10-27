@@ -1,16 +1,20 @@
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
-import { ClerkProvider, SignIn, SignUp, Show, useClerk } from "@clerk/react";
+import { ClerkProvider, SignIn, SignUp, Show, useClerk, useAuth, useUser } from "@clerk/react";
 import { queryClient } from "@/lib/queryClient";
 import { publishableKeyFromHost } from "@clerk/react/internal";
 import { shadcn } from "@clerk/themes";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Layout } from "@/components/layout";
-import { lazy, Suspense, useEffect, useRef } from "react";
+import { lazy, Suspense, useEffect, useRef, useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { SubscriptionContext, useSubscription } from "@/hooks/use-subscription";
+import { setAuthTokenGetter } from "@workspace/api-client-react";
 
 const Home = lazy(() => import("@/pages/home"));
+const PublicHome = lazy(() => import("@/pages/public-home"));
+const PublicGuide = lazy(() => import("@/pages/public-guide"));
 const Planner = lazy(() => import("@/pages/planner"));
 const Shopping = lazy(() => import("@/pages/shopping"));
 const Meals = lazy(() => import("@/pages/meals"));
@@ -19,9 +23,10 @@ const Weight = lazy(() => import("@/pages/weight"));
 const Water = lazy(() => import("@/pages/water"));
 const Plans = lazy(() => import("@/pages/plans"));
 const PlanDetail = lazy(() => import("@/pages/plan-detail"));
+const FastingGuide = lazy(() => import("@/pages/fasting"));
 const AndroidPage = lazy(() => import("@/pages/android"));
 const IosPage = lazy(() => import("@/pages/ios"));
-const GuidePage = lazy(() => import("@/pages/guide"));
+const WindowsPage = lazy(() => import("@/pages/windows"));
 const PrivacyPage = lazy(() => import("@/pages/privacy"));
 const AccountPage = lazy(() => import("@/pages/account"));
 const NotFound = lazy(() => import("@/pages/not-found"));
@@ -32,8 +37,12 @@ const clerkPubKey = publishableKeyFromHost(
   import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
 );
 
-// REQUIRED — copy verbatim
-const clerkProxyUrl = import.meta.env.VITE_CLERK_PROXY_URL;
+// The API server's Clerk proxy is deliberately production-only. Replit web
+// previews also use a public-looking picard.replit.dev hostname, so hostname
+// checks incorrectly enabled the disabled proxy during development.
+const clerkProxyUrl = import.meta.env.PROD
+  ? `${window.location.origin}/api/__clerk`
+  : undefined;
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -104,19 +113,42 @@ function PageLoader() {
   );
 }
 
+const BASE_URL_APP = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
+
 function CheckoutResultHandler() {
   const { toast } = useToast();
+  const { markPaid } = useSubscription();
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const checkout = params.get("checkout");
+    const sessionId = params.get("session_id");
     if (checkout === "success") {
+      const cleanUrl = new URL(window.location.href);
+      cleanUrl.searchParams.delete("checkout");
+      cleanUrl.searchParams.delete("session_id");
+      window.history.replaceState({}, "", cleanUrl.toString());
+
+      const verify = async () => {
+        try {
+          if (sessionId) {
+            const res = await fetch(`${BASE_URL_APP}/api/stripe/verify-session?session_id=${sessionId}`);
+            const data = await res.json();
+            if (data.active) {
+              markPaid();
+            }
+          } else {
+            markPaid();
+          }
+        } catch {
+          markPaid();
+        }
+      };
+      verify();
+
       toast({
         title: "Welcome to PrepFit Pro!",
-        description: "Your subscription is active. Enjoy unlimited AI meal planning!",
+        description: "Your subscription is active. Enjoy unlimited meal planning!",
       });
-      const url = new URL(window.location.href);
-      url.searchParams.delete("checkout");
-      window.history.replaceState({}, "", url.toString());
     } else if (checkout === "cancelled") {
       toast({
         title: "Checkout cancelled",
@@ -124,6 +156,7 @@ function CheckoutResultHandler() {
       });
       const url = new URL(window.location.href);
       url.searchParams.delete("checkout");
+      url.searchParams.delete("session_id");
       window.history.replaceState({}, "", url.toString());
     }
   }, []);
@@ -185,12 +218,10 @@ function SignInPrompt() {
 }
 
 function ProtectedPage({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <Show when="signed-in">{children}</Show>
-      <Show when="signed-out"><SignInPrompt /></Show>
-    </>
-  );
+  const { isLoaded, isSignedIn } = useUser();
+  // Show sign-in prompt immediately (no blank flash while Clerk loads)
+  if (!isLoaded || !isSignedIn) return <SignInPrompt />;
+  return <>{children}</>;
 }
 
 function HomeRedirect() {
@@ -220,7 +251,7 @@ function ClerkQueryClientCacheInvalidator() {
   return null;
 }
 
-function Router() {
+function DashboardRouter() {
   return (
     <Layout>
       <CheckoutResultHandler />
@@ -253,9 +284,10 @@ function Router() {
               <ProtectedPage><PlanDetail /></ProtectedPage>
             )}
           </Route>
+          <Route path="/fasting" component={FastingGuide} />
           <Route path="/android" component={AndroidPage} />
           <Route path="/ios" component={IosPage} />
-          <Route path="/guide" component={GuidePage} />
+          <Route path="/windows" component={WindowsPage} />
           <Route path="/privacy" component={PrivacyPage} />
           <Route path="/account">
             <ProtectedPage><AccountPage /></ProtectedPage>
@@ -264,6 +296,83 @@ function Router() {
         </Switch>
       </Suspense>
     </Layout>
+  );
+}
+
+function RootRoute() {
+  const { isLoaded, isSignedIn } = useUser();
+  if (!isLoaded) return <PageLoader />;
+  if (isSignedIn) return <DashboardRouter />;
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <PublicHome />
+    </Suspense>
+  );
+}
+
+function AppRoutes() {
+  return (
+    <Switch>
+      <Route path="/sign-in/*?" component={SignInPage} />
+      <Route path="/sign-up/*?" component={SignUpPage} />
+      <Route path="/meal-prep-app-guide">
+        <Suspense fallback={<PageLoader />}>
+          <PublicGuide />
+        </Suspense>
+      </Route>
+      <Route path="/" component={RootRoute} />
+      <Route component={DashboardRouter} />
+    </Switch>
+  );
+}
+
+function ClerkAuthTokenSyncer() {
+  const { getToken } = useAuth();
+  useEffect(() => {
+    setAuthTokenGetter(() => getToken());
+    return () => setAuthTokenGetter(null);
+  }, [getToken]);
+  return null;
+}
+
+function SubscriptionProvider({ children }: { children: React.ReactNode }) {
+  const { user, isLoaded, isSignedIn } = useUser();
+  const { getToken } = useAuth();
+  const [isPaid, setIsPaid] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (!isSignedIn || !user) {
+      setIsPaid(false);
+      return;
+    }
+    let cancelled = false;
+    const verify = async () => {
+      setIsChecking(true);
+      try {
+        const token = await getToken();
+        const res = await fetch(`${BASE_URL_APP}/api/stripe/check-subscription`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (!cancelled) setIsPaid(data.active === true);
+      } catch {
+        if (!cancelled) setIsPaid(false);
+      } finally {
+        if (!cancelled) setIsChecking(false);
+      }
+    };
+    verify();
+    return () => { cancelled = true; };
+  }, [user?.id, isLoaded, isSignedIn]);
+
+  const markPaid = useCallback(() => setIsPaid(true), []);
+
+  return (
+    <SubscriptionContext.Provider value={{ isPaid, isChecking, markPaid }}>
+      {children}
+    </SubscriptionContext.Provider>
   );
 }
 
@@ -295,15 +404,14 @@ function ClerkProviderWithRoutes() {
       routerReplace={(to) => setLocation(stripBase(to), { replace: true })}
     >
       <QueryClientProvider client={queryClient}>
+        <ClerkAuthTokenSyncer />
         <ClerkQueryClientCacheInvalidator />
-        <TooltipProvider>
-          <Switch>
-            <Route path="/sign-in/*?" component={SignInPage} />
-            <Route path="/sign-up/*?" component={SignUpPage} />
-            <Route component={Router} />
-          </Switch>
-          <Toaster />
-        </TooltipProvider>
+        <SubscriptionProvider>
+          <TooltipProvider>
+            <AppRoutes />
+            <Toaster />
+          </TooltipProvider>
+        </SubscriptionProvider>
       </QueryClientProvider>
     </ClerkProvider>
   );

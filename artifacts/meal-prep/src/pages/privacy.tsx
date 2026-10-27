@@ -45,7 +45,7 @@ export default function PrivacyPage() {
 
         <h3 className="font-semibold text-sm text-foreground mt-3">c) Camera and photo library access (Android app)</h3>
         <p className="text-muted-foreground text-sm leading-relaxed">
-          The Android app requests access to your device camera and photo library solely to let you capture or select meal photos for AI calorie analysis. Photos are sent to OpenAI for processing and, if you choose to save them, stored in our database. We do not access your camera or photos for any other purpose.
+          The Android app requests access to your device camera and photo library solely to let you capture or select meal photos for calorie analysis. Photos are processed automatically and, if you choose to save them, stored in our database. We do not access your camera or photos for any other purpose.
         </p>
 
         <h3 className="font-semibold text-sm text-foreground mt-3">d) Payment information</h3>
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
           <a href="https://clerk.com/privacy" target="_blank" rel="noopener noreferrer" className="text-primary underline">clerk.com/privacy</a>.
         </p>
 
-        <h3 className="font-semibold text-sm text-foreground mt-3">f) AI processing</h3>
+        <h3 className="font-semibold text-sm text-foreground mt-3">f) Automated processing</h3>
         <p className="text-muted-foreground text-sm leading-relaxed">
           Meal plan generation, grocery list generation, and food photo analysis are powered by <strong>OpenAI's API</strong>. Meal preferences and food photos you submit are sent to OpenAI for processing and are subject to OpenAI's privacy policy:{" "}
           <a href="https://openai.com/privacy" target="_blank" rel="noopener noreferrer" className="text-primary underline">openai.com/privacy</a>.
@@ -76,8 +76,8 @@ export default function PrivacyPage() {
         <h2 className="font-bold text-lg text-foreground">3. How We Use Your Information</h2>
         <ul className="text-muted-foreground text-sm leading-relaxed list-disc pl-5 space-y-1">
           <li>To display your meal plans, weight history, water logs, and saved meals within the app</li>
-          <li>To generate AI-powered meal plans and grocery lists tailored to your goals</li>
-          <li>To analyze food photos and estimate calories using AI</li>
+          <li>To generate smart meal plans and grocery lists tailored to your goals</li>
+          <li>To analyze food photos and estimate calories automatically</li>
           <li>To manage your subscription and verify access to premium features</li>
           <li>To remember your preferences (theme, water intake) across sessions</li>
         </ul>
@@ -108,7 +108,7 @@ export default function PrivacyPage() {
         <ul className="text-muted-foreground text-sm leading-relaxed list-disc pl-5 space-y-1">
           <li><strong>Camera</strong> — used only to capture meal photos for calorie analysis. Never used for any other purpose.</li>
           <li><strong>Photo Library / Storage</strong> — used only to let you select existing photos for calorie analysis.</li>
-          <li><strong>Internet</strong> — required to sync your data, generate AI meal plans, and process payments.</li>
+          <li><strong>Internet</strong> — required to sync your data, generate meal plans, and process payments.</li>
         </ul>
         <p className="text-muted-foreground text-sm leading-relaxed">
           You can revoke camera and photo permissions at any time in your Android device Settings → Apps → PrepFit → Permissions.

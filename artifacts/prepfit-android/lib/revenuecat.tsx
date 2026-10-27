@@ -6,30 +6,35 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Constants from "expo-constants";
 import { useDemoMode } from "@/lib/demo";
 
-const REVENUECAT_TEST_API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_TEST_API_KEY;
-const REVENUECAT_IOS_API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY;
-const REVENUECAT_ANDROID_API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY;
+const REVENUECAT_TEST_API_KEY     = process.env.EXPO_PUBLIC_REVENUECAT_TEST_API_KEY;
+const REVENUECAT_IOS_API_KEY      = process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY;
+const REVENUECAT_ANDROID_API_KEY  = process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY;
+// Set to "test" in preview/internal builds so sideloaded APKs use the test
+// key instead of the Google Play key (Play Store validation is unavailable
+// for sideloaded builds, causing offerings to return empty).
+const REVENUECAT_ENVIRONMENT      = process.env.EXPO_PUBLIC_REVENUECAT_ENVIRONMENT;
 
 export const REVENUECAT_ENTITLEMENT_IDENTIFIER = "pro";
 
 function getRevenueCatApiKey() {
-  if (!REVENUECAT_ENTITLEMENT_IDENTIFIER) {
-    throw new Error("RevenueCat Entitlement Identifier not provided");
-  }
-
-  // Dev / web / Expo Go: always use the test key
-  if (__DEV__ || Platform.OS === "web" || Constants.executionEnvironment === "storeClient") {
+  // Force test key for dev / web / Expo Go / or explicitly flagged test builds
+  if (
+    REVENUECAT_ENVIRONMENT === "test" ||
+    __DEV__ ||
+    Platform.OS === "web" ||
+    Constants.executionEnvironment === "storeClient"
+  ) {
     if (!REVENUECAT_TEST_API_KEY) throw new Error("RevenueCat test API key not found");
     return REVENUECAT_TEST_API_KEY;
   }
 
-  // Production Android — only the Android key is required
+  // Production Android
   if (Platform.OS === "android") {
     if (!REVENUECAT_ANDROID_API_KEY) throw new Error("RevenueCat Android API key not found");
     return REVENUECAT_ANDROID_API_KEY;
   }
 
-  // Production iOS — only the iOS key is required
+  // Production iOS
   if (Platform.OS === "ios") {
     if (!REVENUECAT_IOS_API_KEY) throw new Error("RevenueCat iOS API key not found");
     return REVENUECAT_IOS_API_KEY;
@@ -145,7 +150,10 @@ function useSubscriptionContext() {
     isSubscribed,
     isInTrial,
     trialDaysLeft,
+    // Full loading — waits for both customer info AND offerings
     isLoading: !isLoaded || customerInfoQuery.isLoading || offeringsQuery.isLoading,
+    // Offerings-only loading — used by paywall so customer info delays don't block the button
+    isOfferingsLoading: !isLoaded || offeringsQuery.isLoading,
     purchase: purchaseMutation.mutateAsync,
     restore: restoreMutation.mutateAsync,
     isPurchasing: purchaseMutation.isPending,

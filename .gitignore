@@ -47,3 +47,6 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Uploaded Google service-account credential: keep locally, never commit.
+/attached_assets/prepfit-497000-ce10524547e8_1784017676325.json

@@ -1,5 +1,5 @@
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Pressable,
   ScrollView,
@@ -50,6 +50,16 @@ export function ScrollableTabBar({ state, navigation }: TabBarProps) {
   const { width: screenWidth } = useWindowDimensions();
   const tabWidth = screenWidth / VISIBLE_TABS;
   const scrollRef = useRef<ScrollView>(null);
+
+  // Auto-scroll to center the active tab whenever navigation changes it —
+  // covers card taps, programmatic navigation, and direct tab presses.
+  useEffect(() => {
+    const scrollTo = Math.max(0, (state.index - Math.floor(VISIBLE_TABS / 2)) * tabWidth);
+    const t = setTimeout(() => {
+      scrollRef.current?.scrollTo({ x: scrollTo, animated: true });
+    }, 80);
+    return () => clearTimeout(t);
+  }, [state.index, tabWidth]);
 
   const onPress = (route: TabRoute, index: number, focused: boolean) => {
     const event = navigation.emit({

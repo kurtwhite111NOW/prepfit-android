@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PrepFit — AI search visibility panel</title>
+<style>
+  :root{
+    --paper:#FBFAF7;
+    --card:#FFFFFF;
+    --rule:#000000;
+    --ink:#161616;
+    --muted:#6B6B6B;
+    --accent:#2F3BE0;
+    --flag:#A81E14;
+    --ok:#12603C;
+    --wash:#F0EEE8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size:15px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .panel{
+    max-width:880px;
+    margin:0 auto;
+    padding:28px 20px 80px;
+  }
+  .frame{
+    background:var(--card);
+    border:2px solid var(--rule);
+    padding:22px 24px 28px;
+  }
+
+  /* Nutrition-panel rule hierarchy */
+  .rule-heavy{border:0;border-top:9px solid var(--rule);margin:22px 0 14px;}
+  .rule-mid{border:0;border-top:4px solid var(--rule);margin:18px 0 12px;}
+  .rule-hair{border:0;border-top:1px solid var(--rule);margin:10px 0;}
+
+  h1{
+    font-size:38px;
+    line-height:1.02;
+    letter-spacing:-0.02em;
+    font-weight:800;
+    margin:0 0 4px;
+  }
+  h2{
+    font-size:21px;
+    letter-spacing:-0.01em;
+    font-weight:800;
+    margin:0 0 2px;
+  }
+  h3{
+    font-size:14px;
+    font-weight:700;
+    margin:18px 0 4px;
+  }
+  p{margin:0 0 10px;max-width:72ch;}
+  .lede{color:var(--muted);margin:0 0 14px;}
+
+  .meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 28px;
+    padding:10px 0 2px;
+  }
+  .meta div{min-width:150px;}
+  .meta span{display:block;font-size:12px;color:var(--muted);}
+  .meta strong{font-size:15px;font-weight:700;}
+  .live{
+    display:inline-block;
+    background:var(--accent);
+    color:#fff;
+    font-weight:700;
+    padding:2px 8px;
+  }
+
+  table{border-collapse:collapse;width:100%;margin:8px 0 4px;font-size:13.5px;}
+  caption{text-align:left;font-size:12px;color:var(--muted);padding-bottom:6px;}
+  th{
+    text-align:left;
+    font-weight:700;
+    border-bottom:2px solid var(--rule);
+    padding:6px 8px 5px;
+    vertical-align:bottom;
+  }
+  td{
+    border-bottom:1px solid #D9D6CE;
+    padding:7px 8px;
+    vertical-align:top;
+  }
+  tbody tr:nth-child(even){background:var(--wash);}
+  td.num,th.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .intent{
+    font-weight:700;
+    color:var(--accent);
+    white-space:nowrap;
+  }
+  .nodata{color:var(--muted);}
+
+  ol.review{padding-left:20px;margin:6px 0 0;max-width:74ch;}
+  ol.review li{margin-bottom:8px;}
+
+  .check{list-style:none;padding:0;margin:6px 0 0;}
+  .check li{
+    display:grid;
+    grid-template-columns:76px 1fr;
+    gap:12px;
+    padding:9px 0;
+    border-bottom:1px solid #D9D6CE;
+    max-width:76ch;
+  }
+  .tag{font-weight:700;font-size:12px;padding-top:2px;}
+  .tag.done{color:var(--ok);}
+  .tag.todo{color:var(--flag);}
+  .check b{font-weight:700;}
+  .check em{font-style:normal;color:var(--muted);display:block;font-size:13px;}
+
+  .three td:first-child{font-weight:700;width:29%;}
+  .three td:last-child{width:15%;white-space:nowrap;}
+
+  footer{margin-top:24px;font-size:12.5px;color:var(--muted);max-width:74ch;}
+  code{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;background:var(--wash);padding:0 3px;}
+
+  @media (max-width:620px){
+    h1{font-size:28px;}
+    .frame{padding:16px 14px 22px;}
+    table{font-size:12.5px;}
+    th,td{padding:6px 5px;}
+    .check li{grid-template-columns:64px 1fr;}
+  }
+</style>
+</head>
+<body>
+<main class="panel">
+<div class="frame">
+
+  <h1>PrepFit: AI search visibility panel</h1>
+  <p class="lede">Generative Engine Optimisation audit for prepfit.fit — a meal-prep and macro-tracking web app for gym-goers.</p>
+
+  <hr class="rule-heavy">
+
+  <div class="meta">
+    <div><span>Data mode</span><strong class="live">Live data</strong></div>
+    <div><span>Source</span><strong>DataForSEO MCP connector</strong></div>
+    <div><span>Market / locale</span><strong>United States · google.com · en · desktop</strong></div>
+    <div><span>Pulled</span><strong>15 Sep 2026</strong></div>
+  </div>
+  <p style="font-size:12.5px;color:var(--muted);margin-top:10px;">
+    Every search volume, CPC, keyword difficulty and SERP position below was retrieved live from DataForSEO
+    (Google Ads Search Volume, Labs Bulk Keyword Difficulty, SERP Organic Live Advanced, OnPage Instant Pages).
+    Nothing on this page is estimated. Any figure that could not be retrieved is marked <span class="nodata">no data</span>
+    rather than guessed, and any judgement call is written as an opinion, not a metric.
+  </p>
+
+  <hr class="rule-heavy">
+
+  <h2>1 · Query fan-out</h2>
+  <p>The sub-questions an AI engine is likely to decompose “meal prep app for the gym” into, with the live US metric for the closest retrievable query. These are the questions the page must answer, in this order.</p>
+
+  <table>
+    <caption>Search volume and CPC: Google Ads, US, monthly average. KD: DataForSEO Labs keyword difficulty, 0–100.</caption>
+    <thead>
+      <tr>
+        <th>Intent</th>
+        <th>Sub-question</th>
+        <th>Closest live keyword</th>
+        <th class="num">Volume</th>
+        <th class="num">KD</th>
+        <th class="num">CPC</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="intent">Definition</td><td>What is a meal prep app and what does it actually do?</td><td>meal prep app</td><td class="num">1,300</td><td class="num">25</td><td class="num">$6.13</td></tr>
+      <tr><td class="intent">Definition</td><td>How does an AI meal plan generator build a plan around my macros?</td><td>ai meal planner</td><td class="num">720</td><td class="num">9</td><td class="num">$4.68</td></tr>
+      <tr><td class="intent">How-to</td><td>How do I meal prep a full week for the gym?</td><td>how to meal prep for the week</td><td class="num">3,600</td><td class="num">32</td><td class="num">$1.75</td></tr>
+      <tr><td class="intent">How-to</td><td>How much protein should a lifter eat per day, and per meal?</td><td>high protein meal plan</td><td class="num">14,800</td><td class="num">18</td><td class="num">$3.16</td></tr>
+      <tr><td class="intent">How-to</td><td>How do I set macros for a bulk or a cut?</td><td>meal prep for muscle gain</td><td class="num">720</td><td class="num">17</td><td class="num">$6.13</td></tr>
+      <tr><td class="intent">How-to</td><td>How accurate is scanning a meal to get its calories?</td><td>calorie scanner app</td><td class="num">210</td><td class="num">98</td><td class="num">$3.55</td></tr>
+      <tr><td class="intent">Comparison</td><td>Meal prep app vs macro tracker — which do I need?</td><td>macro tracker app</td><td class="num">1,000</td><td class="num">30</td><td class="num">$3.86</td></tr>
+      <tr><td class="intent">Comparison</td><td>What should I use instead of MyFitnessPal?</td><td>myfitnesspal alternative</td><td class="num">720</td><td class="num">0</td><td class="num">$3.67</td></tr>
+      <tr><td class="intent">Best / top</td><td>What is the best meal prep app right now?</td><td>best meal prep app</td><td class="num">210</td><td class="num">44</td><td class="num">$6.53</td></tr>
+      <tr><td class="intent">Best / top</td><td>What is the best meal prep app for bodybuilding?</td><td>meal prep app for bodybuilders</td><td class="num nodata" colspan="3">no data returned by Google Ads — zero-volume long tail, but it appears as a Google “related search” on <em>best meal prep app</em></td></tr>
+      <tr><td class="intent">Cost</td><td>What do these apps cost, and is there a free one?</td><td>meal prep app free</td><td class="num">210</td><td class="num">46</td><td class="num">$4.75</td></tr>
+      <tr><td class="intent">Problems</td><td>How long does prepped food keep, and why do people quit meal prep?</td><td>meal plan generator</td><td class="num">1,000</td><td class="num">18</td><td class="num">$5.05</td></tr>
+      <tr><td class="intent">Latest</td><td>What changed in meal prep apps in 2026?</td><td>meal planner app</td><td class="num">2,400</td><td class="num">60</td><td class="num">$5.98</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Local intent: deliberately out of scope</h3>
+  <p>PrepFit is a nationwide web app, not a kitchen. Local queries in this space (“meal prep near me”, “meal prep delivery Seattle”) resolve to prepared-food delivery businesses, not software, and Google answers them with a local pack PrepFit cannot enter. Chasing them would dilute the entity. The one local-adjacent question worth a line on the page is grocery availability, which the grocery-list feature already answers.</p>
+
+  <hr class="rule-heavy">
+
+  <h2>2 · Citability review</h2>
+  <p>What the live AI Overview and top-ranking pages get wrong, leave out, or explain poorly.</p>
+  <ol class="review">
+    <li><strong>The AI Overview is a list of vendors, not an answer.</strong> On <em>best meal prep app</em> (US, 15 Sep 2026) Google’s AI Overview names MealPrepPro, Mealime, Paprika 3, Plan to Eat and Eat This Much, then ends by asking the user two follow-up questions — goal, and free vs paid. The engine is openly telling you the decision rule is missing. A page that supplies that rule in a quotable form gets pulled in.</li>
+    <li><strong>Nobody separates planning from tracking.</strong> Every cited source treats “meal prep app”, “meal planner” and “macro tracker” as one category. A lifter needs a plan built <em>to</em> a macro target plus a way to verify intake against it. No top-10 page defines the difference in a sentence an engine can lift.</li>
+    <li><strong>The sources are weak or stale.</strong> Of the eight AI Overview references, three are user-generated or aggregator content (Reddit, Spoon University, a YouTube lecture) and The Spruce Eats page is still headed “of 2024”. Two of the remaining five are competitor blogs ranking their own product first. There is no dietitian- or evidence-cited source in the set.</li>
+    <li><strong>The numbers that matter are absent.</strong> No page in the top 10 states a protein target with a citation, states how long prepped food is safe to keep, or gives a full price table. Those are exactly the fact-shaped sentences AI engines quote.</li>
+    <li><strong>PrepFit currently cannot be cited at all.</strong> The DataForSEO OnPage crawl of prepfit.fit returns a logged-out product dashboard: title “Dashboard | PrepFit”, H1 “Keep it going!”, 91 words of body text and a plain-text rate of 1.8%. There is no sentence on the site for an engine to quote.</li>
+  </ol>
+
+  <hr class="rule-heavy">
+
+  <h2>3 · Live SERP context</h2>
+  <p>Retrieved 15 Sep 2026 via DataForSEO SERP Organic Live Advanced, US desktop.</p>
+  <table>
+    <caption>Query: “best meal prep app”. AI Overview occupies absolute position 1 and cites eight sources.</caption>
+    <thead><tr><th class="num">Pos</th><th>Result</th><th>Type</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td>AI Overview — cites mealpreppro.com, thespruceeats.com, mealime.com, spoonuniversity.com, blog.eatthismuch.com, reddit.com, foodieprep.ai, youtube.com</td><td>AI Overview</td></tr>
+      <tr><td class="num">2</td><td>reddit.com — r/MealPrepSunday, “Which is the best app for meal prep?”</td><td>Organic 1</td></tr>
+      <tr><td class="num">3</td><td>theyummybowl.com — “I Tried the Best Meal Planning Apps”</td><td>Organic 2</td></tr>
+      <tr><td class="num">4</td><td>People Also Ask — incl. “Which AI app is best for meal planning?”, “What is the 3-3-3 rule for meal prep?”</td><td>PAA</td></tr>
+      <tr><td class="num">5</td><td>apps.apple.com — MealPrepPro Planner &amp; Recipes</td><td>Organic 3</td></tr>
+      <tr><td class="num">6</td><td>foodieprep.ai — “Best Meal Planning Apps With Grocery Lists (2026)”</td><td>Organic 4</td></tr>
+      <tr><td class="num">7</td><td>mealpreppro.com — homepage</td><td>Organic 5</td></tr>
+      <tr><td class="num">9</td><td>mealime.com — homepage</td><td>Organic 6</td></tr>
+      <tr><td class="num">10</td><td>play.google.com — Samsung Food, 4.5 from 22,937 ratings</td><td>Organic 7</td></tr>
+      <tr><td class="num">11</td><td>trypeel.app — “Best Free Meal Planning Apps in 2026”</td><td>Organic 8</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:var(--muted);">On the narrower query <em>best meal prep app for bodybuilding</em>, an AI Overview also fires, Reddit ranks first, MealPrepPro second, and the rest of page one is Gaintrain, the App Store, Strongr Fastr (4.7 from 2,275 Google Play ratings), Facebook, NutriScan and Fitia. PrepFit appears nowhere on either SERP.</p>
+
+  <hr class="rule-heavy">
+
+  <h2>4 · On-page audit: prepfit.fit</h2>
+  <p>DataForSEO OnPage Instant Pages, fetched 15 Sep 2026 13:04 UTC, JavaScript rendering on.</p>
+  <table>
+    <thead><tr><th>Signal</th><th>Live value</th><th>Read</th></tr></thead>
+    <tbody>
+      <tr><td>Title</td><td>“Dashboard | PrepFit” (19 chars)</td><td>Flagged <code>title_too_short</code>. Describes the app’s internal UI, not the product.</td></tr>
+      <tr><td>H1</td><td>“Keep it going!”</td><td>Zero topical signal. No entity, no category.</td></tr>
+      <tr><td>Body copy</td><td>91 words, plain-text rate 1.8%</td><td>Flagged <code>low_content_rate</code> and <code>low_character_count</code>. Nothing quotable.</td></tr>
+      <tr><td>Meta description</td><td>107 chars, dashboard-focused</td><td>Consistency with content scored 0.44.</td></tr>
+      <tr><td>Meta keywords</td><td>10 terms present</td><td>Flagged <code>irrelevant_meta_keywords</code>. Ignored by engines; remove.</td></tr>
+      <tr><td>Open Graph</td><td>“PrepFit — Meal Prep App for Gym &amp; Fitness”</td><td>The OG title is the only correct positioning statement on the site. It should be the page title.</td></tr>
+      <tr><td>Speed</td><td>Time to interactive 277 ms, DOM complete 806 ms, CLS 0</td><td>Strong. Not the problem.</td></tr>
+      <tr><td>Technical</td><td>HTTPS, canonical set, SEO-friendly URL, OnPage score 97.07</td><td>Clean. The gap is content, not plumbing.</td></tr>
+    </tbody>
+  </table>
+
+  <hr class="rule-heavy">
+
+  <h2>5 · Citation checklist</h2>
+  <p>On-page and off-page signals that raise the odds of being cited by AI engines, marked against the content drafted for this project.</p>
+  <ul class="check">
+    <li><span class="tag done">Done</span><div><b>Answer-first formatting</b><em>40–60 word opening answer; every H2 opens with a one- or two-sentence direct answer before elaboration.</em></div></li>
+    <li><span class="tag done">Done</span><div><b>Fan-out coverage</b><em>All 13 sub-questions answered under their own heading, in reading order, plus a 7-question FAQ.</em></div></li>
+    <li><span class="tag done">Done</span><div><b>Named, checkable sources</b><em>ISSN 2017 protein position stand, USDA FSIS leftovers guidance, MacroFactor’s own pricing page — not unattributed claims.</em></div></li>
+    <li><span class="tag done">Done</span><div><b>Comparison table</b><em>Five named apps across the same six columns. Table rows are the format AI Overviews lift most readily.</em></div></li>
+    <li><span class="tag done">Done</span><div><b>Consistent entity naming</b><em>“PrepFit” one word, capital P and F, every instance; always paired with “meal prep app for gym-goers”.</em></div></li>
+    <li><span class="tag done">Done</span><div><b>Structured data</b><em>Article + FAQPage JSON-LD supplied, with FAQ entities matching the visible FAQ verbatim.</em></div></li>
+    <li><span class="tag todo">To do</span><div><b>Freshness date in the visible page</b><em>Print “Last reviewed: [date]” under the H1 and set <code>dateModified</code>. Re-review quarterly; competitors are already titling pages “2026”.</em></div></li>
+    <li><span class="tag todo">To do</span><div><b>Named author with a real bio and profile</b><em>The page needs a byline with credentials, a linked author page, and <code>sameAs</code> to a LinkedIn or professional profile. No reviewed-by line exists today.</em></div></li>
+    <li><span class="tag todo">To do</span><div><b>Original data nobody else has</b><em>Publish one aggregate stat from PrepFit’s own usage — e.g. median plan-adherence by prep-day count, or the most common protein shortfall in generated plans. This is the single most quotable asset available and no competitor can copy it.</em></div></li>
+    <li><span class="tag todo">To do</span><div><b>Fix the crawled homepage</b><em>Serve a marketing page, not the logged-in dashboard, to logged-out visitors and crawlers. Title and H1 must carry the product and category.</em></div></li>
+    <li><span class="tag todo">To do</span><div><b>Presence on sources AI engines already trust</b><em>Reddit ranks first on both target SERPs and is cited in the AI Overview. PrepFit needs honest, disclosed participation in r/MealPrepSunday, r/fitmeals and r/naturalbodybuilding, plus a G2 or Product Hunt listing and App Store / Google Play presence.</em></div></li>
+    <li><span class="tag todo">To do</span><div><b>Third-party review coverage</b><em>Every competitor on page one is named in at least one roundup. Pitch the “2026 best meal planning apps” roundups that already rank — theyummybowl.com, trypeel.app, fitia.app.</em></div></li>
+  </ul>
+
+  <hr class="rule-heavy">
+
+  <h2>Do these three first</h2>
+  <table class="three">
+    <thead><tr><th>Action</th><th>Why it matters</th><th>Effort</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Serve a real marketing homepage to logged-out visitors and crawlers</td>
+        <td>DataForSEO’s crawl sees “Dashboard | PrepFit”, H1 “Keep it going!”, and 91 words. There is currently no sentence on the domain an AI engine can quote, so nothing else in this plan can work until the crawlable page describes the product. The correct positioning already exists in the Open Graph title — promote it to the title tag and H1.</td>
+        <td>Medium</td>
+      </tr>
+      <tr>
+        <td>Publish the answer-first pillar page with the comparison table and FAQ</td>
+        <td>The live AI Overview on <em>best meal prep app</em> ends by asking the user which goal they have and whether they want free or paid — the decision rule is the gap. A page that states it in one quotable paragraph, backs it with a same-columns table, and cites ISSN and USDA is materially more citable than the Reddit threads and 2024-dated roundups currently filling the reference set.</td>
+        <td>High</td>
+      </tr>
+      <tr>
+        <td>Add a credentialed byline, a visible review date, and one original usage statistic</td>
+        <td>Three of the eight AI Overview references are user-generated or aggregator pages with no expertise signal, so an evidence-cited page with a named reviewer stands out rather than blends in. The original statistic is the part no competitor can replicate, and original data is what gets a page cited by engines rather than merely ranked.</td>
+        <td>Medium</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <footer>
+    Metrics retrieved 15 Sep 2026 from the DataForSEO MCP connector for the United States locale. Search volumes are Google Ads
+    monthly averages and move month to month; keyword difficulty is DataForSEO’s 0–100 logarithmic index; SERP positions are a
+    single desktop snapshot and will differ by device, personalisation and time. No figure on this page is estimated.
+  </footer>
+
+</div>
+</main>
+</body>
+</html>

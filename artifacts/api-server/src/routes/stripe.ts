@@ -76,6 +76,67 @@ router.get('/stripe/products', async (_req, res): Promise<void> => {
   }
 });
 
+router.get('/stripe/verify-session', async (req, res): Promise<void> => {
+  const { session_id } = req.query;
+  if (!session_id || typeof session_id !== 'string') {
+    res.status(400).json({ error: 'session_id is required' });
+    return;
+  }
+  try {
+    const stripe = await getUncachableStripeClient();
+    const session = await stripe.checkout.sessions.retrieve(session_id);
+    const active =
+      session.status === 'complete' &&
+      session.subscription != null;
+    res.json({ active, customerId: session.customer || null });
+  } catch (err: any) {
+    logger.error({ err }, 'Failed to verify session');
+    res.status(500).json({ error: 'Failed to verify session' });
+  }
+});
+
+router.get('/stripe/check-subscription', async (req: any, res): Promise<void> => {
+  try {
+    const userId = req.userId;
+    if (!userId || userId === 'demo-user') {
+      res.json({ active: false });
+      return;
+    }
+
+    // Check via stored Stripe customer ID first (fast path)
+    const user = await stripeStorage.getUser(userId);
+    if (user?.stripeCustomerId) {
+      const sub = await stripeStorage.getActiveSubscriptionForCustomer(user.stripeCustomerId);
+      if (sub) {
+        res.json({ active: true });
+        return;
+      }
+    }
+
+    // Fallback: look up by email in Stripe directly
+    const { clerkClient } = await import('@clerk/express');
+    const stripe = await getUncachableStripeClient();
+    const clerkUser = await clerkClient.users.getUser(userId);
+    const email = clerkUser.emailAddresses?.[0]?.emailAddress;
+
+    if (email) {
+      const customers = await stripe.customers.list({ email, limit: 5 });
+      for (const customer of customers.data) {
+        const subs = await stripe.subscriptions.list({ customer: customer.id, status: 'active', limit: 1 } as any);
+        if (subs.data.length > 0) {
+          res.json({ active: true });
+          return;
+        }
+      }
+    }
+
+    res.json({ active: false });
+  } catch (err: any) {
+    logger.error({ err }, 'Failed to check subscription');
+    res.status(500).json({ error: 'Failed to check subscription' });
+  }
+});
+
 router.post('/stripe/create-checkout-session', async (req, res): Promise<void> => {
   try {
     const { priceId, userId, email } = req.body as { priceId: string; userId?: string; email?: string };
@@ -110,7 +171,7 @@ router.post('/stripe/create-checkout-session', async (req, res): Promise<void> =
     const sessionParams: any = {
       line_items: [{ price: priceId, quantity: 1 }],
       mode: 'subscription',
-      success_url: `${baseUrl}/?checkout=success`,
+      success_url: `${baseUrl}/?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/?checkout=cancelled`,
       allow_promotion_codes: true,
     };

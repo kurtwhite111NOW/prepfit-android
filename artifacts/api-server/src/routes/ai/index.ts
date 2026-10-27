@@ -15,7 +15,7 @@ router.post("/ai/generate-meal-plan", aiRateLimit, async (req, res): Promise<voi
       return;
     }
 
-    const { mealsPerDay, dailyCalories } = parsed.data;
+    const { mealsPerDay, dailyCalories, allergies, highProtein } = parsed.data;
     const mealTypes: Array<"breakfast" | "lunch" | "dinner" | "snack"> =
       mealsPerDay === 2 ? ["breakfast", "dinner"] :
       mealsPerDay === 3 ? ["breakfast", "lunch", "dinner"] :
@@ -45,7 +45,15 @@ router.post("/ai/generate-meal-plan", aiRateLimit, async (req, res): Promise<voi
       `  Meal ${i + 1} (${type}): EXACTLY ${mealCalorieTargets[i]} calories`
     ).join("\n");
 
-    const prompt = `Create a simple, practical one-day meal plan for a gym-goer or fitness enthusiast. All meals must be VERY EASY — high-protein, everyday foods that support muscle building and performance.
+    const allergyLine = allergies && allergies.length > 0
+      ? `\n⚠️ ALLERGY / EXCLUSION LIST — NEVER include these foods or ingredients in ANY meal: ${allergies.join(", ")}. This is a hard rule — violating it puts the user's health at risk.`
+      : "";
+
+    const proteinLine = highProtein
+      ? "\n🥩 HIGH-PROTEIN MODE: The user wants MORE PROTEIN and FEWER CARBS. Every meal must be protein-dominant. Minimise rice, pasta, bread, and starchy carbs. Replace with extra protein, leafy greens, and healthy fats. Target macro split: ~40% protein, ~20% carbs, ~40% fat."
+      : "";
+
+    const prompt = `Create a simple, practical one-day meal plan for a gym-goer or fitness enthusiast. All meals must be VERY EASY — high-protein, everyday foods that support muscle building and performance.${allergyLine}${proteinLine}
 
 VARIETY TOKEN (internal only, do NOT include in output): ${varietySeed}
 TODAY'S THEME: ${theme.label}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -12,30 +12,30 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import { useSubscription } from "@/lib/revenuecat";
 
-const EMERALD = "#22c55e";
-const EMERALD_DIM = "rgba(34,197,94,0.12)";
-const EMERALD_BORDER = "rgba(34,197,94,0.25)";
-const BG = "#0f1117";
-const CARD_BG = "rgba(255,255,255,0.05)";
-const CARD_BORDER = "rgba(255,255,255,0.10)";
-const WHITE = "#ffffff";
-const WHITE_70 = "rgba(255,255,255,0.70)";
-const WHITE_60 = "rgba(255,255,255,0.60)";
-const WHITE_45 = "rgba(255,255,255,0.45)";
-const AMBER = "#f59e0b";
-const AMBER_BG = "rgba(245,158,11,0.15)";
+const ORANGE       = "#F26B1D";
+const ORANGE_DIM   = "rgba(242,107,29,0.12)";
+const ORANGE_BORDER= "rgba(242,107,29,0.28)";
+const BG           = "#0f1117";
+const CARD_BG      = "rgba(255,255,255,0.05)";
+const CARD_BORDER  = "rgba(255,255,255,0.10)";
+const WHITE        = "#ffffff";
+const WHITE_70     = "rgba(255,255,255,0.70)";
+const WHITE_60     = "rgba(255,255,255,0.60)";
+const WHITE_45     = "rgba(255,255,255,0.45)";
+const AMBER        = "#f59e0b";
+const AMBER_BG     = "rgba(245,158,11,0.15)";
 const AMBER_BORDER = "rgba(245,158,11,0.25)";
-const RED_BG = "rgba(239,68,68,0.10)";
-const RED_BORDER = "rgba(239,68,68,0.30)";
-const RED = "#f87171";
+const RED_BG       = "rgba(239,68,68,0.10)";
+const RED_BORDER   = "rgba(239,68,68,0.30)";
+const RED          = "#f87171";
 
 const FEATURES = [
-  { icon: "cpu" as const,          label: "Meal Plan Generation",      desc: "Personalised weekly plans in seconds" },
-  { icon: "shopping-cart" as const, label: "Smart Grocery Lists",       desc: "Clean-brand picks, organised by aisle" },
-  { icon: "camera" as const,       label: "Photo Calorie Scanner",     desc: "Identifies food and estimates calories" },
-  { icon: "trending-up" as const,  label: "Weight Tracker",            desc: "Trend chart and progress insights" },
-  { icon: "book-open" as const,    label: "My Meals Journal",          desc: "Save and review all analysed meals" },
-  { icon: "droplet" as const,      label: "Daily Water Tracking",      desc: "Hit your hydration goals every day" },
+  { icon: "cpu" as const,           label: "Meal Plan Generation",  desc: "Personalised weekly plans in seconds"    },
+  { icon: "shopping-cart" as const, label: "Smart Grocery Lists",   desc: "Clean-brand picks, organised by aisle"   },
+  { icon: "camera" as const,        label: "Photo Calorie Scanner", desc: "Identifies food and estimates calories"   },
+  { icon: "trending-up" as const,   label: "Weight Tracker",        desc: "Trend chart and progress insights"       },
+  { icon: "book-open" as const,     label: "My Meals Journal",      desc: "Save and review all analysed meals"      },
+  { icon: "droplet" as const,       label: "Daily Water Tracking",  desc: "Hit your hydration goals every day"      },
 ];
 
 interface PaywallModalProps {
@@ -48,21 +48,27 @@ type ConfirmState = { pkg: any; price: string } | null;
 
 export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps) {
   const insets = useSafeAreaInsets();
-  const { offerings, purchase, restore, isPurchasing, isRestoring, isLoading } = useSubscription();
+  const { offerings, purchase, restore, isPurchasing, isRestoring, isOfferingsLoading } = useSubscription();
   const [confirm, setConfirm] = useState<ConfirmState>(null);
   const [error, setError] = useState<string | null>(null);
+  // Safety valve: after 10 s stop waiting for RevenueCat and show button anyway
+  const [timedOut, setTimedOut] = useState(false);
 
-  const current = offerings?.current;
-  const annualPkg = current?.availablePackages.find(
-    (p) => p.identifier === "$rc_annual",
-  );
-  const offeringsReady = !isLoading && !!offerings;
+  useEffect(() => {
+    if (!visible) { setTimedOut(false); return; }
+    const t = setTimeout(() => setTimedOut(true), 10_000);
+    return () => clearTimeout(t);
+  }, [visible]);
 
-  // Pricing display
-  const annualTotal = annualPkg?.product.priceString ?? "$168.00";
-  const annualAmount = annualPkg?.product.price ?? 168;
-  const perMonth = Math.round(annualAmount / 12);
-  const currency = annualPkg?.product.currencyCode === "USD" ? "$" : "";
+  const current    = offerings?.current;
+  const annualPkg  = current?.availablePackages.find((p) => p.identifier === "$rc_annual");
+  // Ready as soon as offerings arrive OR the 10-second timeout fires
+  const offeringsReady = !isOfferingsLoading || !!offerings || timedOut;
+
+  const annualTotal = annualPkg?.product.priceString ?? "$144.00";
+  const annualAmount= annualPkg?.product.price ?? 144;
+  const perMonth    = Math.round(annualAmount / 12);
+  const currency    = annualPkg?.product.currencyCode === "USD" ? "$" : "";
 
   const handleSubscribe = () => {
     if (!annualPkg) return;
@@ -107,7 +113,7 @@ export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps)
         onRequestClose={onDismiss}
       >
         <View style={s.root}>
-          {/* Glow blobs */}
+          {/* Subtle orange glow blobs */}
           <View style={s.glowTop} pointerEvents="none" />
           <View style={s.glowBottom} pointerEvents="none" />
 
@@ -150,7 +156,7 @@ export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps)
               {FEATURES.map(({ icon, label, desc }) => (
                 <View key={label} style={s.featureRow}>
                   <View style={s.checkCircle}>
-                    <Feather name="check" size={12} color={EMERALD} strokeWidth={3} />
+                    <Feather name="check" size={12} color={ORANGE} strokeWidth={3} />
                   </View>
                   <View style={s.featureText}>
                     <Text style={s.featureLabel}>{label}</Text>
@@ -179,14 +185,15 @@ export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps)
               </View>
             )}
 
-            {/* ── CTA — three states: loading / no-offerings / ready ── */}
+            {/* ── CTA ── */}
             {!offeringsReady ? (
-              /* Still loading offerings from RevenueCat */
-              <View style={[s.cta, s.ctaDisabled]}>
-                <ActivityIndicator color={WHITE} />
+              /* Offerings loading — small unobtrusive spinner, NOT the CTA button */
+              <View style={s.loadingRow}>
+                <ActivityIndicator size="small" color={ORANGE} />
+                <Text style={s.loadingText}>Loading plans…</Text>
               </View>
             ) : !annualPkg ? (
-              /* Loaded but no annual package found — show a clear error */
+              /* Loaded but no annual package found */
               <View style={s.offeringsErrorBox}>
                 <Feather name="wifi-off" size={20} color={WHITE_45} style={{ marginBottom: 8 }} />
                 <Text style={s.offeringsErrorTitle}>Pricing unavailable</Text>
@@ -195,7 +202,7 @@ export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps)
                 </Text>
               </View>
             ) : (
-              /* Ready — show normal subscribe button */
+              /* Ready — subscribe button */
               <Pressable
                 style={[s.cta, isPurchasing && s.ctaDisabled]}
                 onPress={handleSubscribe}
@@ -211,7 +218,7 @@ export function PaywallModal({ visible, onDismiss, feature }: PaywallModalProps)
               </Pressable>
             )}
 
-            {/* ── Restore ── always visible so users with existing subs can recover ── */}
+            {/* Restore — always visible */}
             <Pressable style={s.restoreBtn} onPress={handleRestore} disabled={isRestoring}>
               <Text style={s.restoreText}>
                 {isRestoring ? "Restoring…" : "Restore Purchases"}
@@ -276,7 +283,7 @@ const styles = (insets: ReturnType<typeof useSafeAreaInsets>) =>
       width: 400,
       height: 400,
       borderRadius: 200,
-      backgroundColor: "rgba(34,197,94,0.06)",
+      backgroundColor: "rgba(242,107,29,0.07)",
     },
     glowBottom: {
       position: "absolute",
@@ -285,7 +292,7 @@ const styles = (insets: ReturnType<typeof useSafeAreaInsets>) =>
       width: 300,
       height: 300,
       borderRadius: 150,
-      backgroundColor: "rgba(34,197,94,0.04)",
+      backgroundColor: "rgba(242,107,29,0.04)",
     },
     closeBtn: {
       position: "absolute",
@@ -305,7 +312,6 @@ const styles = (insets: ReturnType<typeof useSafeAreaInsets>) =>
       paddingHorizontal: 24,
       alignItems: "center",
     },
-    // Brand header
     header: {
       alignItems: "center",
       marginBottom: 20,
@@ -314,11 +320,11 @@ const styles = (insets: ReturnType<typeof useSafeAreaInsets>) =>
       width: 56,
       height: 56,
       borderRadius: 16,
-      backgroundColor: EMERALD,
+      backgroundColor: ORANGE,
       alignItems: "center",
       justifyContent: "center",
       marginBottom: 10,
-      shadowColor: EMERALD,
+      shadowColor: ORANGE,
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.45,
       shadowRadius: 16,
@@ -336,11 +342,10 @@ const styles = (insets: ReturnType<typeof useSafeAreaInsets>) =>
     brandSub: {
       fontSize: 11,
       fontFamily: "Inter_700Bold",
-      color: EMERALD,
+      color: ORANGE,
       marginTop: 2,
       letterSpacing: 0.3,
     },
-    // Badge + heading
     headingBlock: {
       alignItems: "center",
       marginBottom: 20,
@@ -378,13 +383,12 @@ const styles = (insets: ReturnType<typeof useSafeAreaInsets>) =>
       lineHeight: 21,
       maxWidth: 320,
     },
-    // Feature list
     featureCard: {
       width: "100%",
       borderRadius: 18,
       borderWidth: 1,
-      borderColor: EMERALD_BORDER,
-      backgroundColor: EMERALD_DIM,
+      borderColor: ORANGE_BORDER,
+      backgroundColor: ORANGE_DIM,
       padding: 18,
       gap: 14,
       marginBottom: 14,
@@ -398,7 +402,7 @@ const styles = (insets: ReturnType<typeof useSafeAreaInsets>) =>
       width: 24,
       height: 24,
       borderRadius: 12,
-      backgroundColor: "rgba(34,197,94,0.20)",
+      backgroundColor: "rgba(242,107,29,0.22)",
       alignItems: "center",
       justifyContent: "center",
       marginTop: 1,
@@ -419,7 +423,6 @@ const styles = (insets: ReturnType<typeof useSafeAreaInsets>) =>
       color: WHITE_60,
       lineHeight: 17,
     },
-    // Pricing card
     priceCard: {
       width: "100%",
       borderRadius: 18,
@@ -470,10 +473,9 @@ const styles = (insets: ReturnType<typeof useSafeAreaInsets>) =>
     priceSub: {
       fontSize: 12,
       fontFamily: "Inter_500Medium",
-      color: EMERALD,
+      color: ORANGE,
       marginTop: 3,
     },
-    // Error
     errorBox: {
       width: "100%",
       borderRadius: 12,
@@ -489,7 +491,6 @@ const styles = (insets: ReturnType<typeof useSafeAreaInsets>) =>
       fontFamily: "Inter_400Regular",
       textAlign: "center",
     },
-    // Offerings unavailable fallback
     offeringsErrorBox: {
       width: "100%",
       borderRadius: 16,
@@ -513,15 +514,26 @@ const styles = (insets: ReturnType<typeof useSafeAreaInsets>) =>
       textAlign: "center",
       lineHeight: 19,
     },
-    // CTA
+    loadingRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      paddingVertical: 18,
+      marginBottom: 12,
+    },
+    loadingText: {
+      color: WHITE_60,
+      fontSize: 14,
+      fontFamily: "Inter_400Regular",
+    },
     cta: {
       width: "100%",
-      backgroundColor: EMERALD,
+      backgroundColor: ORANGE,
       paddingVertical: 17,
       borderRadius: 18,
       alignItems: "center",
       justifyContent: "center",
-      shadowColor: EMERALD,
+      shadowColor: ORANGE,
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.40,
       shadowRadius: 16,
@@ -537,7 +549,6 @@ const styles = (insets: ReturnType<typeof useSafeAreaInsets>) =>
       fontFamily: "Inter_700Bold",
       letterSpacing: 0.3,
     },
-    // Restore
     restoreBtn: {
       paddingVertical: 10,
       marginBottom: 8,
@@ -545,7 +556,7 @@ const styles = (insets: ReturnType<typeof useSafeAreaInsets>) =>
     restoreText: {
       fontSize: 14,
       fontFamily: "Inter_500Medium",
-      color: EMERALD,
+      color: ORANGE,
     },
     legal: {
       fontSize: 11,
@@ -555,7 +566,6 @@ const styles = (insets: ReturnType<typeof useSafeAreaInsets>) =>
       lineHeight: 16,
       maxWidth: 320,
     },
-    // Dev confirm
     confirmOverlay: {
       flex: 1,
       backgroundColor: "rgba(0,0,0,0.65)",
@@ -604,7 +614,7 @@ const styles = (insets: ReturnType<typeof useSafeAreaInsets>) =>
       fontSize: 15,
     },
     confirmBtnConfirm: {
-      backgroundColor: EMERALD,
+      backgroundColor: ORANGE,
     },
     confirmBtnConfirmText: {
       color: WHITE,

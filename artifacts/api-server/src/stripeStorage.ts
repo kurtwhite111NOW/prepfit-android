@@ -56,7 +56,7 @@ export class StripeStorage {
     const result = await db.execute(sql`
       SELECT * FROM stripe.subscriptions
       WHERE customer = ${customerId}
-      AND status IN ('active', 'trialing')
+      AND status = 'active'
       ORDER BY created DESC
       LIMIT 1
     `);

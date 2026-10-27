@@ -7,6 +7,8 @@ import aiRouter from "./ai";
 import weightEntriesRouter from "./weight-entries";
 import stripeRouter from "./stripe";
 import accountRouter from "./account";
+import preferencesRouter from "./preferences";
+import storageRouter from "./storage";
 
 const router: IRouter = Router();
 
@@ -18,5 +20,7 @@ router.use(aiRouter);
 router.use(weightEntriesRouter);
 router.use(stripeRouter);
 router.use(accountRouter);
+router.use(preferencesRouter);
+router.use(storageRouter);
 
 export default router;

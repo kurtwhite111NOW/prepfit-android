@@ -1,0 +1,283 @@
+Tool used: DataForSEO MCP connector (Google Ads Search Volume, Labs Bulk Keyword Difficulty, SERP Organic Live Advanced, OnPage Instant Pages). Search locale: United States, google.com, en, desktop, pulled 15 September 2026. All metrics below are live — nothing estimated.
+
+One note on the topic: the URL was given as https;//prepfit.fit. I crawled https://prepfit.fit and it resolves to PrepFit, a web-based meal prep and macro app for gym-goers (plan builder, meal scanner, grocery list, water and weight tracking, 3-day free trial, no App Store required). The content below is written for that product.
+
+The analysis dashboard is the artifact. Copy-ready content follows.
+
+Query fan-out
+
+Grouped by intent, with the live US metric for the closest retrievable query. Full table is in the dashboard.
+
+Definition — What is a meal prep app and what does it do? (meal prep app, 1,300/mo, KD 25, $6.13) · How does an AI meal plan generator build a plan around my macros? (ai meal planner, 720/mo, KD 9, $4.68)
+
+How-to — How do I meal prep a full week for the gym? (how to meal prep for the week, 3,600/mo, KD 32) · How much protein per day and per meal? (high protein meal plan, 14,800/mo, KD 18) · How do I set macros for a bulk or cut? (meal prep for muscle gain, 720/mo, KD 17) · How accurate is scanning a meal for calories? (calorie scanner app, 210/mo, KD 98)
+
+Comparison — Meal prep app vs macro tracker, which do I need? (macro tracker app, 1,000/mo, KD 30) · What should I use instead of MyFitnessPal? (myfitnesspal alternative, 720/mo, KD 0)
+
+Best/top — Best meal prep app right now? (best meal prep app, 210/mo, KD 44, $6.53) · Best meal prep app for bodybuilding? (meal prep app for bodybuilders returned no Google Ads data; it surfaces as a Google related search on best meal prep app)
+
+Cost — What do these cost, is there a free one? (meal prep app free, 210/mo, KD 46)
+
+Problems — How long does prepped food keep, why do people quit? (meal plan generator, 1,000/mo, KD 18)
+
+Latest — What changed in 2026? (meal planner app, 2,400/mo, KD 60)
+
+Local — deliberately out of scope. Local queries here resolve to prepared-food delivery businesses and a local pack a web app cannot enter.
+
+Citability review
+
+Google's live AI Overview on best meal prep app lists five vendors and then asks the user two follow-up questions — which goal, and free or paid — which is the engine admitting the decision rule is missing. No top-ten page separates "app that builds a plan to a macro target" from "app that tracks what you ate", though lifters need both. The reference set is weak: three of eight AI Overview sources are user-generated or aggregator pages (Reddit, Spoon University, a YouTube lecture), The Spruce Eats page is still headed "of 2024", and two more are competitor blogs ranking themselves first. No page states a protein target with a citation, a food-safety window, or a complete price table. And PrepFit itself is currently uncitable: the OnPage crawl returns title "Dashboard | PrepFit", H1 "Keep it going!", 91 words of body text, 1.8% plain-text rate.
+
+Optimised content
+Meal prep apps for the gym: how they work, what they cost, and which to use
+
+Last reviewed: REPLACE_WITH_DATE
+
+A meal prep app builds a week of meals around your calorie and macro targets, then generates the grocery list and cook plan to execute it. For gym-goers the useful split is planning versus tracking: planners tell you what to cook, trackers verify what you ate. Pick a planner if your problem is deciding; pick a tracker if your problem is honesty.
+
+Key takeaways
+Planning apps and tracking apps solve different problems. Most people who quit meal prep quit because they picked the wrong one.
+The International Society of Sports Nutrition's position stand puts daily protein at 1.4–2.0 g per kg of body weight for exercising individuals, with strength and power athletes at the top of that range.
+USDA Food Safety and Inspection Service guidance is 3 to 4 days in the refrigerator for cooked leftovers, which caps a single cook session at roughly four days of meals unless you freeze.
+Prices in the US range from genuinely free tiers to about $72 a year; MacroFactor lists its Nutrition + Workouts bundle at $89.99 a year on its own site.
+Scanning a photo of a meal is fast but approximate. Use it for restaurant food and unlabelled meals, not for the meals you prep yourself and can weigh.
+A web app avoids the App Store entirely, which matters if you want to start on a laptop and continue on a phone without installing anything.
+What is a meal prep app?
+
+A meal prep app turns a calorie and macro target into a concrete week of food: recipes chosen to hit the numbers, portion sizes scaled to your body weight, a grocery list grouped by aisle, and a cook order for prep day. The distinguishing feature against a recipe app is that the plan is generated from the target rather than assembled and then measured.
+
+PrepFit sits in this category. It generates a plan from your goal, scans meals to estimate their calories and macros, keeps a grocery list, and tracks water and weight against the plan — in a browser, with a three-day free trial and no App Store install.
+
+How does an AI meal planner build a plan around your macros?
+
+It solves a constraint problem: pick a combination of recipes and portion sizes whose totals land inside your calorie and macro band, subject to your dislikes, allergies, and how many meals you want to cook.
+
+In practice the sequence is: estimate maintenance calories from your stats and activity, apply a surplus or deficit for the goal, split the calorie figure into protein, carbohydrate and fat targets, then fill those targets from a recipe database with scalable portions. Protein is usually pinned first because it is the constraint with a floor, and carbohydrate and fat absorb the remainder. The quality difference between apps is almost entirely in the recipe database and how finely portions can be scaled — an app that only offers fixed servings will miss your targets by more than one that scales grams.
+
+How much protein should you actually eat?
+
+The ISSN position stand on protein and exercise (Jäger et al., 2017, Journal of the International Society of Sports Nutrition) states that 1.4–2.0 g of protein per kg of body weight per day is sufficient for most exercising individuals to build and maintain muscle.
+
+Within that range, the ISSN places endurance athletes at the lower end, intermittent-sport athletes in the middle, and strength and power athletes at the upper end. It also notes that resistance-trained people in a calorie deficit may need 2.3–3.1 g/kg/day to protect lean mass, and recommends roughly 0.25 g/kg per serving or an absolute dose of 20–40 g, distributed every 3–4 hours.
+
+For an 80 kg lifter, that is 112–160 g a day, in four meals of roughly 25–40 g each. Any app worth paying for should let you set the per-day figure directly rather than inferring it from a diet label.
+
+How do you meal prep a week for the gym?
+
+Cook two sessions rather than one, three to four days apart, and build every meal from a protein, a starch, a vegetable, and a sauce that changes.
+
+The two-session structure exists because of food safety, not preference. Cook on Sunday and Wednesday, portion into containers immediately, and refrigerate within two hours. Cook proteins to safe internal temperatures — 165°F for poultry, 160°F for ground meat, 145°F for whole cuts with a three-minute rest — and reheat everything to 165°F. Batch the starch and vegetable components separately from the protein so you can recombine them into different meals; this is what stops week three from tasting like week one.
+
+Use the app for the parts that are arithmetic: portion weights, the grocery list, and the running total against your macro target. Use your own judgement for what you actually want to eat, because adherence beats optimisation.
+
+How do you set macros for a bulk or a cut?
+
+Set protein first from the ISSN range, set fat at a floor that keeps you functional, and let carbohydrate take the rest of the calorie budget in whichever direction the goal moves.
+
+For a lean gaining phase, a modest surplus over maintenance is standard practice; for a cut, a modest deficit with protein held at the top of the ISSN range or above. The specific surplus or deficit size is contested and depends on training age and how much fat gain you will tolerate, so treat any single number an app gives you as a starting point and adjust from the scale trend over three to four weeks, not from one weigh-in.
+
+How accurate is scanning a meal for calories?
+
+Photo and barcode scanning is accurate for packaged food and useful but approximate for cooked meals. The barcode path reads a published nutrition label; the photo path estimates portion size from an image, which is the error-prone step.
+
+Use scanning where weighing is impossible — restaurant meals, food someone else cooked, a snack at work. For the meals you prep yourself, weighing the protein and starch on a scale during prep day is both faster and more accurate, and it is a one-time cost per batch rather than per meal. Treat scan output as a good estimate, not a measurement.
+
+Meal prep app vs macro tracker: which do you need?
+
+A planner answers "what should I cook this week"; a tracker answers "what did I actually eat". If your food is boring and repetitive but you still are not progressing, you need a tracker. If you know the numbers but keep ordering takeaway at 7pm, you need a planner.
+
+Most people eventually want both, and the cheapest route to both is a planner that also logs intake against the generated plan, rather than two subscriptions. This is the gap the current AI answers skip entirely — they present planners and trackers as one undifferentiated list.
+
+Comparison: five meal prep and macro apps
+App	Primary job	Builds plan to macro target	Logs intake	Platform	US price (verify before buying)
+PrepFit	Plan + track for gym-goers	Yes	Yes, incl. meal scan	Web, no install	3-day free trial; current pricing on site
+MealPrepPro	Meal prep planning	Yes, to calories and macros	Limited	iOS, Android	7-day free trial; the site states its most popular plan works out at about $5/month
+MacroFactor	Adaptive macro tracking	No, sets targets not menus	Yes	iOS, Android	Bundle $89.99/yr per MacroFactor's own pricing page; single-app annual widely reported at $71.99 — confirm in-store
+Eat This Much	Automated plan generation	Yes	Partial	Web, iOS, Android	Free tier plus paid; check current tiers
+Mealime	Fast weeknight cooking	No	No	iOS, Android	Free tier plus paid
+
+Pricing moves and varies by region and store. The MacroFactor bundle figure is from macrofactor.com; the MealPrepPro figure is from mealpreppro.com's own FAQ. Treat every other price as directional and confirm at the source.
+
+What do meal prep apps cost, and is there a free one?
+
+Free tiers exist and are real — Mealime and Eat This Much both offer one — but they generally cap the feature that gym-goers need most, which is planning to a specific macro target rather than a diet label.
+
+Paid tiers cluster between roughly $5 and $12 a month, with annual plans cutting the effective monthly rate by half or more. MacroFactor is the notable outlier with no free tier at all. If you are deciding, the honest test is whether you will still be logging in week six; a free trial long enough to cover one full prep cycle tells you more than a feature list.
+
+Why do people quit meal prep, and what actually goes wrong?
+
+The three recurring failures are food that goes bad, food that gets boring, and a plan that assumes more cooking time than you have.
+
+Food safety sets the hard limit: USDA FSIS puts cooked leftovers at 3 to 4 days refrigerated, or 3 to 4 months frozen, with the refrigerator at 40°F or below. A seven-day single cook is not a plan, it is a risk. Boredom is solved structurally by varying sauce and seasoning rather than the whole meal. And time is solved by being honest in setup — if you will realistically cook twice a week for 45 minutes, tell the app that, because a plan built for three-hour Sundays gets abandoned in week two.
+
+What is the best meal prep app right now?
+
+There is no single best one, and the honest answer is a rule rather than a name: choose a planner if your bottleneck is deciding what to eat, a tracker if your bottleneck is knowing what you ate, and a combined app if you want one subscription.
+
+Google's own AI Overview for this query currently names MealPrepPro for fitness goals, Mealime for speed, Paprika for recipe organisation, Plan to Eat for family calendars and Eat This Much for automated diets — and then asks the user to state their goal and budget before it will narrow further. That follow-up question is the real answer. Match the app to the bottleneck.
+
+What is the best meal prep app for bodybuilding?
+
+For bodybuilding specifically, the requirement narrows: the app must let you set a protein figure in grams, scale portions by weight rather than servings, and hold that target across a bulk and a cut without you rebuilding the plan.
+
+On the US SERP for this query, the apps that surface are MealPrepPro, Gaintrain, Strongr Fastr and Fitia, alongside Reddit threads that mostly recommend MealPrepPro. PrepFit's angle here is that it is built around the gym use case by default and runs in a browser, so a plan built on a laptop opens on the gym floor without an install.
+
+What changed in meal prep apps in 2026?
+
+Two things: photo-based meal scanning moved from novelty to baseline, and pricing consolidated around annual subscriptions rather than one-off purchases.
+
+The competitive effect is that recipe volume no longer differentiates anyone. What separates apps now is how precisely a plan can be pinned to a macro target and how little friction there is in logging against it. This is worth restating on any page that wants to be cited, because most of the roundups currently ranking were written against the old feature set.
+
+FAQ
+
+What is the 3-3-3 rule for meal prep?
+It is a popular shorthand for prepping three proteins, three starches and three vegetables, then mixing them into different combinations across the week. It is a structural trick for avoiding boredom, not a nutrition standard, and no official body publishes it. It works well alongside a macro target rather than instead of one.
+
+How long does meal prepped food last in the fridge?
+USDA Food Safety and Inspection Service guidance is 3 to 4 days for cooked leftovers stored at 40°F or below, and 3 to 4 months in the freezer. Refrigerate within two hours of cooking, or within one hour if the room is above 90°F. Reheat to an internal temperature of 165°F.
+
+Do I need a meal prep app if I already use MyFitnessPal?
+Possibly, because they do different jobs. MyFitnessPal logs what you ate after the fact; a meal prep app decides what you will cook before you shop. If your logs are accurate but your food choices are chaotic, adding a planner is the change that helps.
+
+Can an app calculate my macros for me?
+Yes, and most do, using your height, weight, age, activity level and goal. Treat the output as a starting estimate. The ISSN protein range of 1.4–2.0 g/kg/day is the evidence-based anchor for the protein figure; adjust calories from your weight trend over three to four weeks rather than from a single week.
+
+Is there a free meal prep app?
+Yes. Mealime and Eat This Much both have free tiers, and several apps offer trials. Free tiers usually restrict the feature that matters most to lifters — planning to an exact macro target rather than a generic diet type — so test that specific capability during the trial.
+
+Does a meal prep app work without the App Store?
+A web-based app does. PrepFit runs in a browser, so you can build a plan on a desktop and open the same plan on a phone with no install and no store account. Native apps require a download and store billing.
+
+How accurate is scanning food with a phone camera?
+Barcode scanning reads a published label and is accurate. Photo estimation of a plated meal is approximate because portion size is inferred from an image. Use scanning for food you did not cook and could not weigh, and weigh the food you prep yourself.
+
+Author expertise
+
+This page should carry a named byline with demonstrable first-hand experience, not a house account. The credible profile is one of: a registered dietitian (RD or RDN) or a certified sports nutritionist (CISSN) reviewing the nutrition claims; or the PrepFit founder or product lead writing from operational experience, with a "Reviewed by" line from a credentialed nutrition professional underneath.
+
+The page should show, concretely: how many weeks the author has personally run app-generated prep plans; photographs of their own prep sessions rather than stock imagery; a specific account of what the app gets wrong (portion scaling, recipe repetition, scan variance) because acknowledged limitations are an expertise signal; and one aggregate statistic from PrepFit's own anonymised usage data that no competitor can reproduce. Link the byline to an author page with a sameAs reference to a LinkedIn or professional profile, and print a visible "Last reviewed" date.
+
+Sources
+Jäger R. et al., International Society of Sports Nutrition Position Stand: protein and exercise, Journal of the ISSN, 2017 — https://jissn.biomedcentral.com/articles/10.1186/s12970-017-0177-8
+USDA Food Safety and Inspection Service, Leftovers and Food Safety — https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics/leftovers-and-food-safety
+FoodSafety.gov, Cold Food Storage Charts — https://www.foodsafety.gov/food-safety-charts/cold-food-storage-charts
+MacroFactor, official pricing page — https://macrofactor.com/workouts/price/
+MealPrepPro, official site and FAQ — https://www.mealpreppro.com/
+Structured data
+html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "@id": "REPLACE_WITH_URL#article",
+      "headline": "Meal prep apps for the gym: how they work, what they cost, and which to use",
+      "description": "A meal prep app builds a week of meals around your calorie and macro targets, then generates the grocery list and cook plan. Planning versus tracking, protein targets, food safety limits, costs and a five-app comparison.",
+      "url": "REPLACE_WITH_URL",
+      "mainEntityOfPage": { "@type": "WebPage", "@id": "REPLACE_WITH_URL" },
+      "inLanguage": "en-US",
+      "datePublished": "REPLACE_WITH_ISO_DATE",
+      "dateModified": "REPLACE_WITH_ISO_DATE",
+      "author": {
+        "@type": "Person",
+        "name": "REPLACE_WITH_AUTHOR_NAME",
+        "jobTitle": "REPLACE_WITH_AUTHOR_TITLE",
+        "url": "REPLACE_WITH_AUTHOR_PAGE_URL",
+        "sameAs": ["REPLACE_WITH_AUTHOR_LINKEDIN_URL"]
+      },
+      "reviewedBy": {
+        "@type": "Person",
+        "name": "REPLACE_WITH_REVIEWER_NAME",
+        "honorificSuffix": "REPLACE_WITH_REVIEWER_CREDENTIAL",
+        "url": "REPLACE_WITH_REVIEWER_PAGE_URL"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "PrepFit",
+        "url": "https://prepfit.fit/",
+        "logo": { "@type": "ImageObject", "url": "REPLACE_WITH_LOGO_URL" },
+        "sameAs": ["REPLACE_WITH_SOCIAL_PROFILE_URL"]
+      },
+      "image": { "@type": "ImageObject", "url": "REPLACE_WITH_IMAGE_URL", "width": 1200, "height": 630 },
+      "about": [
+        { "@type": "Thing", "name": "Meal preparation" },
+        { "@type": "Thing", "name": "Macronutrient tracking" },
+        { "@type": "SoftwareApplication", "name": "PrepFit", "applicationCategory": "HealthApplication" }
+      ],
+      "citation": [
+        "https://jissn.biomedcentral.com/articles/10.1186/s12970-017-0177-8",
+        "https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics/leftovers-and-food-safety",
+        "https://www.foodsafety.gov/food-safety-charts/cold-food-storage-charts"
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "REPLACE_WITH_URL#faq",
+      "url": "REPLACE_WITH_URL",
+      "inLanguage": "en-US",
+      "isPartOf": { "@id": "REPLACE_WITH_URL#article" },
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the 3-3-3 rule for meal prep?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It is a popular shorthand for prepping three proteins, three starches and three vegetables, then mixing them into different combinations across the week. It is a structural trick for avoiding boredom, not a nutrition standard, and no official body publishes it. It works well alongside a macro target rather than instead of one."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How long does meal prepped food last in the fridge?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "USDA Food Safety and Inspection Service guidance is 3 to 4 days for cooked leftovers stored at 40F or below, and 3 to 4 months in the freezer. Refrigerate within two hours of cooking, or within one hour if the room is above 90F. Reheat to an internal temperature of 165F."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need a meal prep app if I already use MyFitnessPal?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Possibly, because they do different jobs. MyFitnessPal logs what you ate after the fact; a meal prep app decides what you will cook before you shop. If your logs are accurate but your food choices are chaotic, adding a planner is the change that helps."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can an app calculate my macros for me?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, and most do, using your height, weight, age, activity level and goal. Treat the output as a starting estimate. The International Society of Sports Nutrition protein range of 1.4 to 2.0 g per kg of body weight per day is the evidence-based anchor for the protein figure; adjust calories from your weight trend over three to four weeks rather than from a single week."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a free meal prep app?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Mealime and Eat This Much both have free tiers, and several apps offer trials. Free tiers usually restrict the feature that matters most to lifters, which is planning to an exact macro target rather than a generic diet type, so test that specific capability during the trial."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does a meal prep app work without the App Store?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A web-based app does. PrepFit runs in a browser, so you can build a plan on a desktop and open the same plan on a phone with no install and no store account. Native apps require a download and store billing."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How accurate is scanning food with a phone camera?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Barcode scanning reads a published label and is accurate. Photo estimation of a plated meal is approximate because portion size is inferred from an image. Use scanning for food you did not cook and could not weigh, and weigh the food you prep yourself."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+The citation checklist and the "Do these three first" table are in the dashboard.

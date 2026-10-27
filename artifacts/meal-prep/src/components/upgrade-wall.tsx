@@ -1,11 +1,12 @@
-import { Check, Star, Shield, Zap, Brain, ShoppingCart, ScanLine, Scale, X, Loader2, Smartphone } from "lucide-react";
+import { Check, Star, Shield, Zap, Brain, ShoppingCart, ScanLine, Scale, X, Loader2, Smartphone, Clock } from "lucide-react";
 import { useStripeCheckout } from "../hooks/use-stripe-checkout";
 
 const features = [
-  { icon: Brain, label: "AI Meal Plan Generation", desc: "Personalized weekly plans in seconds" },
+  { icon: Brain, label: "Smart Meal Plan Generation", desc: "Personalized weekly plans in seconds" },
   { icon: ShoppingCart, label: "Smart Grocery Lists", desc: "Clean-brand picks, organized by aisle" },
-  { icon: ScanLine, label: "Photo Calorie Scanner", desc: "AI identifies food and estimates calories" },
+  { icon: ScanLine, label: "Photo Calorie Scanner", desc: "Identifies food and estimates calories" },
   { icon: Scale, label: "Weight Tracker", desc: "Trend chart and progress insights" },
+  { icon: Clock, label: "Fasting Guide", desc: "Full 18:6 window guide — eat 11am–5pm, burn fat 18hrs" },
   { icon: Star, label: "My Meals Journal", desc: "Save and review all analyzed meals" },
   { icon: Shield, label: "Android PWA Install", desc: "Add to home screen — no Play Store needed" },
   { icon: Smartphone, label: "iOS PWA Install", desc: "Add to home screen — no App Store needed" },
@@ -56,7 +57,7 @@ export function UpgradeWall({ onClose }: UpgradeWallProps) {
           <p className="text-white/70 text-sm leading-relaxed max-w-sm">
             {onClose
               ? "Unlock all features and lock in the best rate before your trial ends."
-              : "Your 3-day free trial has ended. Upgrade to keep using AI meal planning, calorie scanning, and all premium features."}
+              : "Your 3-day free trial has ended. Upgrade to keep using meal planning, calorie scanning, and all premium features."}
           </p>
         </div>
 
@@ -84,7 +85,7 @@ export function UpgradeWall({ onClose }: UpgradeWallProps) {
               <span className="text-white/50 text-sm leading-none">/month</span>
             </div>
           </div>
-          <p className="text-white/65 text-xs mt-1">Billed annually — $168.00 USD / year</p>
+          <p className="text-white/65 text-xs mt-1">Billed annually — $144.00 USD / year</p>
           <p className="text-primary text-xs font-medium mt-0.5">Cancel anytime before the renewal date · No hidden fees</p>
         </div>
 
@@ -110,7 +111,7 @@ export function UpgradeWall({ onClose }: UpgradeWallProps) {
         </button>
 
         <p className="text-white/45 text-[11px] leading-relaxed max-w-xs">
-          Subscription auto-renews annually at $168.00 unless cancelled at least 24 hours before the renewal date. Billing is powered by Stripe.
+          Subscription auto-renews annually at $144.00 unless cancelled at least 24 hours before the renewal date. Billing is powered by Stripe.
         </p>
       </div>
     </div>

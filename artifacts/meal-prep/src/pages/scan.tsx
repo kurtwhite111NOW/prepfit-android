@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 
 export default function Scan() {
-  usePageTitle("Scan Food & Count Calories", "Take or upload a photo of any meal and AI will instantly identify the food, estimate calories, and list macros.");
+  usePageTitle("Scan Food & Count Calories", "Take or upload a photo of any meal to instantly identify the food, estimate calories, and list macros.");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -110,13 +110,13 @@ export default function Scan() {
           <ScanLine size={24} />
         </div>
         <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">
-          AI Photo Analysis
+          Photo Analysis
         </p>
         <h1 className="font-serif text-4xl font-bold text-foreground leading-tight mb-2">
           Scan Your Meal
         </h1>
         <p className="text-muted-foreground max-w-md mx-auto">
-          Snap or upload a photo — AI identifies your meal, estimates calories, and lists ingredients instantly.
+          Snap or upload a photo — instantly identifies your meal, estimates calories, and lists ingredients.
         </p>
       </section>
 
@@ -147,7 +147,7 @@ export default function Scan() {
               Tap to photograph your meal
             </h3>
             <p className="text-muted-foreground text-sm max-w-xs">
-              Works best with a clear, well-lit photo. AI identifies food even in complex dishes.
+              Works best with a clear, well-lit photo. Identifies food even in complex dishes.
             </p>
             <div className="flex items-center gap-4 mt-8 text-[11px] text-muted-foreground">
               <span className="flex items-center gap-1.5">
@@ -235,7 +235,7 @@ export default function Scan() {
                   </p>
                   <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                     <ShieldCheck size={12} className="text-primary" />
-                    <span>AI confidence: <strong className="text-foreground">{analyzePhoto.data.confidence}</strong></span>
+                    <span>Confidence: <strong className="text-foreground">{analyzePhoto.data.confidence}</strong></span>
                   </div>
                 </div>
 

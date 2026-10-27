@@ -55,7 +55,12 @@ export default function SignUpScreen() {
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setPendingVerification(true);
     } catch (err: any) {
-      const message = err?.errors?.[0]?.longMessage ?? err?.message ?? "Sign up failed.";
+      const message =
+        err?.errors?.[0]?.longMessage ||
+        err?.errors?.[0]?.message ||
+        err?.message ||
+        JSON.stringify(err?.errors ?? err) ||
+        "Sign up failed.";
       Alert.alert("Sign Up Error", message);
     } finally {
       setLoading(false);

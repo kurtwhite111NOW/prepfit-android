@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import {
   LayoutDashboard,
@@ -11,6 +11,7 @@ import {
   Droplets,
   ClipboardList,
   BookMarked,
+  Clock,
   Settings,
   Loader2,
   ExternalLink,
@@ -21,6 +22,7 @@ import {
 } from "lucide-react";
 import { useClerk, useUser } from "@clerk/react";
 import { useTrial } from "@/hooks/use-trial";
+import { useSubscription } from "@/hooks/use-subscription";
 import { useTheme } from "@/hooks/use-theme";
 import { TrialBanner } from "@/components/trial-banner";
 import { UpgradeWall } from "@/components/upgrade-wall";
@@ -36,16 +38,55 @@ const navItems = [
   { href: "/weight", label: "Weight", emoji: "📊", icon: Scale },
   { href: "/water", label: "Water", emoji: "💧", icon: Droplets },
   { href: "/plans", label: "Saved Plans", emoji: "📋", icon: ClipboardList },
-  { href: "/guide", label: "User Guide", sublabel: "(Read Me First)", emoji: "📖", icon: BookMarked },
+  { href: "/fasting", label: "Fasting Guide", emoji: "⏱️", icon: Clock },
+  { href: "/meal-prep-app-guide", label: "User Guide", sublabel: "(Read Me First)", emoji: "📖", icon: BookMarked },
 ];
 
 const mobileNavItems = navItems;
+
+function MobileBottomNav({ isActive }: { isActive: (href: string) => boolean }) {
+  const navRef = useRef<HTMLDivElement>(null);
+  const activeRef = useRef<HTMLDivElement>(null);
+  const [location, navigate] = useLocation();
+
+  useEffect(() => {
+    if (activeRef.current && navRef.current) {
+      activeRef.current.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    }
+  }, [location]);
+
+  return (
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-sidebar border-t border-sidebar-border z-20">
+      <div ref={navRef} className="flex items-center overflow-x-auto scrollbar-hide px-1 py-1.5">
+        {mobileNavItems.map((item) => {
+          const active = isActive(item.href);
+          return (
+            <div
+              key={item.href}
+              ref={active ? activeRef : undefined}
+              onClick={() => navigate(item.href)}
+              className="flex flex-col items-center gap-0.5 px-2.5 py-1.5 cursor-pointer shrink-0 min-w-[58px]"
+            >
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors text-lg ${active ? "bg-primary/20" : ""}`}>
+                {item.emoji}
+              </div>
+              <span className={`text-[9px] font-bold tracking-wide whitespace-nowrap ${active ? "text-primary" : "text-sidebar-foreground/35"}`}>
+                {item.label.split(" ")[0]}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
 
 const BASE_URL = (import.meta.env.BASE_URL as string)?.replace(/\/$/, '') || '';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const trial = useTrial();
+  const { isPaid } = useSubscription();
   const { isDark, toggle } = useTheme();
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
@@ -86,7 +127,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      {(trial.expired || showUpgrade) && !trial.loading && isSignedIn && (
+      {(trial.expired || showUpgrade) && !trial.loading && isSignedIn && !isPaid && (
         <UpgradeWall onClose={trial.expired ? undefined : () => setShowUpgrade(false)} />
       )}
       {showDeleteAccount && (
@@ -129,7 +170,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 Sign In
               </a>
             )}
-            {isSignedIn && !trial.expired && !trial.loading && (
+            {isSignedIn && !isPaid && !trial.expired && !trial.loading && (
               <button
                 onClick={() => setShowUpgrade(true)}
                 className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary/15 text-primary text-[11px] font-bold border border-primary/20"
@@ -221,7 +262,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               return (
                 <Link key={item.href} href={item.href}>
                   <div
-                    className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 cursor-pointer ${item.href === "/guide" ? "mt-8" : ""} ${
+                    className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 cursor-pointer ${item.href === "/meal-prep-app-guide" ? "mt-8" : ""} ${
                       active
                         ? "bg-primary/15 text-primary border border-primary/20"
                         : "text-sidebar-foreground/55 hover:text-sidebar-foreground hover:bg-sidebar-accent/60"
@@ -252,7 +293,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           {isSignedIn && (
             <div className="px-4 pb-2 pt-1">
               <div className="rounded-2xl bg-primary/10 border border-primary/15 p-4">
-                {!trial.loading && !trial.expired ? (
+                {!trial.loading && !trial.expired && !isPaid ? (
                   <>
                     <div className="flex items-center justify-between mb-1.5">
                       <p className="text-sidebar-foreground/80 text-[11px] font-bold uppercase tracking-wider">🎁 Free Trial</p>
@@ -351,6 +392,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <span className="text-base">🍎</span> Install on iPhone
               </div>
             </Link>
+            <Link href="/windows">
+              <div className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl text-white bg-sidebar-accent/40 hover:bg-sidebar-accent/70 transition-colors cursor-pointer text-[14px] font-extrabold border border-sidebar-border tracking-wide">
+                <span className="text-base">🪟</span> Install on Windows
+              </div>
+            </Link>
           </div>
 
           {/* Footer */}
@@ -365,32 +411,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
         {/* Main Content */}
         <main className="flex-1 min-h-screen pb-24 md:pb-0 overflow-y-auto">
-          {isSignedIn && <TrialBanner trial={trial} onUpgrade={() => setShowUpgrade(true)} />}
+          {isSignedIn && !isPaid && <TrialBanner trial={trial} onUpgrade={() => setShowUpgrade(true)} />}
           <div key={location} className="max-w-3xl mx-auto px-3 md:px-8 py-4 md:py-8 animate-in fade-in duration-300">
             {children}
           </div>
         </main>
 
         {/* Mobile Bottom Nav */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-sidebar border-t border-sidebar-border z-20">
-          <div className="flex items-center overflow-x-auto scrollbar-hide px-1 py-1.5 scroll-smooth">
-            {mobileNavItems.map((item) => {
-              const active = isActive(item.href);
-              return (
-                <Link key={item.href} href={item.href}>
-                  <div className="flex flex-col items-center gap-0.5 px-2.5 py-1.5 cursor-pointer shrink-0 min-w-[58px]">
-                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors text-lg ${active ? "bg-primary/20" : ""}`}>
-                      {item.emoji}
-                    </div>
-                    <span className={`text-[9px] font-bold tracking-wide whitespace-nowrap ${active ? "text-primary" : "text-sidebar-foreground/35"}`}>
-                      {item.label.split(" ")[0]}
-                    </span>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </nav>
+        <MobileBottomNav isActive={isActive} />
       </div>
     </>
   );

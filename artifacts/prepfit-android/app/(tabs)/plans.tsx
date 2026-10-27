@@ -25,6 +25,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
+import { useLanguage } from "@/lib/i18n";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
@@ -40,6 +41,7 @@ export default function PlansScreen() {
   const insets = useSafeAreaInsets();
   const qc = useQueryClient();
   const router = useRouter();
+  const { t } = useLanguage();
 
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
   const [isSelecting, setIsSelecting] = useState(false);
@@ -100,12 +102,12 @@ export default function PlansScreen() {
   const handleDeleteSelected = () => {
     const ids = Array.from(selected);
     Alert.alert(
-      "Delete Plans",
-      `Delete ${ids.length} plan${ids.length !== 1 ? "s" : ""}? This cannot be undone.`,
+      t.plans.deleteTitle,
+      t.plans.deleteMsg(ids.length),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t.plans.cancel, style: "cancel" },
         {
-          text: "Delete",
+          text: t.common.delete,
           style: "destructive",
           onPress: async () => {
             const results = await Promise.allSettled(ids.map((id) => deleteMealPlan(id)));
@@ -113,7 +115,7 @@ export default function PlansScreen() {
             qc.invalidateQueries({ queryKey: getListMealPlansQueryKey() });
             if (failed > 0) {
               Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-              Alert.alert("Partial Delete", `${ids.length - failed} removed, ${failed} failed. Please try again.`);
+              Alert.alert(t.plans.partialDelete, t.plans.partialDeleteMsg(ids.length - failed, failed));
             } else {
               Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             }
@@ -131,18 +133,18 @@ export default function PlansScreen() {
     <View style={[s.root, { backgroundColor: colors.background }]}>
       <View style={[s.header, { paddingTop: 16 }]}>
         <View>
-          <Text style={s.headerTitle}>Saved Plans</Text>
-          <Text style={s.headerSub}>{plans?.length ?? 0} meal plans saved</Text>
+          <Text style={s.headerTitle}>{t.plans.title}</Text>
+          <Text style={s.headerSub}>{t.plans.plansSaved(plans?.length ?? 0)}</Text>
         </View>
         {hasPlans && (
           isSelecting ? (
             <Pressable onPress={cancelSelecting} style={s.selectBtn}>
-              <Text style={s.selectBtnText}>Cancel</Text>
+              <Text style={s.selectBtnText}>{t.plans.cancel}</Text>
             </Pressable>
           ) : (
             <Pressable onPress={startSelecting} style={s.selectBtn}>
               <Feather name="check-square" size={14} color="#fff" />
-              <Text style={s.selectBtnText}>Select</Text>
+              <Text style={s.selectBtnText}>{t.plans.select}</Text>
             </Pressable>
           )
         )}
@@ -167,13 +169,13 @@ export default function PlansScreen() {
           ) : (
             <View style={s.empty}>
               <Feather name="clipboard" size={52} color={colors.mutedForeground} />
-              <Text style={s.emptyTitle}>No plans yet</Text>
-              <Text style={s.emptySub}>Generate your first meal plan in the Planner tab</Text>
+              <Text style={s.emptyTitle}>{t.plans.noPlans}</Text>
+              <Text style={s.emptySub}>{t.plans.noPlansSub}</Text>
               <Pressable
                 style={({ pressed }) => [s.goBtn, { opacity: pressed ? 0.8 : 1 }]}
                 onPress={() => router.push("/(tabs)/planner" as never)}
               >
-                <Text style={s.goBtnText}>Go to Planner</Text>
+                <Text style={s.goBtnText}>{t.plans.goToPlanner}</Text>
               </Pressable>
             </View>
           )
@@ -208,9 +210,9 @@ export default function PlansScreen() {
               <View style={s.cardContent}>
                 <Text style={s.planName} numberOfLines={1}>{item.name}</Text>
                 <View style={s.planMeta}>
-                  <Text style={s.planMetaText}>{item.mealsPerDay} meals/day</Text>
+                  <Text style={s.planMetaText}>{item.mealsPerDay} {t.plans.mealsPerDay.toLowerCase()}</Text>
                   <View style={s.dot} />
-                  <Text style={s.planMetaText}>{item.dailyCalories} kcal</Text>
+                  <Text style={s.planMetaText}>{item.dailyCalories} {t.plans.kcalDay}</Text>
                 </View>
               </View>
               {!isSelecting && (
@@ -223,9 +225,7 @@ export default function PlansScreen() {
 
       {isSelecting && (
         <View style={[s.deleteBar, { paddingBottom: insets.bottom + 12 }]}>
-          <Text style={s.deleteBarCount}>
-            {selected.size} selected
-          </Text>
+          <Text style={s.deleteBarCount}>{t.plans.selected(selected.size)}</Text>
           <Pressable
             style={({ pressed }) => [
               s.deleteBarBtn,
@@ -236,14 +236,11 @@ export default function PlansScreen() {
             disabled={selected.size === 0}
           >
             <Feather name="trash-2" size={16} color="#fff" />
-            <Text style={s.deleteBarBtnText}>
-              Delete{selected.size > 0 ? ` (${selected.size})` : ""}
-            </Text>
+            <Text style={s.deleteBarBtnText}>{t.plans.deleteBtn(selected.size)}</Text>
           </Pressable>
         </View>
       )}
 
-      {/* Backdrop */}
       {panelVisible && (
         <Animated.View
           style={[s.backdrop, { opacity: backdropAnim }]}
@@ -253,7 +250,6 @@ export default function PlansScreen() {
         </Animated.View>
       )}
 
-      {/* Slide-up panel — stays inside tab screen so tab bar remains visible */}
       {panelVisible && (
         <Animated.View
           style={[
@@ -261,13 +257,11 @@ export default function PlansScreen() {
             { backgroundColor: colors.background, transform: [{ translateY: slideAnim }] },
           ]}
         >
-          {/* Handle */}
           <View style={s.panelHandle} />
 
-          {/* Header */}
           <View style={s.modalHeader}>
             <Text style={s.modalTitle} numberOfLines={1}>
-              {planDetail?.name ?? "Loading..."}
+              {planDetail?.name ?? t.plans.loading}
             </Text>
             <Pressable onPress={closePanel} style={s.closeBtn}>
               <Feather name="x" size={20} color={colors.foreground} />
@@ -286,15 +280,15 @@ export default function PlansScreen() {
               <View style={s.planStats}>
                 <View style={s.planStatItem}>
                   <Text style={s.planStatVal}>{planDetail.mealsPerDay}</Text>
-                  <Text style={s.planStatLabel}>Meals/day</Text>
+                  <Text style={s.planStatLabel}>{t.plans.mealsPerDay}</Text>
                 </View>
                 <View style={s.planStatItem}>
                   <Text style={s.planStatVal}>{planDetail.dailyCalories}</Text>
-                  <Text style={s.planStatLabel}>kcal/day</Text>
+                  <Text style={s.planStatLabel}>{t.plans.kcalDay}</Text>
                 </View>
                 <View style={s.planStatItem}>
                   <Text style={s.planStatVal}>{planDetail.meals.length}</Text>
-                  <Text style={s.planStatLabel}>Meals total</Text>
+                  <Text style={s.planStatLabel}>{t.plans.mealsTotal}</Text>
                 </View>
               </View>
 
@@ -313,13 +307,12 @@ export default function PlansScreen() {
                       setExpandedMealId(isExpanded ? null : meal.id);
                     }}
                   >
-                    {/* Header row — always visible */}
                     <View style={s.mealCardHeader}>
                       <View style={s.mealEmojiWrap}>
                         <Text style={s.mealEmoji}>{emoji}</Text>
                       </View>
                       <View style={{ flex: 1 }}>
-                        <Text style={s.mealTypeLabel}>MEAL {meal.mealNumber}</Text>
+                        <Text style={s.mealTypeLabel}>{t.plans.meal} {meal.mealNumber}</Text>
                         <Text style={s.mealName}>{meal.name}</Text>
                       </View>
                       <View style={s.mealHeaderRight}>
@@ -335,13 +328,10 @@ export default function PlansScreen() {
                       </View>
                     </View>
 
-                    {/* Expanded detail */}
                     {isExpanded && (
                       <View style={s.mealDetail}>
-                        {/* Description */}
                         <Text style={s.mealDesc}>{meal.description}</Text>
 
-                        {/* Macros */}
                         {(meal.protein || meal.carbs || meal.fat) ? (
                           <View style={s.macrosRow}>
                             {meal.protein != null && (
@@ -362,10 +352,9 @@ export default function PlansScreen() {
                           </View>
                         ) : null}
 
-                        {/* Ingredients */}
                         {ingredientList.length > 0 && (
                           <View>
-                            <Text style={s.sectionLabel}>INGREDIENTS</Text>
+                            <Text style={s.sectionLabel}>{t.plans.ingredients}</Text>
                             <View style={s.ingredientsWrap}>
                               {ingredientList.map((ing, idx) => (
                                 <View key={idx} style={s.ingChip}>
@@ -376,7 +365,6 @@ export default function PlansScreen() {
                           </View>
                         )}
 
-                        {/* YouTube button */}
                         {meal.youtubeUrl ? (
                           <Pressable
                             style={({ pressed }) => [s.ytBtn, { opacity: pressed ? 0.8 : 1 }]}
@@ -385,7 +373,7 @@ export default function PlansScreen() {
                             }}
                           >
                             <Feather name="youtube" size={16} color="#fff" style={{ marginRight: 8 }} />
-                            <Text style={s.ytBtnText}>Watch How to Make It</Text>
+                            <Text style={s.ytBtnText}>{t.plans.watchHowTo}</Text>
                           </Pressable>
                         ) : null}
                       </View>
@@ -500,9 +488,7 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       backgroundColor: colors.primary,
       borderColor: colors.primary,
     },
-    cardContent: {
-      flex: 1,
-    },
+    cardContent: { flex: 1 },
     planIcon: {
       width: 40,
       height: 40,
@@ -567,9 +553,7 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       paddingVertical: 10,
       borderRadius: 12,
     },
-    deleteBarBtnDisabled: {
-      opacity: 0.4,
-    },
+    deleteBarBtnDisabled: { opacity: 0.4 },
     deleteBarBtnText: {
       fontSize: 14,
       fontFamily: "Inter_600SemiBold",
@@ -706,14 +690,12 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       fontFamily: "Inter_400Regular",
       color: colors.mutedForeground,
     },
-
-    /* Expanded detail area */
     mealDetail: {
-      marginTop: 14,
-      paddingTop: 14,
+      marginTop: 12,
+      paddingTop: 12,
       borderTopWidth: 1,
       borderTopColor: colors.border,
-      gap: 12,
+      gap: 10,
     },
     mealDesc: {
       fontSize: 13,
@@ -723,18 +705,17 @@ const styles = (colors: ReturnType<typeof useColors>) =>
     },
     macrosRow: {
       flexDirection: "row",
-      gap: 6,
       flexWrap: "wrap",
+      gap: 6,
     },
     macroPill: {
+      borderRadius: 100,
       paddingHorizontal: 10,
-      paddingVertical: 5,
-      borderRadius: 10,
-      backgroundColor: colors.accent,
+      paddingVertical: 4,
     },
-    macroPillProtein: { backgroundColor: "rgba(249,115,22,0.12)" },
-    macroPillCarbs: { backgroundColor: "rgba(245,158,11,0.12)" },
-    macroPillFat: { backgroundColor: "rgba(59,130,246,0.12)" },
+    macroPillProtein: { backgroundColor: "rgba(96,165,250,0.15)" },
+    macroPillCarbs: { backgroundColor: "rgba(245,158,11,0.15)" },
+    macroPillFat: { backgroundColor: "rgba(52,211,153,0.15)" },
     macroPillText: {
       fontSize: 12,
       fontFamily: "Inter_500Medium",
@@ -742,10 +723,10 @@ const styles = (colors: ReturnType<typeof useColors>) =>
     },
     sectionLabel: {
       fontSize: 10,
-      fontFamily: "Inter_600SemiBold",
+      fontFamily: "Inter_700Bold",
       color: colors.mutedForeground,
       letterSpacing: 0.8,
-      marginBottom: 8,
+      marginBottom: 6,
     },
     ingredientsWrap: {
       flexDirection: "row",
@@ -753,12 +734,10 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       gap: 6,
     },
     ingChip: {
-      backgroundColor: colors.accent,
+      backgroundColor: colors.muted,
       borderRadius: 8,
       paddingHorizontal: 10,
-      paddingVertical: 5,
-      borderWidth: 1,
-      borderColor: colors.border,
+      paddingVertical: 4,
     },
     ingChipText: {
       fontSize: 12,
@@ -770,10 +749,8 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: "#FF0000",
-      borderRadius: 12,
-      paddingVertical: 12,
-      paddingHorizontal: 16,
-      marginTop: 2,
+      borderRadius: 10,
+      paddingVertical: 10,
     },
     ytBtnText: {
       fontSize: 14,

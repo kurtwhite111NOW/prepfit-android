@@ -2,5 +2,14 @@
 type ModuleMap = Record<string, () => Promise<Record<string, unknown>>>;
 export const modules: ModuleMap = {
   "./components/mockups/PrepFitScreenshots.tsx": () => import("../components/mockups/PrepFitScreenshots.tsx"),
-  "./components/mockups/prepfit/HeroScreen.tsx": () => import("../components/mockups/prepfit/HeroScreen.tsx")
+  "./components/mockups/prepfit/HeroScreen.tsx": () => import("../components/mockups/prepfit/HeroScreen.tsx"),
+  "./components/mockups/prepfit/PrepFitScreenshots.tsx": () => import("../components/mockups/prepfit/PrepFitScreenshots.tsx"),
+  "./components/mockups/prepfit/Screen1Dashboard.tsx": () => import("../components/mockups/prepfit/Screen1Dashboard.tsx"),
+  "./components/mockups/prepfit/Screen2Planner.tsx": () => import("../components/mockups/prepfit/Screen2Planner.tsx"),
+  "./components/mockups/prepfit/Screen3Grocery.tsx": () => import("../components/mockups/prepfit/Screen3Grocery.tsx"),
+  "./components/mockups/prepfit/Screen4Scanner.tsx": () => import("../components/mockups/prepfit/Screen4Scanner.tsx"),
+  "./components/mockups/prepfit/Screen5MyMeals.tsx": () => import("../components/mockups/prepfit/Screen5MyMeals.tsx"),
+  "./components/mockups/prepfit/Screen6Weight.tsx": () => import("../components/mockups/prepfit/Screen6Weight.tsx"),
+  "./components/mockups/prepfit/Screen7Water.tsx": () => import("../components/mockups/prepfit/Screen7Water.tsx"),
+  "./components/mockups/prepfit/Screen8Paywall.tsx": () => import("../components/mockups/prepfit/Screen8Paywall.tsx")
 };

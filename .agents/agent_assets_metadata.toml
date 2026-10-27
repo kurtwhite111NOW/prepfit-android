@@ -227,3 +227,105 @@ id = "FZ3yFhzzDG52-junYs3C4"
 uri = "file://screenshots/09-guide.jpg"
 type = "image"
 title = "9 — User Guide"
+
+[[outputs]]
+id = "BVAVUHn3hCNryAEVWJJFj"
+uri = "file://screenshots/prepfit_01_dashboard.jpeg"
+type = "image"
+title = "1 — Dashboard (streaks, calorie budget, quick actions)"
+
+[[outputs]]
+id = "au9X9gIxUljqf1oQK3Mjq"
+uri = "file://screenshots/prepfit_02_planner.jpeg"
+type = "image"
+title = "2 — AI Meal Planner (generate plan + macro totals + meal cards)"
+
+[[outputs]]
+id = "UtWY580n2GFWKlODMJn5b"
+uri = "file://screenshots/prepfit_03_grocery.jpeg"
+type = "image"
+title = "3 — Grocery List (categorized by protein/veg/grains)"
+
+[[outputs]]
+id = "26cm4Laaf0wM76ZEphXwc"
+uri = "file://screenshots/prepfit_04_scanner.jpeg"
+type = "image"
+title = "4 — Photo Scanner (AI analysis with macros + ingredients)"
+
+[[outputs]]
+id = "-7ZOk2H_Jb3MHnIEn8WP6"
+uri = "file://screenshots/prepfit_05_meals.jpeg"
+type = "image"
+title = "5 — My Meals (photo journal grid)"
+
+[[outputs]]
+id = "9LTKXkevoXicBDIRKew74"
+uri = "file://screenshots/prepfit_06_weight.jpeg"
+type = "image"
+title = "6 — Weight Tracker (7-day chart + log entry + history)"
+
+[[outputs]]
+id = "kOepbpLNYRQ_u6Gu7PpK-"
+uri = "file://screenshots/prepfit_07_water.jpeg"
+type = "image"
+title = "7 — Water Tracker (circular progress + streak)"
+
+[[outputs]]
+id = "lTobDlcNccNtw1tfKQ2tm"
+uri = "file://screenshots/prepfit_08_paywall.jpeg"
+type = "image"
+title = "8 — Onboarding / Paywall (3-day trial countdown)"
+
+[[outputs]]
+id = "17N_5HAY8MKVVDpAdWmP9"
+uri = "file://screenshots/01_home_dashboard.jpg"
+type = "image"
+title = "01 — Home / Dashboard"
+
+[[outputs]]
+id = "jTkkXqDF6NxLazgOOw2Rg"
+uri = "file://screenshots/02_meal_planner.jpg"
+type = "image"
+title = "02 — Meal Planner"
+
+[[outputs]]
+id = "FolDJ-AiwfsjQ5HCZeOXf"
+uri = "file://screenshots/03_grocery_list.jpg"
+type = "image"
+title = "03 — Grocery List"
+
+[[outputs]]
+id = "3JYaSeIjx29yvhlvV-ldz"
+uri = "file://screenshots/04_scan_a_meal.jpg"
+type = "image"
+title = "04 — Scan a Meal (real AI photo!)"
+
+[[outputs]]
+id = "M66_8rOybxiBg17Pz1jbO"
+uri = "file://screenshots/05_weight_tracker.jpg"
+type = "image"
+title = "05 — Weight Tracker"
+
+[[outputs]]
+id = "HyyhQVKn7bXgshrr9ndhE"
+uri = "file://screenshots/06_water_tracker.jpg"
+type = "image"
+title = "06 — Water Tracker"
+
+[[outputs]]
+id = "cfV1CotA3SMW7Lpol2FmL"
+uri = "file://screenshots/07_saved_plans.jpg"
+type = "image"
+title = "07 — Saved Plans"
+
+[[outputs]]
+id = "JE0tJJACW6cRf2tEx_x5Q"
+uri = "file://screenshots/08_user_guide.jpg"
+type = "image"
+title = "08 — User Guide"
+
+[[outputs]]
+id = "E7Ac5yklNPqmcni_VyIB8"
+uri = "file://screenshots/09_home_dashboard_spanish.jpg"
+type = "image"
+title = "09 — Home (Spanish / Light mode)"

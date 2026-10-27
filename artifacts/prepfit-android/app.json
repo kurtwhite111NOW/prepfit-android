@@ -2,7 +2,7 @@
   "expo": {
     "name": "PrepFit Android",
     "slug": "prepfit-android",
-    "version": "1.0.0",
+    "version": "1.1.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "prepfit-android",
@@ -23,7 +23,7 @@
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#12151A"
       },
-      "versionCode": 5,
+      "versionCode": 23,
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ]
@@ -63,6 +63,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "updates": {
+      "url": "https://u.expo.dev/5a0f2ba7-594b-4d58-87b4-1d2c662c2fe7"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     },
     "extra": {
       "eas": {

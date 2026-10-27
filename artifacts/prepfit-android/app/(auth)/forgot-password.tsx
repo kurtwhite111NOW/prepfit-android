@@ -53,8 +53,10 @@ export default function ForgotPasswordScreen() {
       setStep("code");
     } catch (err: any) {
       const message =
-        err?.errors?.[0]?.longMessage ??
-        err?.message ??
+        err?.errors?.[0]?.longMessage ||
+        err?.errors?.[0]?.message ||
+        err?.message ||
+        JSON.stringify(err?.errors ?? err) ||
         "Could not send reset email. Please check the address and try again.";
       Alert.alert("Error", message);
     } finally {

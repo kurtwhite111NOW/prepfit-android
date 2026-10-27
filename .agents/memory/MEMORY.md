@@ -6,3 +6,12 @@
 - [EAS native build: Replit-managed Clerk fails](eas-replit-clerk-native.md) — Replit-managed Clerk key (picard.replit.dev) is unreachable from real devices; always use an external Clerk account for EAS builds.
 - [API server Clerk key: use env var directly](api-server-clerk-key.md) — server must use CLERK_PUBLISHABLE_KEY directly, NOT publishableKeyFromHost; that function derives a wrong key from the Replit proxy host → all real-device JWTs return 401.
 - [EAS native build: demo mode auth token](eas-demo-mode-token.md) — setAuthTokenGetter must NOT be gated on clerkLoaded; demo mode needs token getter registered immediately on mount.
+- [PrepFit API 401: Clerk instance mismatch](prepfit-clerk-mismatch.md) — Replit CLERK_SECRET_KEY is for a different Clerk instance; fix is JWT local decode fallback in requireAuth. Token IS sent but getAuth() returns null.
+- [PrepFit auth token race condition](prepfit-auth-race.md) — React Query fires before Clerk loads from SecureStore; fix is refs + wait-loop in setAuthTokenGetter (polls clerkLoadedRef up to 8s).
+- [Stripe trialing ≠ paid](stripe-trialing-status.md) — getActiveSubscriptionForCustomer must use status='active' only, not IN ('active','trialing'); Stripe trialing subscriptions are unpaid and must not grant Pro access.
+- [api-zod stale api.schemas export](api-zod-stale-export.md) — after every codegen run, lib/api-zod/src/index.ts re-gains a stale `export * from "./generated/api.schemas"` line that breaks typecheck:libs; remove it (keep only `export * from "./generated/api"`).
+- [Storage public-objects auth](storage-public-objects-auth.md) — /api/storage/public-objects must be added to PUBLIC_PATH_PREFIXES in app.ts or the global requireAuth middleware returns 401 before the storage route handles it.
+- [Replit proxy streaming limit](replit-proxy-streaming-limit.md) — autoscale proxy kills streams after ~1s; serve large files via signed GCS URL redirect, not server-side pipe.
+- [Clerk public route ordering](clerk-public-route-order.md) — mount crawler and public asset routes before Clerk or browser headers may trigger auth redirects.
+- [Public navigation reliability](public-navigation-reliability.md) — use direct anchors on signed-out pages; client routing through Clerk can stall until refresh.
+- [PrepFit SPA canonical strategy](prepfit-spa-canonical.md) — shared HTML must not hardcode homepage canonical; set one per public route, noindex signed-in routes.

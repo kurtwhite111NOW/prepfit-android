@@ -13,6 +13,7 @@ import Svg, { Circle, Defs, LinearGradient, Stop } from "react-native-svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { updateWaterStreak } from "@/hooks/useStreaks";
+import { useLanguage } from "@/lib/i18n";
 
 const DAILY_GOAL = 8;
 const STORAGE_KEY = "prepfit_water_data";
@@ -26,10 +27,12 @@ function CircularProgress({
   count,
   goal,
   colors,
+  ofGlassesLabel,
 }: {
   count: number;
   goal: number;
   colors: ReturnType<typeof useColors>;
+  ofGlassesLabel: string;
 }) {
   const SIZE = 180;
   const STROKE = 14;
@@ -75,7 +78,7 @@ function CircularProgress({
           {count}
         </Text>
         <Text style={{ fontSize: 13, fontFamily: "Inter_400Regular", color: colors.mutedForeground }}>
-          of {goal} glasses
+          {ofGlassesLabel}
         </Text>
       </View>
     </View>
@@ -85,6 +88,7 @@ function CircularProgress({
 export default function WaterScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
+  const { t } = useLanguage();
   const [count, setCount] = useState(0);
 
   const todayKey = new Date().toISOString().split("T")[0];
@@ -152,17 +156,20 @@ export default function WaterScreen() {
       showsVerticalScrollIndicator={false}
     >
       <View style={[s.header, { paddingTop: 16 }]}>
-        <Text style={s.headerTitle}>Water Tracker</Text>
-        <Text style={s.headerSub}>Stay hydrated · {DAILY_GOAL} glasses/day goal</Text>
+        <Text style={s.headerTitle}>{t.water.title}</Text>
+        <Text style={s.headerSub}>{t.water.sub(DAILY_GOAL)}</Text>
       </View>
 
       <View style={s.progressSection}>
-        <CircularProgress count={count} goal={DAILY_GOAL} colors={colors} />
+        <CircularProgress
+          count={count}
+          goal={DAILY_GOAL}
+          colors={colors}
+          ofGlassesLabel={t.water.ofGlasses(DAILY_GOAL)}
+        />
 
         <Text style={s.statusText}>
-          {count >= DAILY_GOAL
-            ? "🎉 Daily goal reached!"
-            : `${remaining} more to reach your goal`}
+          {count >= DAILY_GOAL ? t.water.goalReached : t.water.moreToGo(remaining)}
         </Text>
 
         <View style={s.controls}>
@@ -179,7 +186,7 @@ export default function WaterScreen() {
             onPress={addGlass}
           >
             <MaterialCommunityIcons name="water-plus" size={28} color="#FFF" />
-            <Text style={s.addBtnText}>Add Glass</Text>
+            <Text style={s.addBtnText}>{t.water.addGlass}</Text>
           </Pressable>
 
           <Pressable
@@ -205,11 +212,11 @@ export default function WaterScreen() {
 
       <View style={s.statsCard}>
         <View style={s.statRow}>
-          <Text style={s.statLabel}>Today's intake</Text>
-          <Text style={s.statValue}>{count * 250}ml · {(count * 8.45).toFixed(0)}oz</Text>
+          <Text style={s.statLabel}>{t.water.todayIntake}</Text>
+          <Text style={s.statValue}>{t.water.todayIntakeValue(count)}</Text>
         </View>
         <View style={s.statRow}>
-          <Text style={s.statLabel}>Goal completion</Text>
+          <Text style={s.statLabel}>{t.water.goalCompletion}</Text>
           <Text style={[s.statValue, { color: count >= DAILY_GOAL ? "#22C55E" : colors.primary }]}>
             {pct}%
           </Text>

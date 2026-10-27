@@ -22,6 +22,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { PremiumGate } from "@/components/PremiumGate";
+import { useLanguage } from "@/lib/i18n";
+import type { Translations } from "@/lib/i18n";
 
 const MEAL_EMOJI: Record<string, string> = {
   breakfast: "🍳",
@@ -30,10 +32,33 @@ const MEAL_EMOJI: Record<string, string> = {
   snack: "🥜",
 };
 
+function getNextSundayLabel(): string {
+  const now = new Date();
+  const daysUntil = now.getDay() === 0 ? 7 : 7 - now.getDay();
+  const sunday = new Date(now);
+  sunday.setDate(now.getDate() + daysUntil);
+  return sunday.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function extractMainIngredient(ingredients: string): string {
+  return (ingredients.split(",")[0] ?? "").trim();
+}
+
+function buildChecklistItems(meals: GeneratedMeal[], t: Translations["planner"]): string[] {
+  return [
+    t.batchStepGather,
+    ...meals.map((m) => t.batchStepCook(extractMainIngredient(m.ingredients), m.name)),
+    t.batchStepPortion,
+    t.batchStepLabel,
+    t.batchStepRefrigerate,
+  ];
+}
+
 function PlannerScreenContent() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const qc = useQueryClient();
+  const { t } = useLanguage();
 
   const [mealsPerDay, setMealsPerDay] = useState(3);
   const [dailyCalories, setDailyCalories] = useState(2000);
@@ -45,7 +70,7 @@ function PlannerScreenContent() {
         setGeneratedPlan(data);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       },
-      onError: () => Alert.alert("Error", "Failed to generate plan. Please try again."),
+      onError: () => Alert.alert(t.common.error, t.planner.alertError),
     },
   });
 
@@ -54,20 +79,20 @@ function PlannerScreenContent() {
       onSuccess: () => {
         qc.invalidateQueries({ queryKey: getListMealPlansQueryKey() });
         setGeneratedPlan(null);
-        Alert.alert("Saved!", "Your meal plan has been saved.");
+        Alert.alert(t.planner.alertSavedTitle, t.planner.alertSaved);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       },
-      onError: () => Alert.alert("Error", "Failed to save plan."),
+      onError: () => Alert.alert(t.common.error, t.planner.alertSaveError),
     },
   });
 
   const handleGenerate = () => {
     if (mealsPerDay < 2 || mealsPerDay > 5) {
-      Alert.alert("Invalid", "Meals per day must be between 2 and 5.");
+      Alert.alert(t.planner.alertInvalid, t.planner.alertInvalidMeals);
       return;
     }
     if (dailyCalories < 500 || dailyCalories > 5000) {
-      Alert.alert("Invalid", "Daily calories must be between 500 and 5000.");
+      Alert.alert(t.planner.alertInvalid, t.planner.alertInvalidCals);
       return;
     }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -97,7 +122,6 @@ function PlannerScreenContent() {
     });
   };
 
-  // Compute plan-level totals
   const totals = generatedPlan
     ? generatedPlan.meals.reduce(
         (acc, m) => ({
@@ -118,15 +142,15 @@ function PlannerScreenContent() {
       showsVerticalScrollIndicator={false}
     >
       <View style={[s.header, { paddingTop: 16 }]}>
-        <Text style={s.headerTitle}>Meal Planner</Text>
-        <Text style={s.headerSub}>Smart plans in seconds</Text>
+        <Text style={s.headerTitle}>{t.planner.title}</Text>
+        <Text style={s.headerSub}>{t.planner.sub}</Text>
       </View>
 
       <View style={s.configCard}>
-        <Text style={s.configTitle}>Configure Your Plan</Text>
+        <Text style={s.configTitle}>{t.planner.configTitle}</Text>
 
         <View style={s.row}>
-          <Text style={s.configLabel}>Meals per day</Text>
+          <Text style={s.configLabel}>{t.planner.mealsPerDay}</Text>
           <View style={s.counter}>
             <Pressable
               style={s.counterBtn}
@@ -145,7 +169,7 @@ function PlannerScreenContent() {
         </View>
 
         <View style={s.row}>
-          <Text style={s.configLabel}>Daily calories</Text>
+          <Text style={s.configLabel}>{t.planner.dailyCalories}</Text>
           <TextInput
             style={s.calorieInput}
             value={String(dailyCalories)}
@@ -168,7 +192,7 @@ function PlannerScreenContent() {
           ) : (
             <>
               <Feather name="zap" size={18} color="#FFF" />
-              <Text style={s.generateBtnText}>Generate Meal Plan</Text>
+              <Text style={s.generateBtnText}>{t.planner.generate}</Text>
             </>
           )}
         </Pressable>
@@ -176,13 +200,10 @@ function PlannerScreenContent() {
 
       {generatedPlan && totals && (
         <View style={s.resultSection}>
-          {/* Plan header */}
           <View style={s.planHeader}>
             <View style={{ flex: 1 }}>
               <Text style={s.planName}>{generatedPlan.name}</Text>
-              <Text style={s.planSub}>
-                High-protein · Gym-focused · {generatedPlan.meals.length} meals
-              </Text>
+              <Text style={s.planSub}>{t.planner.highProtein(generatedPlan.meals.length)}</Text>
             </View>
             <Pressable
               style={({ pressed }) => [s.saveBtn, { opacity: pressed || saveMutation.isPending ? 0.8 : 1 }]}
@@ -192,25 +213,22 @@ function PlannerScreenContent() {
               {saveMutation.isPending ? (
                 <ActivityIndicator color={colors.primary} size="small" />
               ) : (
-                <Text style={s.saveBtnText}>Save Plan</Text>
+                <Text style={s.saveBtnText}>{t.planner.savePlan}</Text>
               )}
             </Pressable>
           </View>
 
-          {/* Macro totals */}
           <View style={s.macroTotalsRow}>
             <MacroTotal label="PROTEIN" value={totals.protein} color="#60a5fa" bg="rgba(96,165,250,0.12)" border="rgba(96,165,250,0.25)" />
             <MacroTotal label="CARBS" value={totals.carbs} color="#f59e0b" bg="rgba(245,158,11,0.12)" border="rgba(245,158,11,0.25)" />
             <MacroTotal label="FAT" value={totals.fat} color="#34d399" bg="rgba(52,211,153,0.12)" border="rgba(52,211,153,0.25)" />
           </View>
 
-          {/* Meal cards */}
           {generatedPlan.meals.map((meal) => (
-            <MealCard key={meal.mealNumber} meal={meal} colors={colors} />
+            <MealCard key={meal.mealNumber} meal={meal} colors={colors} t={t.planner} />
           ))}
 
-          {/* Batch Prep Checklist */}
-          <BatchPrepChecklist meals={generatedPlan.meals} colors={colors} />
+          <BatchPrepChecklist meals={generatedPlan.meals} colors={colors} t={t.planner} />
         </View>
       )}
 
@@ -220,17 +238,9 @@ function PlannerScreenContent() {
 }
 
 function MacroTotal({
-  label,
-  value,
-  color,
-  bg,
-  border,
+  label, value, color, bg, border,
 }: {
-  label: string;
-  value: number;
-  color: string;
-  bg: string;
-  border: string;
+  label: string; value: number; color: string; bg: string; border: string;
 }) {
   const colors = useColors();
   return (
@@ -250,19 +260,17 @@ const macroTotalStyles = StyleSheet.create({
     borderWidth: 1,
     marginHorizontal: 3,
   },
-  value: {
-    fontSize: 20,
-    fontFamily: "Inter_700Bold",
-  },
-  label: {
-    fontSize: 10,
-    fontFamily: "Inter_600SemiBold",
-    marginTop: 2,
-    letterSpacing: 0.8,
-  },
+  value: { fontSize: 20, fontFamily: "Inter_700Bold" },
+  label: { fontSize: 10, fontFamily: "Inter_600SemiBold", marginTop: 2, letterSpacing: 0.8 },
 });
 
-function MealCard({ meal, colors }: { meal: GeneratedMeal; colors: ReturnType<typeof useColors> }) {
+function MealCard({
+  meal, colors, t,
+}: {
+  meal: GeneratedMeal;
+  colors: ReturnType<typeof useColors>;
+  t: Translations["planner"];
+}) {
   const [expanded, setExpanded] = useState(false);
   const s = mealCardStyles(colors);
 
@@ -270,21 +278,15 @@ function MealCard({ meal, colors }: { meal: GeneratedMeal; colors: ReturnType<ty
   const mealTypeLabel = (meal.mealType ?? "meal").toUpperCase();
 
   const handleYouTube = () => {
-    if (meal.youtubeUrl) {
-      Linking.openURL(meal.youtubeUrl);
-    }
+    if (meal.youtubeUrl) Linking.openURL(meal.youtubeUrl);
   };
 
   return (
     <View style={s.card}>
-      {/* Card header */}
       <Pressable style={s.cardHeader} onPress={() => setExpanded(!expanded)}>
-        {/* Emoji ring */}
         <View style={s.emojiRing}>
           <Text style={s.emoji}>{emoji}</Text>
         </View>
-
-        {/* Meal info */}
         <View style={{ flex: 1 }}>
           <Text style={s.mealTypeLabel}>{mealTypeLabel}</Text>
           <Text style={s.mealName}>{meal.name}</Text>
@@ -292,8 +294,6 @@ function MealCard({ meal, colors }: { meal: GeneratedMeal; colors: ReturnType<ty
             {meal.description}
           </Text>
         </View>
-
-        {/* Calorie badge */}
         <View style={s.calsBadge}>
           <Feather name="zap" size={12} color={colors.primary} />
           <Text style={s.cals}>{meal.calories}</Text>
@@ -301,7 +301,6 @@ function MealCard({ meal, colors }: { meal: GeneratedMeal; colors: ReturnType<ty
         </View>
       </Pressable>
 
-      {/* Macro pills — always visible */}
       <View style={s.macroPillsRow}>
         <MacroPill value={meal.protein} label="protein" color="#60a5fa" bg="rgba(96,165,250,0.15)" />
         <MacroPill value={meal.carbs} label="carbs" color="#f59e0b" bg="rgba(245,158,11,0.15)" />
@@ -314,19 +313,17 @@ function MealCard({ meal, colors }: { meal: GeneratedMeal; colors: ReturnType<ty
         )}
       </View>
 
-      {/* Expanded: ingredients */}
       {expanded && (
         <View style={s.expandedSection}>
           <View style={s.ingredientsBox}>
-            <Text style={s.ingredientsLabel}>INGREDIENTS</Text>
+            <Text style={s.ingredientsLabel}>{t.ingredients}</Text>
             <Text style={s.ingredientsText}>{meal.ingredients}</Text>
           </View>
         </View>
       )}
 
-      {/* Expand toggle */}
       <Pressable style={s.expandRow} onPress={() => setExpanded(!expanded)}>
-        <Text style={s.expandTxt}>{expanded ? "Show less" : "Show ingredients & recipe"}</Text>
+        <Text style={s.expandTxt}>{expanded ? t.showLess : t.showIngredients}</Text>
         <Feather name={expanded ? "chevron-up" : "chevron-down"} size={14} color={colors.mutedForeground} />
       </Pressable>
     </View>
@@ -334,15 +331,9 @@ function MealCard({ meal, colors }: { meal: GeneratedMeal; colors: ReturnType<ty
 }
 
 function MacroPill({
-  value,
-  label,
-  color,
-  bg,
+  value, label, color, bg,
 }: {
-  value?: number;
-  label: string;
-  color: string;
-  bg: string;
+  value?: number; label: string; color: string; bg: string;
 }) {
   const colors = useColors();
   return (
@@ -363,50 +354,18 @@ const macroPillStyles = StyleSheet.create({
     gap: 4,
     marginRight: 6,
   },
-  value: {
-    fontSize: 12,
-    fontFamily: "Inter_700Bold",
-  },
-  label: {
-    fontSize: 12,
-    fontFamily: "Inter_400Regular",
-  },
+  value: { fontSize: 12, fontFamily: "Inter_700Bold" },
+  label: { fontSize: 12, fontFamily: "Inter_400Regular" },
 });
 
-// ─── Batch Prep Checklist ───────────────────────────────────────────────────
-
-function getNextSundayLabel(): string {
-  const now = new Date();
-  const daysUntil = now.getDay() === 0 ? 7 : 7 - now.getDay();
-  const sunday = new Date(now);
-  sunday.setDate(now.getDate() + daysUntil);
-  return sunday.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
-function extractMainIngredient(ingredients: string): string {
-  return (ingredients.split(",")[0] ?? "").trim();
-}
-
-function buildChecklistItems(meals: GeneratedMeal[]): string[] {
-  return [
-    "Gather all ingredients and containers before you start",
-    ...meals.map(
-      (m) => `Cook/prepare: ${extractMainIngredient(m.ingredients)} (for ${m.name})`
-    ),
-    "Portion each meal into separate airtight containers",
-    "Label containers with meal name and calories",
-    "Refrigerate — stays fresh for 4–5 days",
-  ];
-}
-
 function BatchPrepChecklist({
-  meals,
-  colors,
+  meals, colors, t,
 }: {
   meals: GeneratedMeal[];
   colors: ReturnType<typeof useColors>;
+  t: Translations["planner"];
 }) {
-  const items = buildChecklistItems(meals);
+  const items = buildChecklistItems(meals, t);
   const [checked, setChecked] = useState<boolean[]>(() => items.map(() => false));
   const doneCount = checked.filter(Boolean).length;
   const sundayLabel = getNextSundayLabel();
@@ -418,18 +377,16 @@ function BatchPrepChecklist({
 
   return (
     <View style={s.card}>
-      {/* Header */}
       <View style={s.header}>
         <View style={s.titleRow}>
           <Feather name="check-square" size={16} color={colors.primary} />
-          <Text style={s.title}>Batch Prep Checklist</Text>
+          <Text style={s.title}>{t.batchTitle}</Text>
         </View>
         <View style={s.sundayBadge}>
-          <Text style={s.sundayText}>Do this Sunday {sundayLabel}</Text>
+          <Text style={s.sundayText}>{t.batchDoSunday(sundayLabel)}</Text>
         </View>
       </View>
 
-      {/* Items */}
       {items.map((item, i) => (
         <Pressable key={i} style={s.itemRow} onPress={() => toggle(i)}>
           <View style={[s.circle, checked[i] && s.circleChecked]}>
@@ -439,11 +396,8 @@ function BatchPrepChecklist({
         </Pressable>
       ))}
 
-      {/* Progress */}
       <View style={s.footer}>
-        <Text style={s.progress}>
-          {doneCount} of {items.length} steps done
-        </Text>
+        <Text style={s.progress}>{t.batchProgress(doneCount, items.length)}</Text>
       </View>
     </View>
   );
@@ -469,27 +423,15 @@ const batchStyles = (colors: ReturnType<typeof useColors>) =>
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
     },
-    titleRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 7,
-    },
-    title: {
-      fontSize: 14,
-      fontFamily: "Inter_700Bold",
-      color: colors.foreground,
-    },
+    titleRow: { flexDirection: "row", alignItems: "center", gap: 7 },
+    title: { fontSize: 14, fontFamily: "Inter_700Bold", color: colors.foreground },
     sundayBadge: {
       backgroundColor: "rgba(242,107,29,0.12)",
       borderRadius: 100,
       paddingHorizontal: 9,
       paddingVertical: 3,
     },
-    sundayText: {
-      fontSize: 10,
-      fontFamily: "Inter_500Medium",
-      color: colors.primary,
-    },
+    sundayText: { fontSize: 10, fontFamily: "Inter_500Medium", color: colors.primary },
     itemRow: {
       flexDirection: "row",
       alignItems: "flex-start",
@@ -510,30 +452,11 @@ const batchStyles = (colors: ReturnType<typeof useColors>) =>
       marginTop: 1,
       flexShrink: 0,
     },
-    circleChecked: {
-      backgroundColor: colors.primary,
-      borderColor: colors.primary,
-    },
-    itemText: {
-      flex: 1,
-      fontSize: 14,
-      fontFamily: "Inter_400Regular",
-      color: colors.foreground,
-      lineHeight: 20,
-    },
-    itemTextDone: {
-      color: colors.mutedForeground,
-      textDecorationLine: "line-through",
-    },
-    footer: {
-      paddingHorizontal: 14,
-      paddingVertical: 10,
-    },
-    progress: {
-      fontSize: 12,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-    },
+    circleChecked: { backgroundColor: colors.primary, borderColor: colors.primary },
+    itemText: { flex: 1, fontSize: 14, fontFamily: "Inter_400Regular", color: colors.foreground, lineHeight: 20 },
+    itemTextDone: { color: colors.mutedForeground, textDecorationLine: "line-through" },
+    footer: { paddingHorizontal: 14, paddingVertical: 10 },
+    progress: { fontSize: 12, fontFamily: "Inter_400Regular", color: colors.mutedForeground },
   });
 
 const styles = (colors: ReturnType<typeof useColors>) =>
@@ -544,17 +467,8 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       paddingHorizontal: 20,
       paddingBottom: 20,
     },
-    headerTitle: {
-      fontSize: 26,
-      fontFamily: "Inter_700Bold",
-      color: "#FFFFFF",
-    },
-    headerSub: {
-      fontSize: 13,
-      fontFamily: "Inter_400Regular",
-      color: "rgba(255,255,255,0.5)",
-      marginTop: 4,
-    },
+    headerTitle: { fontSize: 26, fontFamily: "Inter_700Bold", color: "#FFFFFF" },
+    headerSub: { fontSize: 13, fontFamily: "Inter_400Regular", color: "rgba(255,255,255,0.5)", marginTop: 4 },
     configCard: {
       backgroundColor: colors.card,
       margin: 16,
@@ -563,28 +477,10 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       borderWidth: 1,
       borderColor: colors.border,
     },
-    configTitle: {
-      fontSize: 16,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.foreground,
-      marginBottom: 16,
-    },
-    row: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      marginBottom: 16,
-    },
-    configLabel: {
-      fontSize: 15,
-      fontFamily: "Inter_500Medium",
-      color: colors.foreground,
-    },
-    counter: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 12,
-    },
+    configTitle: { fontSize: 16, fontFamily: "Inter_600SemiBold", color: colors.foreground, marginBottom: 16 },
+    row: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 16 },
+    configLabel: { fontSize: 15, fontFamily: "Inter_500Medium", color: colors.foreground },
+    counter: { flexDirection: "row", alignItems: "center", gap: 12 },
     counterBtn: {
       width: 32,
       height: 32,
@@ -593,13 +489,7 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       alignItems: "center",
       justifyContent: "center",
     },
-    counterVal: {
-      fontSize: 18,
-      fontFamily: "Inter_700Bold",
-      color: colors.foreground,
-      minWidth: 28,
-      textAlign: "center",
-    },
+    counterVal: { fontSize: 18, fontFamily: "Inter_700Bold", color: colors.foreground, minWidth: 28, textAlign: "center" },
     calorieInput: {
       width: 90,
       height: 40,
@@ -623,29 +513,11 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       gap: 8,
       marginTop: 4,
     },
-    generateBtnText: {
-      fontSize: 16,
-      fontFamily: "Inter_700Bold",
-      color: "#FFFFFF",
-    },
+    generateBtnText: { fontSize: 16, fontFamily: "Inter_700Bold", color: "#FFFFFF" },
     resultSection: { paddingHorizontal: 16 },
-    planHeader: {
-      flexDirection: "row",
-      alignItems: "flex-start",
-      marginBottom: 14,
-      gap: 12,
-    },
-    planName: {
-      fontSize: 20,
-      fontFamily: "Inter_700Bold",
-      color: colors.foreground,
-    },
-    planSub: {
-      fontSize: 12,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-      marginTop: 3,
-    },
+    planHeader: { flexDirection: "row", alignItems: "flex-start", marginBottom: 14, gap: 12 },
+    planName: { fontSize: 20, fontFamily: "Inter_700Bold", color: colors.foreground },
+    planSub: { fontSize: 12, fontFamily: "Inter_400Regular", color: colors.mutedForeground, marginTop: 3 },
     saveBtn: {
       paddingHorizontal: 16,
       paddingVertical: 8,
@@ -654,16 +526,8 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       borderColor: colors.primary,
       marginTop: 2,
     },
-    saveBtnText: {
-      fontSize: 14,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.primary,
-    },
-    macroTotalsRow: {
-      flexDirection: "row",
-      marginBottom: 16,
-      marginHorizontal: -3,
-    },
+    saveBtnText: { fontSize: 14, fontFamily: "Inter_600SemiBold", color: colors.primary },
+    macroTotalsRow: { flexDirection: "row", marginBottom: 16, marginHorizontal: -3 },
   });
 
 const mealCardStyles = (colors: ReturnType<typeof useColors>) =>
@@ -693,47 +557,14 @@ const mealCardStyles = (colors: ReturnType<typeof useColors>) =>
       justifyContent: "center",
       backgroundColor: "rgba(242,107,29,0.10)",
     },
-    emoji: {
-      fontSize: 22,
-    },
-    mealTypeLabel: {
-      fontSize: 10,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.primary,
-      letterSpacing: 1,
-      marginBottom: 2,
-    },
-    mealName: {
-      fontSize: 15,
-      fontFamily: "Inter_700Bold",
-      color: colors.foreground,
-    },
-    mealDesc: {
-      fontSize: 12,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-      marginTop: 2,
-      lineHeight: 17,
-    },
-    calsBadge: {
-      alignItems: "center",
-      paddingTop: 2,
-    },
-    cals: {
-      fontSize: 17,
-      fontFamily: "Inter_700Bold",
-      color: colors.primary,
-    },
-    calsLabel: {
-      fontSize: 10,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-    },
-    macroPillsRow: {
-      flexDirection: "row",
-      paddingHorizontal: 14,
-      paddingBottom: 10,
-    },
+    emoji: { fontSize: 22 },
+    mealTypeLabel: { fontSize: 10, fontFamily: "Inter_600SemiBold", color: colors.primary, letterSpacing: 1, marginBottom: 2 },
+    mealName: { fontSize: 15, fontFamily: "Inter_700Bold", color: colors.foreground },
+    mealDesc: { fontSize: 12, fontFamily: "Inter_400Regular", color: colors.mutedForeground, marginTop: 2, lineHeight: 17 },
+    calsBadge: { alignItems: "center", paddingTop: 2 },
+    cals: { fontSize: 17, fontFamily: "Inter_700Bold", color: colors.primary },
+    calsLabel: { fontSize: 10, fontFamily: "Inter_400Regular", color: colors.mutedForeground },
+    macroPillsRow: { flexDirection: "row", paddingHorizontal: 14, paddingBottom: 10 },
     expandedSection: {
       borderTopWidth: 1,
       borderTopColor: colors.border,
@@ -742,24 +573,9 @@ const mealCardStyles = (colors: ReturnType<typeof useColors>) =>
       paddingBottom: 4,
       gap: 10,
     },
-    ingredientsBox: {
-      backgroundColor: colors.muted,
-      borderRadius: 10,
-      padding: 12,
-    },
-    ingredientsLabel: {
-      fontSize: 10,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.mutedForeground,
-      letterSpacing: 0.8,
-      marginBottom: 6,
-    },
-    ingredientsText: {
-      fontSize: 13,
-      fontFamily: "Inter_400Regular",
-      color: colors.foreground,
-      lineHeight: 20,
-    },
+    ingredientsBox: { backgroundColor: colors.muted, borderRadius: 10, padding: 12 },
+    ingredientsLabel: { fontSize: 10, fontFamily: "Inter_600SemiBold", color: colors.mutedForeground, letterSpacing: 0.8, marginBottom: 6 },
+    ingredientsText: { fontSize: 13, fontFamily: "Inter_400Regular", color: colors.foreground, lineHeight: 20 },
     ytPill: {
       flexDirection: "row",
       alignItems: "center",
@@ -770,42 +586,22 @@ const mealCardStyles = (colors: ReturnType<typeof useColors>) =>
       backgroundColor: "rgba(255,0,0,0.12)",
       marginRight: 6,
     },
-    ytPillTxt: {
-      fontSize: 12,
-      fontFamily: "Inter_600SemiBold",
-      color: "#FF0000",
-    },
-    youtubeBtn: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 6,
-      paddingVertical: 4,
-    },
-    youtubeTxt: {
-      flex: 1,
-      fontSize: 13,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.primary,
-    },
+    ytPillTxt: { fontSize: 12, fontFamily: "Inter_500Medium", color: "#FF0000" },
     expandRow: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
       paddingVertical: 10,
-      gap: 4,
       borderTopWidth: 1,
       borderTopColor: colors.border,
+      gap: 4,
     },
-    expandTxt: {
-      fontSize: 12,
-      fontFamily: "Inter_500Medium",
-      color: colors.mutedForeground,
-    },
+    expandTxt: { fontSize: 13, fontFamily: "Inter_500Medium", color: colors.mutedForeground },
   });
 
 export default function PlannerScreen() {
   return (
-    <PremiumGate feature="Meal Planner">
+    <PremiumGate feature="AI Meal Planner">
       <PlannerScreenContent />
     </PremiumGate>
   );

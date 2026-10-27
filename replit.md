@@ -192,6 +192,12 @@ lib/
 
 ---
 
+## User Preferences
+
+- **No "AI" branding** — never use the words "AI", "AI-powered", or "AI-generated" in any user-facing copy, meta tags, SEO content, or UI text. The product is "smart", "personalized", "automated", or just described by what it does.
+
+---
+
 ## Upcoming
 
 - **Stripe paywall** — Wire "Start Pro Plan" button to Stripe Checkout ($144/year subscription), handle webhook to unlock access after payment

@@ -13,7 +13,6 @@ import {
   ActivityIndicator,
   Alert,
   Image,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -23,11 +22,13 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/useColors";
 import { PremiumGate } from "@/components/PremiumGate";
+import { useLanguage } from "@/lib/i18n";
 
 function ScanScreenContent() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const qc = useQueryClient();
+  const { t } = useLanguage();
 
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [imageBase64, setImageBase64] = useState<string | null>(null);
@@ -39,7 +40,7 @@ function ScanScreenContent() {
         setAnalysis(data);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       },
-      onError: () => Alert.alert("Error", "Could not analyze photo. Please try again."),
+      onError: () => Alert.alert(t.common.error, t.scan.alertError),
     },
   });
 
@@ -47,13 +48,13 @@ function ScanScreenContent() {
     mutation: {
       onSuccess: () => {
         qc.invalidateQueries({ queryKey: getListSavedMealsQueryKey() });
-        Alert.alert("Saved!", "Meal added to your journal.");
+        Alert.alert(t.scan.alertSavedTitle, t.scan.alertSaved);
         setImageUri(null);
         setImageBase64(null);
         setAnalysis(null);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       },
-      onError: () => Alert.alert("Error", "Failed to save meal."),
+      onError: () => Alert.alert(t.common.error, t.scan.alertSaveError),
     },
   });
 
@@ -62,7 +63,7 @@ function ScanScreenContent() {
     if (source === "camera") {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert("Permission needed", "Camera access is required to scan meals.");
+        Alert.alert(t.scan.alertPermTitle, t.scan.alertPermCamera);
         return;
       }
       result = await ImagePicker.launchCameraAsync({
@@ -73,7 +74,7 @@ function ScanScreenContent() {
     } else {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert("Permission needed", "Photo library access is required.");
+        Alert.alert(t.scan.alertPermTitle, t.scan.alertPermGallery);
         return;
       }
       result = await ImagePicker.launchImageLibraryAsync({
@@ -126,8 +127,8 @@ function ScanScreenContent() {
       showsVerticalScrollIndicator={false}
     >
       <View style={[s.header, { paddingTop: 16 }]}>
-        <Text style={s.headerTitle}>Scan a Meal</Text>
-        <Text style={s.headerSub}>Identifies food and estimates calories</Text>
+        <Text style={s.headerTitle}>{t.scan.title}</Text>
+        <Text style={s.headerSub}>{t.scan.sub}</Text>
       </View>
 
       <View style={s.content}>
@@ -136,8 +137,8 @@ function ScanScreenContent() {
             <View style={s.iconRing}>
               <Feather name="camera" size={40} color={colors.primary} />
             </View>
-            <Text style={s.pickTitle}>Take or choose a photo</Text>
-            <Text style={s.pickSub}>Identifies the food and estimates calories</Text>
+            <Text style={s.pickTitle}>{t.scan.pickTitle}</Text>
+            <Text style={s.pickSub}>{t.scan.pickSub}</Text>
 
             <View style={s.btnRow}>
               <Pressable
@@ -145,14 +146,14 @@ function ScanScreenContent() {
                 onPress={() => pickImage("camera")}
               >
                 <Feather name="camera" size={20} color="#FFF" />
-                <Text style={s.pickBtnText}>Camera</Text>
+                <Text style={s.pickBtnText}>{t.scan.camera}</Text>
               </Pressable>
               <Pressable
                 style={({ pressed }) => [s.pickBtnOutline, { opacity: pressed ? 0.8 : 1 }]}
                 onPress={() => pickImage("gallery")}
               >
                 <Feather name="image" size={20} color={colors.primary} />
-                <Text style={s.pickBtnOutlineText}>Gallery</Text>
+                <Text style={s.pickBtnOutlineText}>{t.scan.gallery}</Text>
               </Pressable>
             </View>
           </View>
@@ -171,14 +172,14 @@ function ScanScreenContent() {
                 onPress={handleAnalyze}
               >
                 <Feather name="zap" size={18} color="#FFF" />
-                <Text style={s.analyzeBtnText}>Analyze Meal</Text>
+                <Text style={s.analyzeBtnText}>{t.scan.analyze}</Text>
               </Pressable>
             )}
 
             {analyzeMutation.isPending && (
               <View style={s.analyzingContainer}>
                 <ActivityIndicator color={colors.primary} size="large" />
-                <Text style={s.analyzingText}>Analyzing your meal...</Text>
+                <Text style={s.analyzingText}>{t.scan.analyzing}</Text>
               </View>
             )}
 
@@ -187,7 +188,7 @@ function ScanScreenContent() {
                 <View style={s.resultHeader}>
                   <View>
                     <Text style={s.resultName}>{analysis.name}</Text>
-                    <Text style={s.resultConfidence}>Confidence: {analysis.confidence}</Text>
+                    <Text style={s.resultConfidence}>{t.scan.confidence} {analysis.confidence}</Text>
                   </View>
                   <View style={s.calsBig}>
                     <Text style={s.calsBigNum}>{analysis.estimatedCalories}</Text>
@@ -198,7 +199,7 @@ function ScanScreenContent() {
                 <Text style={s.resultDesc}>{analysis.description}</Text>
 
                 <View style={s.ingredientSection}>
-                  <Text style={s.ingredientLabel}>Ingredients identified</Text>
+                  <Text style={s.ingredientLabel}>{t.scan.ingredientsLabel}</Text>
                   <Text style={s.ingredientText}>{analysis.ingredients}</Text>
                 </View>
 
@@ -213,7 +214,7 @@ function ScanScreenContent() {
                     ) : (
                       <>
                         <Feather name="check" size={16} color="#FFF" />
-                        <Text style={s.saveBtnText}>Save to Journal</Text>
+                        <Text style={s.saveBtnText}>{t.scan.saveToJournal}</Text>
                       </>
                     )}
                   </Pressable>
@@ -221,7 +222,7 @@ function ScanScreenContent() {
                     style={({ pressed }) => [s.discardBtn, { opacity: pressed ? 0.8 : 1 }]}
                     onPress={handleReset}
                   >
-                    <Text style={s.discardBtnText}>Discard</Text>
+                    <Text style={s.discardBtnText}>{t.scan.discard}</Text>
                   </Pressable>
                 </View>
               </View>

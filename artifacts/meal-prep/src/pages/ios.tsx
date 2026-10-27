@@ -103,7 +103,7 @@ const STEPS = [
 ];
 
 const FEATURES = [
-  { icon: CalendarDays, label: "AI Meal Plans", desc: "Personalized weekly plans in seconds" },
+  { icon: CalendarDays, label: "Smart Meal Plans", desc: "Personalized weekly plans in seconds" },
   { icon: Camera, label: "Photo Calorie Scanner", desc: "Snap a meal, get instant calorie breakdown" },
   { icon: Scale, label: "Weight Tracker", desc: "Chart your progress with trend graphs" },
   { icon: ShoppingCart, label: "Smart Grocery Lists", desc: "Clean-brand picks, organized by aisle" },

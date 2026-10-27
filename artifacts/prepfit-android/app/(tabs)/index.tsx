@@ -26,90 +26,19 @@ import {
 import { useColors } from "@/hooks/useColors";
 import { useTheme } from "@/lib/theme";
 import { useStreaks } from "@/hooks/useStreaks";
+import { useLanguage } from "@/lib/i18n";
 
-// ─── Constants ───────────────────────────────────────────────────────────────
-
-const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const WATER_KEY = "prepfit_water_data";
 const DAILY_GOAL = 8;
 
-const GYM_TIPS = [
-  "Aim for 0.7–1g of protein per pound of bodyweight daily. That's about 140–200g for a 200 lb athlete.",
-  "Stay hydrated — aim for 8+ glasses of water daily. Dehydration tanks gym performance more than most people realize.",
-  "Meal prep on Sundays cuts decision fatigue all week. Fewer decisions = more consistent eating.",
-  "Eating protein within 30–60 min after a workout helps muscle repair and growth.",
-  "Compound lifts (squat, deadlift, bench, row) build more muscle than isolation exercises — prioritise them.",
-  "Sleep 7–9 hours. Growth hormone is released during deep sleep — it's when you actually get stronger.",
-  "Track your calories for just 2 weeks. Most people are shocked at how much they under- or over-eat.",
-  "Progressive overload is the #1 driver of strength gains. Add weight, reps, or sets each week.",
-  "Frozen veggies are just as nutritious as fresh and way cheaper. Use them freely.",
-  "If you miss a meal, don't compensate by over-eating the next one. Just continue as normal.",
-  "Creatine monohydrate is the most studied, most effective legal supplement for strength and muscle.",
-  "Your metabolism doesn't slow until you're in a very deep calorie deficit. Most 'slow metabolism' is under-tracked eating.",
-  "Canned tuna, eggs, and Greek yoghurt are the three cheapest high-protein foods. Keep them stocked.",
-  "Rest between sets matters: 2–3 min for strength lifts, 60–90 sec for hypertrophy work.",
-  "Consistency over 6 months beats intensity over 2 weeks every single time.",
+const QUICK_ACTION_META = [
+  { route: "/(tabs)/planner", icon: "calendar" as const, family: "feather" as const, color: "#F26B1D", bg: "rgba(242,107,29,0.15)" },
+  { route: "/(tabs)/scan", icon: "camera" as const, family: "feather" as const, color: "#F59E0B", bg: "rgba(245,158,11,0.15)" },
+  { route: "/(tabs)/grocery", icon: "shopping-cart" as const, family: "feather" as const, color: "#3B82F6", bg: "rgba(59,130,246,0.15)" },
+  { route: "/(tabs)/water", icon: "water" as const, family: "community" as const, color: "#38BDF8", bg: "rgba(56,189,248,0.15)" },
+  { route: "/(tabs)/weight", icon: "trending-up" as const, family: "feather" as const, color: "#22C55E", bg: "rgba(34,197,94,0.15)" },
+  { route: "/(tabs)/plans", icon: "bookmark" as const, family: "feather" as const, color: "#A855F7", bg: "rgba(168,85,247,0.15)" },
 ];
-
-const QUICK_ACTIONS = [
-  {
-    label: "Build a Meal Plan",
-    desc: "Smart plans in seconds",
-    route: "/(tabs)/planner",
-    icon: "calendar" as const,
-    family: "feather" as const,
-    color: "#F26B1D",
-    bg: "rgba(242,107,29,0.15)",
-  },
-  {
-    label: "Scan a Meal",
-    desc: "Snap a photo — get instant calories",
-    route: "/(tabs)/scan",
-    icon: "camera" as const,
-    family: "feather" as const,
-    color: "#F59E0B",
-    bg: "rgba(245,158,11,0.15)",
-  },
-  {
-    label: "Grocery List",
-    desc: "What to buy for your plan",
-    route: "/(tabs)/grocery",
-    icon: "shopping-cart" as const,
-    family: "feather" as const,
-    color: "#3B82F6",
-    bg: "rgba(59,130,246,0.15)",
-  },
-  {
-    label: "Water Tracker",
-    desc: null,
-    route: "/(tabs)/water",
-    icon: "water" as const,
-    family: "community" as const,
-    color: "#38BDF8",
-    bg: "rgba(56,189,248,0.15)",
-  },
-  {
-    label: "Track Weight",
-    desc: "Log your progress",
-    route: "/(tabs)/weight",
-    icon: "trending-up" as const,
-    family: "feather" as const,
-    color: "#22C55E",
-    bg: "rgba(34,197,94,0.15)",
-  },
-  {
-    label: "Saved Plans",
-    desc: "All your meal plan history",
-    route: "/(tabs)/plans",
-    icon: "bookmark" as const,
-    family: "feather" as const,
-    color: "#A855F7",
-    bg: "rgba(168,85,247,0.15)",
-  },
-];
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function useWaterCount() {
   const [count, setCount] = useState(0);
@@ -126,17 +55,15 @@ function useWaterCount() {
     }).catch(() => {});
   }, [todayKey]);
 
-  // Initial load
   useEffect(() => { refresh(); }, [refresh]);
 
   return { count, refresh };
 }
 
-function getDailyTip(): string {
-  const dayOfYear = Math.floor(
+function getDailyTipIndex(): number {
+  return Math.floor(
     (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000
   );
-  return GYM_TIPS[dayOfYear % GYM_TIPS.length];
 }
 
 function MacroBar({
@@ -167,8 +94,6 @@ function MacroBar({
   );
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export default function DashboardScreen() {
   const { user } = useUser();
   const { signOut } = useClerk();
@@ -177,8 +102,8 @@ export default function DashboardScreen() {
   const router = useRouter();
   const { count: waterCount, refresh: refreshWater } = useWaterCount();
   const qc = useQueryClient();
+  const { t } = useLanguage();
 
-  // Refresh water count + all API data whenever this tab comes into focus
   useFocusEffect(
     useCallback(() => {
       refreshWater();
@@ -212,40 +137,33 @@ export default function DashboardScreen() {
     enabled: !!activePlan?.id,
   });
 
-  // ── Derived data ────────────────────────────────────────────────────────────
-
   const now = new Date();
-  const dayName = DAYS[now.getDay()];
-  const dateStr = `${dayName.toUpperCase()}, ${MONTHS[now.getMonth()]} ${now.getDate()}`;
-  const hour = now.getHours();
+  const dayName = t.home.dateDays[now.getDay()];
+  const monthName = t.home.dateMonths[now.getMonth()];
+  const dateStr = `${dayName.toUpperCase()}, ${monthName} ${now.getDate()}`;
 
   const displayName = user?.firstName || user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] || "Athlete";
 
-  // Today calories
   const todayStr = now.toISOString().split("T")[0];
   const todayMeals = savedMeals?.filter((m) => m.createdAt.startsWith(todayStr)) ?? [];
   const todayCalories = todayMeals.reduce((s, m) => s + (m.estimatedCalories ?? 0), 0);
 
-  // Budget vs actual
   const budget = activePlan?.dailyCalories ?? 0;
   const budgetProgress = budget > 0 ? Math.min(todayCalories / budget, 1) : 0;
   const overBudget = budget > 0 && todayCalories > budget;
   const remaining = Math.max(budget - todayCalories, 0);
   const showBudget = activePlan && budget > 0;
 
-  // Macros from active plan
   const totalProtein = planDetail?.meals.reduce((s, m) => s + (m.protein ?? 0), 0) ?? 0;
   const totalCarbs = planDetail?.meals.reduce((s, m) => s + (m.carbs ?? 0), 0) ?? 0;
   const totalFat = planDetail?.meals.reduce((s, m) => s + (m.fat ?? 0), 0) ?? 0;
   const planTotalKcal = totalProtein * 4 + totalCarbs * 4 + totalFat * 9;
   const hasMacros = totalProtein > 0 || totalCarbs > 0 || totalFat > 0;
 
-  // Streaks
   const mealDates = savedMeals?.map((m) => m.createdAt.split("T")[0]) ?? [];
   const weightDates = weightEntries?.map((e) => new Date(e.recordedAt).toISOString().split("T")[0]) ?? [];
   const { mealStreak, weightStreak, waterStreak } = useStreaks(mealDates, weightDates);
 
-  // Weekly summary (last 7 days)
   const weekAgo = new Date(now);
   weekAgo.setDate(weekAgo.getDate() - 6);
   const weekAgoStr = weekAgo.toISOString().split("T")[0];
@@ -263,7 +181,9 @@ export default function DashboardScreen() {
       : null;
   const showWeekly = weekMeals.length > 0 || weekWeightEntries.length > 0;
 
-  const tip = getDailyTip();
+  const tipIndex = getDailyTipIndex() % t.gymTips.length;
+  const tip = t.gymTips[tipIndex];
+
   const s = styles(colors);
 
   return (
@@ -272,7 +192,7 @@ export default function DashboardScreen() {
       contentInsetAdjustmentBehavior="automatic"
       showsVerticalScrollIndicator={false}
     >
-      {/* ── Hero ────────────────────────────────────────────────────────────── */}
+      {/* Hero */}
       <View style={[s.hero, { backgroundColor: resolvedTheme === "dark" ? colors.card : "#12151A" }]}>
         <View style={s.heroTopRow}>
           <Text style={s.heroDate}>{dateStr}</Text>
@@ -280,28 +200,28 @@ export default function DashboardScreen() {
             onPress={() =>
               Alert.alert("Account", `Signed in as ${user?.emailAddresses?.[0]?.emailAddress}`, [
                 { text: "Sign Out", style: "destructive", onPress: () => signOut() },
-                { text: "Cancel", style: "cancel" },
+                { text: t.common.cancel, style: "cancel" },
               ])
             }
           >
-            <Text style={s.heroVersion}>version 2.0.0</Text>
+            <Text style={s.heroVersion}>{t.home.version}</Text>
           </Pressable>
         </View>
 
-        <Text style={s.heroTitle}>💪 Let's crush today!</Text>
+        <Text style={s.heroTitle}>{t.home.greeting}</Text>
 
         {activePlan ? (
           <View style={s.heroPlanRow}>
             <Feather name="zap" size={13} color={colors.primary} />
             <Text style={s.heroPlanText}>
-              Active: <Text style={{ color: colors.primary }}>{activePlan.name}</Text>
+              {t.home.activeLabel} <Text style={{ color: colors.primary }}>{activePlan.name}</Text>
             </Text>
           </View>
         ) : (
           <Pressable style={s.heroPlanRow} onPress={() => router.push("/(tabs)/planner" as never)}>
             <Feather name="zap" size={13} color={colors.primary} />
             <Text style={s.heroPlanText}>
-              No plan yet — <Text style={{ color: colors.primary }}>Build your first plan</Text>
+              {t.home.noActivePlan}<Text style={{ color: colors.primary }}>{t.home.buildFirstPlan}</Text>
             </Text>
           </Pressable>
         )}
@@ -309,26 +229,26 @@ export default function DashboardScreen() {
         {todayCalories > 0 && (
           <Pressable style={s.caloriePill} onPress={() => router.push("/(tabs)/meals" as never)}>
             <Text style={s.calorieEmoji}>🔥</Text>
-            <Text style={s.calorieText}>{todayCalories} kcal scanned today</Text>
+            <Text style={s.calorieText}>{t.home.kcalScannedTodayShort(todayCalories)}</Text>
             <Feather name="chevron-right" size={12} color={colors.primary} />
           </Pressable>
         )}
       </View>
 
-      {/* ── Budget vs Actual ─────────────────────────────────────────────────── */}
+      {/* Budget vs Actual */}
       {showBudget && (
         <View style={s.section}>
-          <Text style={s.sectionTitle}>TODAY'S CALORIES</Text>
+          <Text style={s.sectionTitle}>{t.home.sectionCalories}</Text>
           <View style={s.budgetCard}>
             <View style={s.budgetRow}>
               <View>
                 <Text style={s.budgetActual}>{todayCalories.toLocaleString()}</Text>
-                <Text style={s.budgetLabel}>kcal logged</Text>
+                <Text style={s.budgetLabel}>{t.home.kcalLogged}</Text>
               </View>
               <View style={s.budgetDivider} />
               <View style={{ alignItems: "flex-end" }}>
                 <Text style={s.budgetGoal}>{budget.toLocaleString()}</Text>
-                <Text style={s.budgetLabel}>kcal budget</Text>
+                <Text style={s.budgetLabel}>{t.home.kcalBudget}</Text>
               </View>
             </View>
             <View style={s.budgetTrack}>
@@ -345,91 +265,94 @@ export default function DashboardScreen() {
             <View style={s.budgetFooter}>
               {overBudget ? (
                 <Text style={[s.budgetRemaining, { color: colors.destructive }]}>
-                  {(todayCalories - budget).toLocaleString()} kcal over budget
+                  {t.home.overBudget(todayCalories - budget)}
                 </Text>
               ) : (
                 <Text style={s.budgetRemaining}>
-                  {remaining.toLocaleString()} kcal remaining · {Math.round(budgetProgress * 100)}% of goal
+                  {t.home.remaining(remaining, Math.round(budgetProgress * 100))}
                 </Text>
               )}
               <Pressable onPress={() => router.push("/(tabs)/scan" as never)}>
-                <Text style={s.budgetScanLink}>+ Log meal</Text>
+                <Text style={s.budgetScanLink}>{t.home.logMeal}</Text>
               </Pressable>
             </View>
           </View>
         </View>
       )}
 
-      {/* ── Streaks ──────────────────────────────────────────────────────────── */}
+      {/* Streaks */}
       <View style={s.section}>
-        <Text style={s.sectionTitle}>YOUR STREAKS</Text>
+        <Text style={s.sectionTitle}>{t.home.sectionStreaks}</Text>
         <View style={s.streakRow}>
           {[
-            { emoji: "🔥", count: mealStreak, label: "Meal Scan", color: "#F59E0B" },
-            { emoji: "💧", count: waterStreak, label: "Water Goal", color: "#38BDF8" },
-            { emoji: "⚖️", count: weightStreak, label: "Weight Log", color: "#22C55E" },
+            { emoji: "🔥", count: mealStreak, label: t.home.streakMealScan, color: "#F59E0B" },
+            { emoji: "💧", count: waterStreak, label: t.home.streakWaterGoal, color: "#38BDF8" },
+            { emoji: "⚖️", count: weightStreak, label: t.home.streakWeightLog, color: "#22C55E" },
           ].map((item) => (
             <View key={item.label} style={s.streakCard}>
               <Text style={s.streakEmoji}>{item.emoji}</Text>
               <Text style={[s.streakCount, { color: item.count > 0 ? item.color : colors.mutedForeground }]}>
                 {item.count}
               </Text>
-              <Text style={s.streakDays}>{item.count === 1 ? "day" : "days"}</Text>
+              <Text style={s.streakDays}>{item.count === 1 ? t.home.streakDay : t.home.streakDays}</Text>
               <Text style={s.streakLabel}>{item.label}</Text>
             </View>
           ))}
         </View>
       </View>
 
-      {/* ── Quick Actions ─────────────────────────────────────────────────────── */}
+      {/* Quick Actions */}
       <View style={s.section}>
-        <Text style={s.sectionTitle}>WHAT DO YOU WANT TO DO?</Text>
+        <Text style={s.sectionTitle}>{t.home.sectionActions}</Text>
         <View style={s.grid}>
-          {QUICK_ACTIONS.map((action) => (
-            <Pressable
-              key={action.label}
-              style={({ pressed }) => [s.actionCard, { opacity: pressed ? 0.85 : 1 }]}
-              onPress={() => router.push(action.route as never)}
-            >
-              <View style={[s.actionIcon, { backgroundColor: action.bg }]}>
-                {action.family === "community" ? (
-                  <MaterialCommunityIcons name={action.icon as any} size={24} color={action.color} />
-                ) : (
-                  <Feather name={action.icon as any} size={24} color={action.color} />
-                )}
-              </View>
-              <Text style={s.actionLabel}>{action.label}</Text>
-              <Text style={s.actionDesc} numberOfLines={1}>
-                {action.label === "Water Tracker"
-                  ? `${waterCount}/${DAILY_GOAL} glasses today`
-                  : action.label === "Scan a Meal" && todayCalories > 0
-                  ? `${todayCalories} kcal scanned today`
-                  : action.desc}
-              </Text>
-            </Pressable>
-          ))}
+          {t.home.actions.map((action, idx) => {
+            const meta = QUICK_ACTION_META[idx];
+            return (
+              <Pressable
+                key={action.label}
+                style={({ pressed }) => [s.actionCard, { opacity: pressed ? 0.85 : 1 }]}
+                onPress={() => router.push(meta.route as never)}
+              >
+                <View style={[s.actionIcon, { backgroundColor: meta.bg }]}>
+                  {meta.family === "community" ? (
+                    <MaterialCommunityIcons name={meta.icon as any} size={24} color={meta.color} />
+                  ) : (
+                    <Feather name={meta.icon as any} size={24} color={meta.color} />
+                  )}
+                </View>
+                <Text style={s.actionLabel}>{action.label}</Text>
+                <Text style={s.actionDesc} numberOfLines={1}>
+                  {idx === 3
+                    ? t.home.waterGlassesToday(waterCount, DAILY_GOAL)
+                    : idx === 1 && todayCalories > 0
+                    ? t.home.kcalScannedTodayShort(todayCalories)
+                    : action.desc}
+                </Text>
+              </Pressable>
+            );
+          })}
         </View>
       </View>
 
-      {/* ── This Week ─────────────────────────────────────────────────────────── */}
+      {/* This Week */}
       {showWeekly && (
         <View style={s.section}>
-          <Text style={s.sectionTitle}>THIS WEEK</Text>
+          <Text style={s.sectionTitle}>{t.home.sectionWeekly}</Text>
           <View style={s.weekCard}>
             <View style={s.weekGrid}>
               <View style={s.weekStat}>
                 <Text style={s.weekStatVal}>{weekMeals.length}</Text>
-                <Text style={s.weekStatLabel}>Meals logged</Text>
+                <Text style={s.weekStatLabel}>{t.home.mealsLogged}</Text>
               </View>
               <View style={s.weekStatDivider} />
               <View style={s.weekStat}>
                 <Text style={s.weekStatVal}>{weekAvgKcal > 0 ? weekAvgKcal.toLocaleString() : "—"}</Text>
-                <Text style={s.weekStatLabel}>Avg kcal/day</Text>
+                <Text style={s.weekStatLabel}>{t.home.avgKcalDay}</Text>
               </View>
               <View style={s.weekStatDivider} />
               <View style={s.weekStat}>
                 <Text style={s.weekStatVal}>{weekDaysActive}/7</Text>
-                <Text style={s.weekStatLabel}>Active days</Text>
+                <Text style={s.weekStatLabel}>{t.home.activeDays}</Text>
               </View>
               {weekWeightDelta !== null && (
                 <>
@@ -441,7 +364,7 @@ export default function DashboardScreen() {
                     ]}>
                       {parseFloat(weekWeightDelta) > 0 ? "+" : ""}{weekWeightDelta}
                     </Text>
-                    <Text style={s.weekStatLabel}>Weight (lbs)</Text>
+                    <Text style={s.weekStatLabel}>{t.home.weightLbs}</Text>
                   </View>
                 </>
               )}
@@ -450,18 +373,18 @@ export default function DashboardScreen() {
               style={({ pressed }) => [s.weekViewBtn, { opacity: pressed ? 0.7 : 1 }]}
               onPress={() => router.push("/(tabs)/meals" as never)}
             >
-              <Text style={s.weekViewBtnText}>View My Meals →</Text>
+              <Text style={s.weekViewBtnText}>{t.home.viewMyMeals}</Text>
             </Pressable>
           </View>
         </View>
       )}
 
-      {/* ── Macro Targets ─────────────────────────────────────────────────────── */}
+      {/* Daily Macro Targets */}
       {hasMacros && (
         <View style={s.section}>
-          <Text style={s.sectionTitle}>DAILY MACRO TARGETS</Text>
+          <Text style={s.sectionTitle}>{t.home.sectionMacros}</Text>
           <View style={s.macroCard}>
-            <Text style={s.macroSource}>From: {activePlan?.name}</Text>
+            <Text style={s.macroSource}>{t.home.from} {activePlan?.name}</Text>
             <MacroBar label="Protein" grams={totalProtein} kcalPerG={4} totalKcal={planTotalKcal} color="#F26B1D" colors={colors} />
             <MacroBar label="Carbs" grams={totalCarbs} kcalPerG={4} totalKcal={planTotalKcal} color="#38BDF8" colors={colors} />
             <MacroBar label="Fat" grams={totalFat} kcalPerG={9} totalKcal={planTotalKcal} color="#A855F7" colors={colors} />
@@ -473,13 +396,13 @@ export default function DashboardScreen() {
         </View>
       )}
 
-      {/* ── Current Plan ──────────────────────────────────────────────────────── */}
+      {/* Your Current Plan */}
       <View style={s.section}>
         <View style={s.sectionRow}>
-          <Text style={s.sectionTitle}>YOUR CURRENT PLAN</Text>
+          <Text style={s.sectionTitle}>{t.home.sectionCurrentPlan}</Text>
           {plans && plans.length > 0 && (
             <Pressable onPress={() => router.push("/(tabs)/plans" as never)}>
-              <Text style={s.sectionLink}>All plans →</Text>
+              <Text style={s.sectionLink}>{t.home.allPlans}</Text>
             </Pressable>
           )}
         </View>
@@ -500,7 +423,7 @@ export default function DashboardScreen() {
               <View style={{ flex: 1 }}>
                 <Text style={s.planName}>{activePlan.name}</Text>
                 <View style={s.planMeta}>
-                  <Text style={s.planMetaText}>{activePlan.mealsPerDay} meals/day</Text>
+                  <Text style={s.planMetaText}>{t.home.mealsPerDay(activePlan.mealsPerDay)}</Text>
                   <View style={s.dot} />
                   <Text style={s.planMetaText}>{activePlan.dailyCalories} kcal/day</Text>
                 </View>
@@ -516,24 +439,22 @@ export default function DashboardScreen() {
             <View style={s.emptyPlanIcon}>
               <Feather name="plus" size={28} color={colors.mutedForeground} />
             </View>
-            <Text style={s.emptyPlanTitle}>No plan yet</Text>
-            <Text style={s.emptyPlanSub}>
-              Build your first meal plan in seconds — set your calorie goal and we'll handle the rest.
-            </Text>
+            <Text style={s.emptyPlanTitle}>{t.home.noActivePlanTitle}</Text>
+            <Text style={s.emptyPlanSub}>{t.home.noActivePlanSub}</Text>
             <View style={s.emptyPlanBtn}>
               <Feather name="plus" size={14} color="#FFF" />
-              <Text style={s.emptyPlanBtnText}>Build My First Plan</Text>
+              <Text style={s.emptyPlanBtnText}>{t.home.buildMyFirstPlan}</Text>
             </View>
           </Pressable>
         )}
       </View>
 
-      {/* ── Daily tip ──────────────────────────────────────────────────────────── */}
+      {/* Daily Tip */}
       <View style={s.section}>
         <View style={s.tipCard}>
           <Text style={s.tipEmoji}>💡</Text>
           <View style={{ flex: 1 }}>
-            <Text style={s.tipLabel}>GYM &amp; MEAL PREP TIP</Text>
+            <Text style={s.tipLabel}>{t.home.sectionDailyTip}</Text>
             <Text style={s.tipText}>{tip}</Text>
           </View>
         </View>
@@ -547,8 +468,6 @@ export default function DashboardScreen() {
 const styles = (colors: ReturnType<typeof useColors>) =>
   StyleSheet.create({
     root: { flex: 1 },
-
-    // Hero
     hero: {
       backgroundColor: "#12151A",
       paddingHorizontal: 20,
@@ -561,34 +480,11 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       alignItems: "center",
       marginBottom: 14,
     },
-    heroDate: {
-      fontSize: 12,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.primary,
-      letterSpacing: 0.8,
-    },
-    heroVersion: {
-      fontSize: 12,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.primary,
-    },
-    heroTitle: {
-      fontSize: 30,
-      fontFamily: "Inter_800ExtraBold" as any,
-      color: "#FFFFFF",
-      marginBottom: 10,
-      lineHeight: 36,
-    },
-    heroPlanRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 6,
-    },
-    heroPlanText: {
-      fontSize: 13,
-      fontFamily: "Inter_400Regular",
-      color: "rgba(255,255,255,0.60)",
-    },
+    heroDate: { fontSize: 12, fontFamily: "Inter_600SemiBold", color: colors.primary, letterSpacing: 0.8 },
+    heroVersion: { fontSize: 12, fontFamily: "Inter_600SemiBold", color: colors.primary },
+    heroTitle: { fontSize: 30, fontFamily: "Inter_800ExtraBold" as any, color: "#FFFFFF", marginBottom: 10, lineHeight: 36 },
+    heroPlanRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+    heroPlanText: { fontSize: 13, fontFamily: "Inter_400Regular", color: "rgba(255,255,255,0.60)" },
     caloriePill: {
       flexDirection: "row",
       alignItems: "center",
@@ -601,38 +497,11 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       alignSelf: "flex-start",
     },
     calorieEmoji: { fontSize: 13 },
-    calorieText: {
-      fontSize: 12,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.primary,
-    },
-
-    // Sections
-    section: {
-      paddingHorizontal: 16,
-      marginTop: 20,
-    },
-    sectionRow: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: 12,
-    },
-    sectionTitle: {
-      fontSize: 11,
-      fontFamily: "Inter_700Bold",
-      color: colors.mutedForeground,
-      letterSpacing: 0.9,
-      marginBottom: 12,
-    },
-    sectionLink: {
-      fontSize: 13,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.primary,
-      marginBottom: 12,
-    },
-
-    // Budget vs Actual
+    calorieText: { fontSize: 12, fontFamily: "Inter_600SemiBold", color: colors.primary },
+    section: { paddingHorizontal: 16, marginTop: 20 },
+    sectionRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
+    sectionTitle: { fontSize: 11, fontFamily: "Inter_700Bold", color: colors.mutedForeground, letterSpacing: 0.9, marginBottom: 12 },
+    sectionLink: { fontSize: 13, fontFamily: "Inter_600SemiBold", color: colors.primary, marginBottom: 12 },
     budgetCard: {
       backgroundColor: colors.card,
       borderRadius: colors.radius,
@@ -641,63 +510,17 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       borderColor: colors.border,
       gap: 10,
     },
-    budgetRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-    budgetActual: {
-      fontSize: 26,
-      fontFamily: "Inter_800ExtraBold" as any,
-      color: colors.primary,
-    },
-    budgetGoal: {
-      fontSize: 26,
-      fontFamily: "Inter_800ExtraBold" as any,
-      color: colors.foreground,
-    },
-    budgetLabel: {
-      fontSize: 11,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-      marginTop: 2,
-    },
-    budgetDivider: {
-      width: 1,
-      height: 40,
-      backgroundColor: colors.border,
-    },
-    budgetTrack: {
-      height: 8,
-      backgroundColor: colors.muted,
-      borderRadius: 4,
-      overflow: "hidden",
-    },
-    budgetFill: {
-      height: 8,
-      borderRadius: 4,
-    },
-    budgetFooter: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-    },
-    budgetRemaining: {
-      fontSize: 12,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-    },
-    budgetScanLink: {
-      fontSize: 12,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.primary,
-    },
-
-    // Streaks
-    streakRow: {
-      flexDirection: "row",
-      gap: 10,
-    },
+    budgetRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+    budgetActual: { fontSize: 26, fontFamily: "Inter_800ExtraBold" as any, color: colors.primary },
+    budgetGoal: { fontSize: 26, fontFamily: "Inter_800ExtraBold" as any, color: colors.foreground },
+    budgetLabel: { fontSize: 11, fontFamily: "Inter_400Regular", color: colors.mutedForeground, marginTop: 2 },
+    budgetDivider: { width: 1, height: 40, backgroundColor: colors.border },
+    budgetTrack: { height: 8, backgroundColor: colors.muted, borderRadius: 4, overflow: "hidden" },
+    budgetFill: { height: 8, borderRadius: 4 },
+    budgetFooter: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+    budgetRemaining: { fontSize: 12, fontFamily: "Inter_400Regular", color: colors.mutedForeground },
+    budgetScanLink: { fontSize: 12, fontFamily: "Inter_600SemiBold", color: colors.primary },
+    streakRow: { flexDirection: "row", gap: 10 },
     streakCard: {
       flex: 1,
       backgroundColor: colors.card,
@@ -709,29 +532,10 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       gap: 2,
     },
     streakEmoji: { fontSize: 22, marginBottom: 2 },
-    streakCount: {
-      fontSize: 24,
-      fontFamily: "Inter_800ExtraBold" as any,
-    },
-    streakDays: {
-      fontSize: 11,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-    },
-    streakLabel: {
-      fontSize: 10,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.mutedForeground,
-      textAlign: "center",
-      marginTop: 2,
-    },
-
-    // Quick actions
-    grid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      gap: 10,
-    },
+    streakCount: { fontSize: 24, fontFamily: "Inter_800ExtraBold" as any },
+    streakDays: { fontSize: 11, fontFamily: "Inter_400Regular", color: colors.mutedForeground },
+    streakLabel: { fontSize: 10, fontFamily: "Inter_600SemiBold", color: colors.mutedForeground, textAlign: "center", marginTop: 2 },
+    grid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
     actionCard: {
       width: "30.5%",
       backgroundColor: colors.card,
@@ -740,118 +544,23 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       borderWidth: 1,
       borderColor: colors.border,
     },
-    actionIcon: {
-      width: 46,
-      height: 46,
-      borderRadius: 14,
-      alignItems: "center",
-      justifyContent: "center",
-      marginBottom: 8,
-    },
-    actionLabel: {
-      fontSize: 12,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.foreground,
-      marginBottom: 2,
-    },
-    actionDesc: {
-      fontSize: 10,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-      lineHeight: 13,
-    },
-
-    // Weekly summary
-    weekCard: {
-      backgroundColor: colors.card,
-      borderRadius: colors.radius,
-      padding: 16,
-      borderWidth: 1,
-      borderColor: colors.border,
-      gap: 12,
-    },
-    weekGrid: {
-      flexDirection: "row",
-      alignItems: "center",
-      flexWrap: "wrap",
-      gap: 8,
-    },
-    weekStat: {
-      alignItems: "center",
-      minWidth: 64,
-      flex: 1,
-    },
-    weekStatVal: {
-      fontSize: 20,
-      fontFamily: "Inter_700Bold",
-      color: colors.foreground,
-    },
-    weekStatLabel: {
-      fontSize: 10,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-      marginTop: 2,
-      textAlign: "center",
-    },
-    weekStatDivider: {
-      width: 1,
-      height: 32,
-      backgroundColor: colors.border,
-    },
-    weekViewBtn: {
-      borderTopWidth: 1,
-      borderTopColor: colors.border,
-      paddingTop: 12,
-      alignItems: "center",
-    },
-    weekViewBtnText: {
-      fontSize: 13,
-      fontFamily: "Inter_600SemiBold",
-      color: colors.primary,
-    },
-
-    // Macros
-    macroCard: {
-      backgroundColor: colors.card,
-      borderRadius: colors.radius,
-      padding: 16,
-      borderWidth: 1,
-      borderColor: colors.border,
-      gap: 12,
-    },
-    macroSource: {
-      fontSize: 11,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-      marginBottom: -4,
-    },
-    macroTotal: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 5,
-      paddingTop: 4,
-      borderTopWidth: 1,
-      borderTopColor: colors.border,
-    },
-    macroTotalText: {
-      fontSize: 12,
-      fontFamily: "Inter_500Medium",
-      color: colors.mutedForeground,
-    },
-
-    // Current plan
-    planCard: {
-      backgroundColor: colors.card,
-      borderRadius: colors.radius,
-      padding: 16,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    planCardHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 12,
-    },
+    actionIcon: { width: 46, height: 46, borderRadius: 14, alignItems: "center", justifyContent: "center", marginBottom: 8 },
+    actionLabel: { fontSize: 12, fontFamily: "Inter_600SemiBold", color: colors.foreground, marginBottom: 2 },
+    actionDesc: { fontSize: 10, fontFamily: "Inter_400Regular", color: colors.mutedForeground, lineHeight: 13 },
+    weekCard: { backgroundColor: colors.card, borderRadius: colors.radius, padding: 16, borderWidth: 1, borderColor: colors.border, gap: 12 },
+    weekGrid: { flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: 8 },
+    weekStat: { alignItems: "center", minWidth: 64, flex: 1 },
+    weekStatVal: { fontSize: 20, fontFamily: "Inter_700Bold", color: colors.foreground },
+    weekStatLabel: { fontSize: 10, fontFamily: "Inter_400Regular", color: colors.mutedForeground, marginTop: 2, textAlign: "center" },
+    weekStatDivider: { width: 1, height: 32, backgroundColor: colors.border },
+    weekViewBtn: { borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 12, alignItems: "center" },
+    weekViewBtnText: { fontSize: 13, fontFamily: "Inter_600SemiBold", color: colors.primary },
+    macroCard: { backgroundColor: colors.card, borderRadius: colors.radius, padding: 16, borderWidth: 1, borderColor: colors.border, gap: 12 },
+    macroSource: { fontSize: 11, fontFamily: "Inter_400Regular", color: colors.mutedForeground, marginBottom: -4 },
+    macroTotal: { flexDirection: "row", alignItems: "center", gap: 5, paddingTop: 4, borderTopWidth: 1, borderTopColor: colors.border },
+    macroTotalText: { fontSize: 12, fontFamily: "Inter_500Medium", color: colors.mutedForeground },
+    planCard: { backgroundColor: colors.card, borderRadius: colors.radius, padding: 16, borderWidth: 1, borderColor: colors.border },
+    planCardHeader: { flexDirection: "row", alignItems: "center", gap: 12 },
     planIconWrap: {
       width: 40,
       height: 40,
@@ -860,98 +569,18 @@ const styles = (colors: ReturnType<typeof useColors>) =>
       alignItems: "center",
       justifyContent: "center",
     },
-    planName: {
-      fontSize: 16,
-      fontFamily: "Inter_700Bold",
-      color: colors.foreground,
-    },
-    planMeta: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginTop: 3,
-      gap: 6,
-    },
-    planMetaText: {
-      fontSize: 12,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-    },
-    dot: {
-      width: 3,
-      height: 3,
-      borderRadius: 1.5,
-      backgroundColor: colors.mutedForeground,
-    },
-    emptyPlan: {
-      backgroundColor: colors.card,
-      borderRadius: colors.radius,
-      padding: 24,
-      alignItems: "center",
-      borderWidth: 1,
-      borderColor: colors.border,
-      gap: 8,
-    },
-    emptyPlanIcon: {
-      width: 64,
-      height: 64,
-      borderRadius: 32,
-      backgroundColor: colors.muted,
-      alignItems: "center",
-      justifyContent: "center",
-      marginBottom: 4,
-    },
-    emptyPlanTitle: {
-      fontSize: 18,
-      fontFamily: "Inter_700Bold",
-      color: colors.foreground,
-    },
-    emptyPlanSub: {
-      fontSize: 13,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-      textAlign: "center",
-      lineHeight: 19,
-      paddingHorizontal: 10,
-    },
-    emptyPlanBtn: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 6,
-      backgroundColor: colors.primary,
-      paddingHorizontal: 20,
-      paddingVertical: 11,
-      borderRadius: 12,
-      marginTop: 4,
-    },
-    emptyPlanBtnText: {
-      fontSize: 14,
-      fontFamily: "Inter_600SemiBold",
-      color: "#FFF",
-    },
-
-    // Tip
-    tipCard: {
-      backgroundColor: colors.card,
-      borderRadius: colors.radius,
-      padding: 14,
-      borderWidth: 1,
-      borderColor: colors.border,
-      flexDirection: "row",
-      gap: 12,
-      alignItems: "flex-start",
-    },
+    planName: { fontSize: 16, fontFamily: "Inter_700Bold", color: colors.foreground },
+    planMeta: { flexDirection: "row", alignItems: "center", marginTop: 3, gap: 6 },
+    planMetaText: { fontSize: 12, fontFamily: "Inter_400Regular", color: colors.mutedForeground },
+    dot: { width: 3, height: 3, borderRadius: 1.5, backgroundColor: colors.mutedForeground },
+    emptyPlan: { backgroundColor: colors.card, borderRadius: colors.radius, padding: 24, alignItems: "center", borderWidth: 1, borderColor: colors.border, gap: 8 },
+    emptyPlanIcon: { width: 64, height: 64, borderRadius: 32, backgroundColor: colors.muted, alignItems: "center", justifyContent: "center", marginBottom: 4 },
+    emptyPlanTitle: { fontSize: 18, fontFamily: "Inter_700Bold", color: colors.foreground },
+    emptyPlanSub: { fontSize: 13, fontFamily: "Inter_400Regular", color: colors.mutedForeground, textAlign: "center", lineHeight: 19, paddingHorizontal: 10 },
+    emptyPlanBtn: { flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: colors.primary, paddingHorizontal: 20, paddingVertical: 11, borderRadius: 12, marginTop: 4 },
+    emptyPlanBtnText: { fontSize: 14, fontFamily: "Inter_600SemiBold", color: "#FFF" },
+    tipCard: { backgroundColor: colors.card, borderRadius: colors.radius, padding: 14, borderWidth: 1, borderColor: colors.border, flexDirection: "row", gap: 12, alignItems: "flex-start" },
     tipEmoji: { fontSize: 22, marginTop: 2 },
-    tipLabel: {
-      fontSize: 10,
-      fontFamily: "Inter_700Bold",
-      color: colors.primary,
-      letterSpacing: 0.8,
-      marginBottom: 5,
-    },
-    tipText: {
-      fontSize: 13,
-      fontFamily: "Inter_400Regular",
-      color: colors.mutedForeground,
-      lineHeight: 19,
-    },
+    tipLabel: { fontSize: 10, fontFamily: "Inter_700Bold", color: colors.primary, letterSpacing: 0.8, marginBottom: 5 },
+    tipText: { fontSize: 13, fontFamily: "Inter_400Regular", color: colors.mutedForeground, lineHeight: 19 },
   });

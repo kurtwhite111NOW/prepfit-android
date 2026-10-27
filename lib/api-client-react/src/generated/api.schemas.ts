@@ -108,6 +108,10 @@ export interface GenerateMealPlanBody {
    */
   mealsPerDay: number;
   dailyCalories: number;
+  /** Foods to exclude from the meal plan */
+  allergies?: string[];
+  /** Prioritise high protein and reduce carbs */
+  highProtein?: boolean;
 }
 
 export interface GeneratedMeal {
@@ -175,6 +179,25 @@ export interface CreateWeightEntryBody {
   recordedAt?: string;
 }
 
+export interface UserPreferences {
+  allergies: string[];
+  highProteinMode: boolean;
+}
+
 export interface ErrorResponse {
   error: string;
+}
+
+export interface UploadUrlRequest {
+  /** @minLength 1 */
+  name: string;
+  /** @minimum 1 */
+  size: number;
+  /** @minLength 1 */
+  contentType: string;
+}
+
+export interface UploadUrlResponse {
+  uploadURL: string;
+  objectPath: string;
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, KeyboardEvent } from "react";
 import { usePageTitle } from "@/hooks/use-page-title";
 import { useLocation } from "wouter";
 import {
@@ -6,6 +6,8 @@ import {
   useCreateMealPlan,
   useListMealPlans,
   getListMealPlansQueryKey,
+  useGetPreferences,
+  useUpdatePreferences,
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +28,9 @@ import {
   Share2,
   CheckSquare,
   Dumbbell,
+  X,
+  ShieldAlert,
+  TrendingUp,
 } from "lucide-react";
 
 const MEAL_LABELS: Record<number, string> = {
@@ -44,6 +49,7 @@ const GYM_TIPS = [
   "Rotisserie chicken is one of the best meal prep hacks — cheap, ready-made, and high protein.",
 ];
 const tip = GYM_TIPS[Math.floor(Math.random() * GYM_TIPS.length)];
+
 
 function buildShareText(planName: string, meals: any[], dailyCalories: number): string {
   const lines: string[] = [`💪 ${planName}`, `📊 ${dailyCalories.toLocaleString()} cal/day`, ""];
@@ -74,7 +80,7 @@ function buildPrepChecklist(meals: any[]): string[] {
 }
 
 export default function Planner() {
-  usePageTitle("AI Meal Planner", "Generate a personalized weekly meal plan with AI. Set your calorie goal, meals per day, and get a high-protein gym-ready plan in seconds.");
+  usePageTitle("Meal Planner", "Generate a personalized weekly meal plan. Set your calorie goal, meals per day, and get a high-protein gym-ready plan in seconds.");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -84,6 +90,61 @@ export default function Planner() {
   const [planName, setPlanName] = useState<string>("My Clean Plan");
   const [checklistDone, setChecklistDone] = useState<Record<number, boolean>>({});
 
+  // Allergy / food exclusions — server-side per user
+  const [allergies, setAllergies] = useState<string[]>([]);
+  const [allergyInput, setAllergyInput] = useState("");
+  const allergyInputRef = useRef<HTMLInputElement>(null);
+
+  // High protein / low carb toggle — server-side per user
+  const [highProtein, setHighProtein] = useState<boolean>(false);
+  const [prefsInitialized, setPrefsInitialized] = useState(false);
+
+  const { data: prefsData } = useGetPreferences();
+  const { mutate: savePrefs } = useUpdatePreferences();
+
+  // Load from server once on mount
+  useEffect(() => {
+    if (prefsData && !prefsInitialized) {
+      setAllergies(prefsData.allergies ?? []);
+      setHighProtein(prefsData.highProteinMode ?? false);
+      setPrefsInitialized(true);
+    }
+  }, [prefsData, prefsInitialized]);
+
+  const updateAllergies = (next: string[]) => {
+    setAllergies(next);
+    savePrefs({ data: { allergies: next, highProteinMode: highProtein } });
+  };
+
+  const updateHighProtein = (val: boolean) => {
+    setHighProtein(val);
+    savePrefs({ data: { allergies, highProteinMode: val } });
+  };
+
+  const addAllergy = () => {
+    const val = allergyInput.trim();
+    if (!val) return;
+    const lower = val.toLowerCase();
+    if (!allergies.map((a) => a.toLowerCase()).includes(lower)) {
+      updateAllergies([...allergies, val]);
+    }
+    setAllergyInput("");
+    allergyInputRef.current?.focus();
+  };
+
+  const removeAllergy = (tag: string) => {
+    updateAllergies(allergies.filter((a) => a !== tag));
+  };
+
+  const handleAllergyKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      addAllergy();
+    } else if (e.key === "Backspace" && allergyInput === "" && allergies.length > 0) {
+      updateAllergies(allergies.slice(0, -1));
+    }
+  };
+
   const generateMealPlan = useGenerateMealPlan();
   const createMealPlan = useCreateMealPlan();
 
@@ -91,7 +152,14 @@ export default function Planner() {
 
   const handleGenerate = () => {
     setChecklistDone({});
-    generateMealPlan.mutate({ data: { mealsPerDay, dailyCalories } });
+    generateMealPlan.mutate({
+      data: {
+        mealsPerDay,
+        dailyCalories,
+        allergies: allergies.length > 0 ? allergies : undefined,
+        highProtein: highProtein || undefined,
+      } as any,
+    });
   };
 
   const handleSave = () => {
@@ -155,15 +223,16 @@ export default function Planner() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <section>
-        <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">AI Meal Planner</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">Meal Planner</p>
         <h1 className="font-serif text-4xl font-bold text-foreground leading-tight mb-2">Build Your Plan</h1>
-        <p className="text-muted-foreground">Set your daily targets and let AI design a high-protein, gym-ready menu.</p>
+        <p className="text-muted-foreground">Set your daily targets and build a high-protein, gym-ready menu.</p>
       </section>
 
       <div className="grid md:grid-cols-[300px_1fr] gap-8 items-start">
         {/* Settings Panel */}
         <div className="space-y-4 md:sticky md:top-8">
           <div className="rounded-2xl border border-border bg-card shadow-sm p-6 space-y-7">
+
             {/* Meals per day */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -231,8 +300,98 @@ export default function Planner() {
                   <Clock size={13} />
                   <span>Per meal estimate</span>
                 </div>
-                <span className="font-bold text-foreground text-sm">~{calPerMeal} cal</span>
+                <span className="font-bold text-foreground text-sm">{calPerMeal} cal</span>
               </div>
+            </div>
+
+            <div className="border-t border-border" />
+
+            {/* High Protein / Low Carb Toggle */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                    <TrendingUp size={13} className="text-primary" />
+                    More Protein, Less Carbs
+                  </Label>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">Shifts meals to protein-dominant macros</p>
+                </div>
+                <button
+                  onClick={() => updateHighProtein(!highProtein)}
+                  className={`relative w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none ${
+                    highProtein ? "gradient-emerald" : "bg-muted border border-border"
+                  }`}
+                  aria-checked={highProtein}
+                  role="switch"
+                >
+                  <span
+                    className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                      highProtein ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+              </div>
+              {highProtein && (
+                <div className="flex items-center gap-1.5 text-[11px] text-primary bg-primary/8 border border-primary/15 rounded-xl px-3 py-2">
+                  <Zap size={11} />
+                  <span>~40% protein · ~20% carbs · ~40% fat</span>
+                </div>
+              )}
+            </div>
+
+            <div className="border-t border-border" />
+
+            {/* Allergy / Food Exclusions */}
+            <div className="space-y-3">
+              <div>
+                <Label className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                  <ShieldAlert size={13} className="text-primary" />
+                  Food Exclusions / Allergies
+                </Label>
+                <p className="text-[11px] text-muted-foreground mt-0.5">These foods will never appear in your plan</p>
+              </div>
+
+              {/* Tag display */}
+              {allergies.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {allergies.map((tag) => (
+                    <span
+                      key={tag}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold"
+                    >
+                      {tag}
+                      <button
+                        onClick={() => removeAllergy(tag)}
+                        className="hover:text-red-300 transition-colors ml-0.5"
+                        aria-label={`Remove ${tag}`}
+                      >
+                        <X size={11} />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Input */}
+              <div className="flex gap-2">
+                <input
+                  ref={allergyInputRef}
+                  type="text"
+                  value={allergyInput}
+                  onChange={(e) => setAllergyInput(e.target.value)}
+                  onKeyDown={handleAllergyKeyDown}
+                  placeholder="e.g. peanuts, shellfish..."
+                  className="flex-1 h-9 rounded-xl border border-border bg-muted/40 px-3 text-xs font-medium text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/40 transition-colors"
+                />
+                <button
+                  onClick={addAllergy}
+                  disabled={!allergyInput.trim()}
+                  className="h-9 px-3 rounded-xl gradient-emerald text-white text-xs font-bold disabled:opacity-40 transition-opacity"
+                >
+                  Add
+                </button>
+              </div>
+              <p className="text-[10px] text-muted-foreground">Press Enter or comma to add · Backspace to remove last</p>
             </div>
 
             <Button
@@ -261,6 +420,23 @@ export default function Planner() {
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">{tip}</p>
           </div>
+
+          {/* Fasting callout */}
+          <a
+            href="/fasting"
+            className="rounded-2xl border border-indigo-500/20 bg-indigo-500/8 p-4 flex items-center gap-3 hover:border-indigo-500/40 hover:bg-indigo-500/12 transition-colors group"
+          >
+            <div className="w-8 h-8 rounded-xl bg-indigo-500/20 flex items-center justify-center shrink-0 text-base">
+              ⏱️
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-indigo-400 leading-snug">Boost your results</p>
+              <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">
+                Combine this plan with the 18:6 fasting window for faster fat loss.
+              </p>
+            </div>
+            <ExternalLink size={12} className="text-indigo-400/60 shrink-0 group-hover:text-indigo-400 transition-colors" />
+          </a>
         </div>
 
         {/* Results */}
@@ -278,6 +454,8 @@ export default function Planner() {
               <h3 className="font-serif text-xl font-semibold text-foreground mb-2">Building your menu</h3>
               <p className="text-muted-foreground text-sm max-w-xs">
                 Designing {mealsPerDay} high-protein meals totaling {dailyCalories.toLocaleString()} calories.
+                {allergies.length > 0 && ` Excluding: ${allergies.join(", ")}.`}
+                {highProtein && " Maximising protein."}
               </p>
               <div className="flex gap-1.5 mt-6">
                 {[0, 1, 2].map((i) => (
@@ -293,7 +471,11 @@ export default function Planner() {
                 <div className="p-5 flex items-center justify-between gap-4">
                   <div>
                     <h3 className="font-serif text-xl font-bold text-foreground">{plan.name}</h3>
-                    <p className="text-muted-foreground text-xs mt-1">High-protein · Gym-focused · Simple</p>
+                    <p className="text-muted-foreground text-xs mt-1">
+                      High-protein · Gym-focused · Simple
+                      {highProtein && " · Low Carb"}
+                      {allergies.length > 0 && ` · No ${allergies.join(", ")}`}
+                    </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button

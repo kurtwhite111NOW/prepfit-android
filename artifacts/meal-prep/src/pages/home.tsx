@@ -41,7 +41,7 @@ function getWaterStreak(): number {
 }
 
 export default function Home() {
-  usePageTitle("Dashboard", "Your AI-powered meal prep dashboard. View your active plan, daily macros, and quick actions for gym-focused nutrition.");
+  usePageTitle("Dashboard", "Your meal prep dashboard. View your active plan, daily macros, and quick actions for gym-focused nutrition.");
   const { data: mealPlans, isLoading } = useListMealPlans({
     query: { queryKey: getListMealPlansQueryKey() },
   });
@@ -60,7 +60,7 @@ export default function Home() {
       href: "/planner",
       emoji: "🥗",
       label: "Build a Meal Plan",
-      desc: "AI picks high-protein meals for your calorie goal",
+      desc: "High-protein meals built for your calorie goal",
       color: "bg-orange-500",
     },
     {
