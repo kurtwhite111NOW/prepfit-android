@@ -35,6 +35,7 @@
     },
     "production": {
       "distribution": "store",
+      "pnpm": "10.26.1",
       "autoIncrement": false,
       "channel": "production",
       "android": {
